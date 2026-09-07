@@ -1,0 +1,18 @@
+#
+# $Id: winprn.hbp 3623 2025-04-21 04:07:27Z josequintas $
+#
+# auto included hbmk.hbm
+#
+
+-stop={win}
+winprn.prg
+-owinprn
+-n
+-lm
+-w1
+-static
+-d__LINUX__ -d__GTK__
+
+../../hwgui.hbc
+
+# ==================== EOF of winprn.hbp ===============

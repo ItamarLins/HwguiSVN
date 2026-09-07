@@ -1,0 +1,20 @@
+#
+# $Id: qrencodedll.hbp 3583 2025-04-13 10:57:36Z josequintas $
+#
+# auto included hbmk.hbm
+
+{linux}-stop="Windows only"
+{darwin}-stop="Windows only"
+{unix}-stop="Windows only"
+
+# hbwin.hbc
+xhb.hbc
+
+# -lqrcodegen
+# -lhbqrencode
+
+-oqrencodedll
+
+qrencodedll.prg
+
+# ==================== EOF of qrencodedll.hbp ===============

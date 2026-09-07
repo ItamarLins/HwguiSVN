@@ -1,0 +1,19 @@
+#
+# $Id: progbars.hbp 3623 2025-04-21 04:07:27Z josequintas $
+#
+# auto included hbmk.hbm
+#
+
+# See footmark 12 in Readme.txt
+-stop={win}
+
+#../../hwgui.hbc
+# Prepared for MacOS
+
+-n
+
+-oprogbars
+
+progbars.prg
+
+# ==================== EOF of progbars.hbp ===============

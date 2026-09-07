@@ -1,0 +1,22 @@
+#
+# $Id$
+#
+
+-n -w3
+
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+-L../../
+hwgui.hbc
+
+-ohwlblsample
+
+hwlblsample.prg
+libhwlabel.prg
+
+{win}hwlbledt.rc
+
+# ============== EOF of hwlbledt.hbp ====================

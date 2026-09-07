@@ -1,0 +1,15 @@
+#
+# Ticket116.hbp
+#
+# $Id: Ticket116.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-stop={linux}
+
+hbct.hbc
+
+-oTicket116
+
+Ticket116.prg
+
+# ==================== EOF of Ticket116.hbp =========================

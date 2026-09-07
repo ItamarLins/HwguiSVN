@@ -1,0 +1,14 @@
+#
+# $Id: hello.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+{linux}-stop="Windows only"
+{darwin}-stop="Windows only"
+{unix}-stop="Windows only"
+
+-ohello
+
+hello.prg
+
+# ==================== EOF of hello.hbp ===============

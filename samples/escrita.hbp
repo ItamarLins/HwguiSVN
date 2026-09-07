@@ -1,0 +1,10 @@
+#
+# $Id: escrita.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+-oescrita
+
+escrita.prg
+
+# ==================== EOF of escrita.hbp ===============

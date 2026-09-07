@@ -1,0 +1,2120 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>HwGUI documentation - commands</title>
+  <link rel="stylesheet" type="text/css" href="table.css">
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<div class="navheader">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15%" align="left"><a href="http://www.kresin.ru">Home page</a></td>
+      <td width="70%" align="center"><strong class="title"> HwGUI 2.23 reference manual </strong></td>
+      <td width="15%" align="right">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="15%" align="left"><a href="hwgdoc.html">prev</a></td>
+      <td width="70%" align="center">Alexander S.Kresin, July 2026</td>
+      <td width="15%" align="right"><a href="hwgdoc_functions.html">next</a></td>
+    </tr>
+  </table>
+  <hr align="left" width="100%">
+</div>
+
+    <br><strong class="title"><a name="Commands" href="hwgdoc.html#_Commands">
+    4.  Commands</a></strong><br>
+
+    <ul>
+      <li><a name="_Commands1" href="#Commands1">4.1.  Commands for windows and dialogs</a>
+      <li><a name="_Commands2" href="#Commands2">4.2.  Menu commands</a>
+      <li><a name="_Commands3" href="#Commands3">4.3.  Commands for controls</a>
+      <li><a name="_Commands4" href="#Commands4">4.4.  Get system commands</a>
+      <li><a name="_Commands5" href="#Commands5">4.5.  Print commands</a>
+      <li><a name="_Commands6" href="#Commands6">4.6.  Other commands</a>
+    </ul>
+
+    <br><strong class="subhead"><a name="Commands1" href="hwgdoc.html#_Commands1">
+    4.1.  Commands for windows and dialogs handling</a></strong><br>
+     <ul>
+       <li><a name="_initwindow" href="#initwindow"> INIT WINDOW</a>
+       <li><a name="_initdialog" href="#initdialog"> INIT DIALOG</a>
+       <li><a name="_actwindow" href="#actwindow"> ACTIVATE WINDOW</a>
+       <li><a name="_actdialog" href="#actdialog"> ACTIVATE DIALOG</a>
+     </ul>
+
+    <br><a name="initwindow" href="#_initwindow"> INIT WINDOW</a>
+    <p>This command creates the window - main, MDI or MDI CHILD. To force this
+     window show up on the screen you need to activate it later. You can do this
+     with <A href="#actwindow">ACTIVATE WINDOW</a> command or with
+     <A href="hwgdoc_classes.html#hmainwindow">Activate()</a> method of that window object.
+    </p>
+    <pre class="code">
+      INIT WINDOW &lt;oWnd&gt;
+    	 [ MAIN ]
+    	 [ MDI ]
+    	 [ MDICHILD ]
+         [ APPNAME &lt;appname&gt; ]
+    	 [ TITLE &lt;cTitle&gt; ]
+    	 [ AT &lt;x&gt;, &lt;y&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ ICON &lt;ico&gt; ]
+    	 [ SYSCOLOR &lt;sysclr&gt; ]
+    	 [ BACKCOLOR &lt;clr&gt; ]
+         [ BACKGROUND BITMAP &lt;oBmp>&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ MENUPOS &lt;nPos&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+    	 [ ON OTHER MESSAGES &lt;bOther&gt; ]
+    	 [ ON EXIT &lt;bExit&gt;]
+         [ HELP &lt;cHelp&gt; ]
+         [ HELPID &lt;nHelpId&gt; ]
+    </pre>
+    <br><b>MAIN,MDI,MDICHILD</b> clauses specifies the type of the window, only one of this
+    clauses may be used in the command.<br>
+    <b>cTitle</b> - title of the window;<br>
+    <b>x,y,width,height</b> - left and top coordinates of the window, it's width and height;<br>
+    <b>ico</b> - an icon for a window, an object of HIcon class;<br>
+    <b>clr</b> - the background color of the window;<br>
+    <b>nStyle</b> - style of the window;<br>
+    <b>oFont</b> - a font for a window, an object of HFont class;<br>
+    <b>nPos</b> - identifies the window menu used for controlling MDI child windows.
+    As child windows are created, the application adds their titles to the
+    Window menu as menu items. The user can then activate a child window by
+    choosing its title from the window menu.<br>
+    <b>bSize</b> - codeblock, which is evaluated while resizing window;<br>
+    <b>bPaint</b> - codeblock, which is evaluated while window drawing;<br>
+    <b>bGFocus</b> - codeblock, which is evaluated when window gets focus;<br>
+    <b>bLFocus</b> - codeblock, which is evaluated when window losts focus;<br>
+    <b>bExit</b> - codeblock, which is evaluated when window is closed;<br>
+    <b>bOther</b> - codeblock, which is evaluated for all other messages - you can write
+    your own procedure for messages handling;<br>
+    <br><br>
+    <b>Special information for tray applications:</b><br>
+    The behavior of tray applications differs between Windows and LINUX.<br>
+    On LINUX, the main windows appears at start time, but the main window is
+    reachable by mouse right click.<br>
+    <br>
+    (On LINUX, there is now way to change the tray icon, because<br>
+    the WinAPI function "HWG_SHELLMODIFYICON" does not work here.<br>
+    So the menu point "Change icon" does not appear on GTK/LINUX).<br>
+    <br>
+    For details, see sample programs<br>
+    samples/gtk_samples/testtray.prg and samples/testtray.prg .<br>
+    <br>Some screenshots from sample program "testtray.prg":<br>
+    Windows 10:<br>
+    <br>
+    <img src="./image/tray_start_win10.png" align=center wborder=0 alt="Tray icon at start of example"><br>
+    Tray icon at start of example program with tooltip text<br>
+    <br>
+    <img src="./image/tray_ContMenu_win10.png" align=center wborder=0 alt="Tray with context menu"><br>
+    Tray with context menu<br>
+    <br>
+    <br>LINUX:<br>
+    <img src="./image/tray_LINUX_mainwin.png" align=center wborder=0 alt="Main window"><br>
+    Main window<br>
+    <br>
+    <img src="./image/tray_LINUX_msg.png" align=center wborder=0 alt="Tray message window"><br>
+    Tray message window<br>
+    <br>
+    Iconification:<br>
+    See sample files and instructions in directory:<br>
+    samples/iconify<br>
+    (also for creating desktop shortcuts and dock/dash (task bar)<br>
+     shortcuts for HWGUI programs)<br>
+
+    <br><a name="initdialog" href="#_initdialog"> INIT DIALOG</a>
+    <p>This command creates the dialog box. To force the dialog
+     show up on the screen you need to activate it later. You can do this
+     with <A href="#actdialog">ACTIVATE DIALOG</a> command or with
+     <A href="hwgdoc_classes.html#hdialog">Activate()</a> method of that window object.
+    </p>
+    <pre class="code">
+      INIT DIALOG &lt;oWnd&gt;
+    	 [ TITLE &lt;cTitle&gt; ]
+    	 [ AT &lt;x&gt;, &lt;y&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ ICON &lt;ico&gt; ]
+         [ BACKGROUND BITMAP &lt;oBmp&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ BACKCOLOR &lt;clr&gt; ]
+    	 [ CLIPPER ]
+    	 [ NOEXIT ]
+    	 [ NOEXITESC ]
+    	 [ NOCLOSABLE ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+    	 [ ON OTHER MESSAGES &lt;bOther&gt; ]
+    	 [ ON EXIT &lt;bExit&gt; ]
+    	 [ HELPID &lt;nHelpId>&gt; ]
+    </pre>
+    <p>All clauses has the same meaning as in <A href="#initwindow">INIT WINDOW</a> command,
+     there is only two specific clause:<br>
+     <br>
+     <b>CLIPPER</b> - to force the Clipper like behavior - the Enter key is used for moving between GET's;<br>
+     &nbsp;&nbsp;&nbsp;Important:<br>
+     &nbsp;&nbsp;&nbsp;The CLIPPER option has no effect on EDITBOX,<br>
+     &nbsp;&nbsp;&nbsp;because it is an HWGUI extension for multi line editing.<br>
+     &nbsp;&nbsp;&nbsp;So ENTER means LINE FEED.<br>
+     <br>
+     <b>NOEXIT</b> - the Enter key doesn't cause closing of a dialog box.<br>
+     On GTK, this option is forever active.<br>
+     <br>
+     A little sample to handle the ESC key in a dialog for GTK:<br>
+     (but also OK for Windows)<br>
+     <br>
+     &nbsp;&nbsp;&nbsp;#define GDK_Escape &nbsp;&nbsp;&nbsp;         0xFF1B<br>
+     &nbsp;&nbsp;&nbsp;#define  VK_ESCAPE    &nbsp;&nbsp;&nbsp;      GDK_Escape<br>
+     <br>
+     &nbsp;&nbsp;&nbsp;INIT DIALOG oDlg... NOEXIT<br>
+     &nbsp;&nbsp;&nbsp;...<br>
+     &nbsp;&nbsp;&nbsp;#ifdef __GTK__<br>
+     &nbsp;&nbsp;&nbsp;SET KEY 0,VK_ESCAPE TO EDMSK_KEYESC(oDlg)<br>
+     &nbsp;&nbsp;&nbsp;#endif<br>
+     &nbsp;&nbsp;&nbsp;...  * Your dialog<br>
+     &nbsp;&nbsp;&nbsp;ACTIVATE DIALOG ...<br>
+     &nbsp;&nbsp;&nbsp;#ifdef __GTK__ <br>
+     &nbsp;&nbsp;&nbsp;SET KEY 0,VK_ESCAPE TO<br>
+     &nbsp;&nbsp;&nbsp;#endif<br>
+     <br>
+     <br>
+     &nbsp;&nbsp;&nbsp;FUNCTION EDMSK_KEYESC(odlg)<br>
+     &nbsp;&nbsp;&nbsp;* Closes edit dialog at ESC key<br>
+     &nbsp;&nbsp;&nbsp;* hwg_MsgInfo("ESC key pressed")  && Debug<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;odlg:Close()<br>
+     &nbsp;&nbsp;&nbsp;RETURN NIL<br>
+     <br>
+    </p>
+
+    <br><a name="actwindow" href="#_actwindow"> ACTIVATE WINDOW</a>
+    <pre class="code">
+      ACTIVATE WINDOW &lt;oWnd&gt;
+             [ NOSHOW ]
+             [ MAXIMIZED ]
+             [ MINIMIZED ]
+             [ CENTER ]
+             [ ON ACTIVATE &lt;bInit&gt; ]
+    </pre>
+
+    <p>This command is equivalent to 'oWnd:Activate()' call. It shows the previously created
+    window and starts messages processing for it.</p>
+    <br><a name="actdialog" href="#_actdialog"> ACTIVATE DIALOG</a>
+    <pre class="code">
+      ACTIVATE DIALOG &lt;oDlg&gt;
+             [ NOMODAL ]
+             [ MAXIMIZED ]
+             [ MINIMIZED ]
+             [ CENTER ]
+             [ ON ACTIVATE &lt;bInit&gt; ]
+
+    Special instructions for non modal mode:
+    The behavior of non modal dialoges differs between WinAPI and GTK.
+    For details see function documentation for FUNCTION hwg_ShowHelp().
+    </pre>
+
+    <p>This command is equivalent to 'oDlg:Activate()' call. It shows the previously defined<br>
+    dialog and starts messages processing for it. By default, it creates modal dialog.<br>
+    You can create modeless dialog, specifying NOMODAL clause in this command.<br>
+    <br>
+    Some commands between INIT DIALOG ... and ACTIVATE DIALOG ... NOMODAL<br>
+    overwrite the modeless property, so the NOMODAL option is ignored and<br>
+    the dialog started in modal mode. For example the HCEDIT command do this, see<br>
+    HELP() function of CLLOG in src/hilfew.prg<br>
+    (<a href="https://sourceforge.net/projects/cllog/">https://sourceforge.net/projects/cllog/</a>).<br>
+    <br>
+    Attention !<br>
+    Be sure, that the dialog calling a subdialog in non modal mode is not closed in background.<br>
+    Otherwise, if the calling dialog is closed, the called non modal subdialog is also closed<br>
+    together with the calling dialog.<br>
+    </p>
+
+    <br><strong class="subhead"><a name="Commands2" href="hwgdoc.html#_Commands2">
+    4.2.  Menu commands</a></strong><br>
+     <ul>
+       <li><a name="_menu" href="#menu"> MENU</a>
+       <li><a name="_endmenu" href="#endmenu"> ENDMENU</a>
+       <li><a name="_menuitem" href="#menuitem"> MENUITEM</a>
+       <li><a name="_menuitemcheck" href="#menuitemcheck"> MENUITEMCHECK</a>
+       <li><a name="_separator" href="#separator"> SEPARATOR</a>
+       <li><a name="_contextmenu" href="#contextmenu"> CONTEXT MENU</a>
+       <li><a name="_accelerator" href="#accelerator"> ACCELERATOR</a>
+     </ul>
+    <p><b>Additional instructions for menus:</b><br>
+     Structure errors in menu command blocks are not recognized by the Harbour compiler.<br>
+     At run time, in case of those error(s) the menu disappeared.<br>
+     Check the structure manually.<br>
+     <br>
+     LINUX/GTK: Submenus are mandatory.<br>
+     If a main menu point is standalone, the action of this menu is not reachable.<br>
+     You see only an empty sub menu "Aktivieren" (german, means "Activate"),<br>
+     here the screenshot from Ubuntu LINUX:<br>
+     <img src="./image/GTK_without_submenu.jpg" align=center wborder=0 alt="System menu without submenu">
+     <br>
+     Add a submenu point for multi platform programs, for example:<br>
+     MENU OF oMainWindow<br>
+     &nbsp;MENU TITLE "&Exit"<br>
+     &nbsp;&nbsp; MENUITEM "&Quit" ACTION hwg_EndWindow()<br>
+     &nbsp;ENDMENU<br>
+     &nbsp;MENU TITLE "&Dialog"<br>
+     ...
+    </p>
+
+    <br><a name="menu" href="#_menu"> MENU</a>
+    <p></p>
+    <pre class="code">
+      MENU [ OF &lt;oWnd&gt; ] [ ID &lt;nId&gt; ] [ TITLE &lt;cTitle&gt; ]
+    </pre>
+    <p>
+    Some hints to usage of hotkeys in menu's and submenu's<br>
+    (Letter marked with "&" character in MENUITEM caption):<br>
+    The behavior is a little different between WinAPI and GTK/LINUX:<br>
+    LINUX:<br>
+    Press the "Alt" key (not the "AltGr" key) and hold it while pressing the<br>
+    letter for the submenu (==> the & mark).<br>
+    The activated Alt mode is marked by an underline of the menu letter<br>
+    (during Alt key is pressed).<br>
+    After the submenu is opened, release the "Alt" key ann press the letter of the<br>
+    desired submenu.<br>
+    WinAPI:<br>
+    On Windows, the Alt key can be pressed once before selecting<br>
+    the menu or submenu with the hotkey.<br>
+    </p>
+    <br><a name="endmenu" href="#_endmenu"> ENDMENU</a>
+    <p></p>
+    <pre class="code">
+      ENDMENU
+    </pre>
+
+    <br><a name="menuitem" href="#_menuitem"> MENUITEM</a>
+    <p></p>
+    <pre class="code">
+    MENUITEM &lt;item&gt; [ ID &lt;nId&gt; ]
+        ACTION &lt;act&gt;
+        [ BITMAP &lt;bmp&gt; ]
+        [ ACCELERATOR &lt;flag&gt;, &lt;key&gt; ]
+        [ &lt;lDisabled: DISABLED&gt; ]
+    </pre>
+
+    <br><a name="menuitemcheck" href="#_menuitemcheck"> MENUITEMCHECK</a>
+    <p></p>
+    <pre class="code">
+    MENUITEMCHECK &lt;item&gt; [ ID &lt;nId&gt; ]
+        ACTION &lt;act&gt;
+        [ ACCELERATOR &lt;flag&gt;, &lt;key&gt; ]
+        [ &lt;lDisabled: DISABLED&gt; ]
+    </pre>
+
+    <br><a name="separator" href="#_separator">4.2.5.  SEPARATOR</a>
+    <p></p>
+    <pre class="code">
+      SEPARATOR
+    </pre>
+
+    <br><a name="contextmenu" href="#_contextmenu"> CONTEXT MENU</a>
+    <p></p>
+    <pre class="code">
+      CONTEXT MENU &lt;oMenu&gt;
+    </pre>
+
+    <br><a name="accelerator" href="#_accelerator"> ACCELERATOR</a>
+    <p></p>
+    <pre class="code">
+      ACCELERATOR &lt;flag&gt;, &lt;key&gt;
+                [ ID &lt;nId&gt; ]
+                ACTION &lt;act&gt;
+    </pre>
+
+    <br><strong class="subhead"><a name="Commands3" href="hwgdoc.html#_Commands3">
+    4.3.  Commands for controls handling</a></strong><br>
+     <ul>
+       <li><a name="_addstatus" href="#addstatus"> ADD STATUS TO</a>
+       <li><a name="_say" href="#say"> @ &lt;x&gt;,&lt;y&gt; SAY</a>
+       <li><a name="_editbox" href="#editbox"> @ &lt;x&gt;,&lt;y&gt; EDITBOX</a>
+
+       <li><a name="_button" href="#button"> @ &lt;x&gt;,&lt;y&gt; BUTTON</a>
+
+       <li><a name="_checkbox" href="#checkbox"> @ &lt;x&gt;,&lt;y&gt; CHECKBOX</a>
+
+       <li><a name="_combobox" href="#combobox"> @ &lt;x&gt;,&lt;y&gt; COMBOBOX</a>
+
+       <li><a name="_radiobtn" href="#radiobtn"> @ &lt;x&gt;,&lt;y&gt; RADIOBUTTON</a>
+
+       <li><a name="_radiogr" href="#radiogr"> RADIOGROUP</a>
+       <li><a name="_endradiogr" href="#endradiogr"> END RADIOGROUP</a>
+       <li><a name="_panel" href="#panel"> @ &lt;x&gt;,&lt;y&gt; PANEL</a>
+       <li><a name="_toppanel" href="#toppanel"> ADD TOP PANEL</a>
+       <li><a name="_heapanel" href="#heapanel"> ADD HEADER PANEL</a>
+       <li><a name="_statuspanel" href="#statuspanel"> ADD STATUS PANEL</a>
+
+       <li><a name="_browse" href="#browse"> @ &lt;x&gt;,&lt;y&gt; BROWSE</a>
+       <li><a name="_browsefilter" href="#browsefilter"> @ &lt;x&gt;,&lt;y&gt; BROWSE &lt;oBrw&gt; FILTER</a>
+       <li><a name="_addcolumn" href="#addcolumn"> ADD COLUMN</a>
+       <li><a name="_inscolumn" href="#inscolumn"> INSERT COLUMN</a>
+
+       <li><a name="_ownerbtn" href="#ownerbtn"> @ &lt;x&gt;,&lt;y&gt; OWNERBUTTON</a>
+       <li><a name="_shadebtn" href="#shadebtn"> @ &lt;x&gt;,&lt;y&gt; SHADEBUTTON</a>
+       <li><a name="_nicebtn" href="#nicebtn"> @ &lt;x&gt;,&lt;y&gt; NICEBUTTON</a>
+
+       <li><a name="_groupbox" href="#groupbox">  @ &lt;x&gt;,&lt;y&gt; GROUPBOX</a>
+       <li><a name="_datepick" href="#datepick"> @ &lt;x&gt;,&lt;y&gt; DATEPICKER</a>
+       <li><a name="_updown" href="#updown">  @ &lt;x&gt;,&lt;y&gt; UPDOWN</a>
+       <li><a name="_tab" href="#tab">  @ &lt;x&gt;,&lt;y&gt; TAB</a>
+       <li><a name="_beginpage" href="#beginpage"> BEGIN PAGE</a>
+       <li><a name="_endpage" href="#endpage"> END PAGE, ENDPAGE</a>
+       <li><a name="_tree" href="#tree"> @ &lt;x&gt;,&lt;y&gt; TREE</a>
+       <li><a name="_insnode" href="#insnode"> INSERT NODE</a>
+       <li><a name="_bitmap" href="#bitmap"> @ &lt;x&gt;,&lt;y&gt; BITMAP</a>
+
+       <li><a name="_icon" href="#icon"> @ &lt;x&gt;,&lt;y&gt; ICON</a>
+       <li><a name="_image" href="#image"> @ &lt;x&gt;,&lt;y&gt; IMAGE</a>
+
+       <li><a name="_line" href="#line"> @ &lt;x&gt;,&lt;y&gt; LINE</a>
+       <li><a name="_richedit" href="#richedit"> @ &lt;x&gt;,&lt;y&gt; RICHEDIT</a>
+       <li><a name="_splitter" href="#splitter"> @ &lt;x&gt;,&lt;y&gt; SPLITTER</a>
+       <li><a name="_Commands3-34" href="#Commands3-34"> @ &lt;x&gt;,&lt;y&gt; GRAPH</a>
+       <li><a name="_progressbar" href="#progressbar"> @ &lt;x&gt;,&lt;y&gt; PROGRESSBAR</a>
+       <li><a name="_monthcalen" href="#monthcalen"> @ &lt;x&gt;,&lt;y&gt; MONTHCALENDAR</a>
+       <li><a name="_listbox" href="#listbox"> @ &lt;x&gt;,&lt;y&gt; LISTBOX</a>
+
+       <li><a name="_splash" href="#splash"> SPLASH</a>
+       <li><a name="_trackbar" href="#trackbar"> @ &lt;x&gt;,&lt;y&gt; TRACKBAR</a>
+       <li><a name="_animation" href="#animation"> @ &lt;x&gt;,&lt;y&gt; ANIMATION</a>
+
+       <li><a name="_grid" href="#grid"> @ &lt;x&gt;,&lt;y&gt; GRID</a>
+       <li><a name="_colgrid" href="#colgrid"> ADD COLUMN TO GRID</a>
+       <li><a name="_rowgrid" href="#rowgrid"> ADDROW TO GRID</a>
+
+       <li><a name="_rect" href="#rect"> @ &lt;x&gt;,&lt;y&gt; RECT</a>
+       <li><a name="_link" href="#link"> @ &lt;x&gt;,&lt;y&gt; SAY (LINK)</a>
+
+       <li><a name="_toolbar" href="#toolbar"> @ &lt;x&gt;,&lt;y&gt; TOOLBAR</a>
+       <li><a name="_toolbtn" href="#toolbtn"> TOOLBUTTON, ADD TOOLBUTTON</a>
+       <li><a name="_pager" href="#pager"> @ &lt;x&gt;,&lt;y&gt; PAGER</a>
+       <li><a name="_rebar" href="#rebar"> @ &lt;x&gt;,&lt;y&gt; REBAR</a>
+       <li><a name="_addband" href="#addband"> ADDBAND &lt;hWnd&gt; TO &lt;oPage&gt;</a>
+       <li><a name="_shape" href="#shape"> @ &lt;x&gt;,&lt;y&gt; SHAPE</a>
+       <li><a name="_hcedit" href="#hcedit"> @ &lt;x&gt;,&lt;y&gt; HCEDIT</a>
+       <li><a name="_track" href="#track"> @ &lt;x&gt;,&lt;y&gt; TRACK</a>
+       <li><a name="_lenta" href="#lenta"> @ &lt;x&gt;,&lt;y&gt; LENTA</a>
+       <li><a name="_dateselect" href="#dateselect"> @ &lt;x&gt;,&lt;y&gt; DATESELECT</a>
+       <li><a name="_board" href="#board"> @ &lt;x&gt;,&lt;y&gt; BOARD</a>
+       <li><a name="_drawn" href="#drawn"> @ &lt;x&gt;,&lt;y&gt; DRAWN</a>
+       <li><a name="_drawncheck" href="#drawncheck"> @ &lt;x&gt;,&lt;y&gt; DRAWN CHECK</a>
+       <li><a name="_drawnradio" href="#drawnradio"> @ &lt;x&gt;,&lt;y&gt; DRAWN RADIO </a>
+       <li><a name="_drawntrack" href="#drawntrack"> @ &lt;x&gt;,&lt;y&gt; DRAWN TRACK</a>
+       <li><a name="_drawnedit" href="#drawnedit"> @ &lt;x&gt;,&lt;y&gt; DRAWN EDIT</a>
+       <li><a name="_drawnlenta" href="#drawnlenta"> @ &lt;x&gt;,&lt;y&gt; DRAWN LENTA</a>
+       <li><a name="_drawncombo" href="#drawncombo"> @ &lt;x&gt;,&lt;y&gt; DRAWN COMBO</a>
+       <li><a name="_drawnupdown" href="#drawnupdown"> @ &lt;x&gt;,&lt;y&gt; DRAWN UPDOWN</a>
+       <li><a name="_drawnbrowse" href="#drawnbrowse"> @ &lt;x&gt;,&lt;y&gt; DRAWN BROWSE</a>
+       <li><a name="_drawndate" href="#drawndate"> @ &lt;x&gt;,&lt;y&gt; DRAWN DATE</a>
+     </ul>
+    <p>All the following commands creates the instances of classes, they
+    are preprocessed into the New() method of appropriate class.</p>
+    <br><a name="addstatus" href="#_addstatus"> ADD STATUS TO</a>
+    <p></p>
+    <pre class="code">
+    ADD STATUS [ TO &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ PARTS &lt;aparts,...&gt; ]
+    </pre>
+    <br><a name="say" href="#_say"> @ &lt;x&gt;,&lt;y&gt; SAY</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; SAY [ &lt;oSay&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt; ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ TRANSPARENT ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <br><a name="editbox" href="#_editbox"> @ &lt;x&gt;,&lt;y&gt; EDITBOX</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; EDITBOX [ &lt;oEdit&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+         [ ON KEYDOWN &lt;bKeyDown&gt;]
+         [ ON CHANGE &lt;bChange&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+         [ NOBORDER ]
+         [ PASSWORD ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="button" href="#_button"> @ &lt;x&gt;,&lt;y&gt; BUTTON</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; BUTTON [ &lt;oButton&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="checkbox" href="#_checkbox"> @ &lt;x&gt;,&lt;y&gt; CHECKBOX</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; CHECKBOX [ &lt;oCheck&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ TRANSPARENT ]
+    	 [ INIT &lt;lInit&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <p>
+    Additional information:<br>
+    To avoid some trouble with presetting of values for CHECKBOX,<br>
+    it is a better solution to use:<br>
+    LOCAL lCheckbox1<br>
+    lCheckbox1 := .F.<br>
+    ...<br>
+    @ &lt;x&gt;,&lt;y&gt;  GET CHECKBOX &lt;oCheck&gt; VAR lCheckbox1 ;<br>
+      CAPTION  &lt;caption&gt; SIZE &lt;width&gt;, &lt;height&gt;<br>
+    (See sample program \samples\democheckbox.prg)<br>
+    In this code snippet mentioned, it is mandatory to pre init the variable lCheckbox1<br>
+    with .T. or .F. .<br>
+    </p>
+
+    <br><a name="combobox" href="#_combobox"> @ &lt;x&gt;,&lt;y&gt; COMBOBOX</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; COMBOBOX [ &lt;oCombo&gt; ITEMS ] &lt;aItems&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ INIT &lt;nInit&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CHANGE &lt;bChange&gt; ]
+         [ ON GETFOCUS &lt;bWhen&gt; ]
+         [ ON LOSTFOCUS &lt;bValid&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    	 [ EDIT ]&nbsp;&nbsp;&nbsp;&nbsp;(Windows only)
+    	 [ TEXT ]
+    	 [ DISPLAYCOUNT ]
+    </pre>
+    Important advice:<br>
+    The behavior in the WinAPI function at newer GCC/MinGW versions<br>
+    differs. If the size in y direction is to small for all items,<br>
+    the last items are not visible at the first call.<br>
+    But they could be reached and selected by the cursor keys.<br>
+    We recommend to place an advice in your dialog text or increase<br>
+    the y size, so that all items have enough space to display.<br>
+    <br>
+    Extra instructions for using COMBOBOX values:<br>
+    The test and demo program<br>
+    "test/tstcombovals.prg"<br>
+    demonstrates the usage of<br>
+    @ &lt;x&gt;,&lt;y&gt; GET COMBOBOX ...<br>
+    To preset values in a combobox from inifile<br>
+    and write the selection into <br>
+    a infile.<br>
+    The functions <br>
+    hwg_CCOMB2STRI()<br>
+    hwg_STRI2COMB()<br>
+    are helpers to<br>
+    handle the combobox entries<br>
+    as strings (Type=C) to<br>
+    read from inifile or<br>
+    store it in a inifile or<br>
+    a database.<br>
+   <br>    <p></p>
+
+    <br><a name="radiobtn" href="#_radiobtn"> @ &lt;x&gt;,&lt;y&gt; RADIOBUTTON</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; RADIOBUTTON [ &lt;oRadio&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    	 [ TRANSPARENT ]
+    </pre>
+
+    <br><a name="radiogr" href="#_radiogr"> RADIOGROUP</a>
+    <pre class="code">
+       RADIOGROUP
+    </pre>
+    <br><a name="endradiogr" href="#_endradiogr"> END RADIOGROUP</a>
+    <pre class="code">
+       END RADIOGROUP [ SELECTED &lt;nSel&gt; ]
+    </pre>
+
+    <br><a name="panel" href="#_panel"> @ &lt;x&gt;,&lt;y&gt; PANEL</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; PANEL &lt;oPanel&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ HSTYLE &lt;oStyle&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    </pre>
+
+    <br><a name="toppanel" href="#_toppanel"> ADD TOP PANEL</a>
+    <p></p>
+    <pre class="code">
+    ADD TOP PANEL [ &lt;oPanel&gt; ] TO &lt;oWnd&gt;
+    	 [ ID &lt;nId&gt; ]
+         HEIGHT &lt;height&gt;
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ HSTYLE &lt;oStyle&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    </pre>
+
+    <br><a name="heapanel" href="#_heapanel"> ADD HEADER PANEL</a>
+    <p></p>
+    <pre class="code">
+    ADD HEADER PANEL [ &lt;oPanel&gt; ] [TO &lt;oWnd&gt;]
+    	 [ ID &lt;nId&gt; ]
+         HEIGHT &lt;height&gt;
+    	 [ TEXTCOLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ HSTYLE &lt;oStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+         [ TEXT &lt;cText&gt; [COORS &lt;xt&gt;[,&lt;yt&gt;] ] ]
+         [ &lt;lBtnClose: BTN_CLOSE&gt; ]
+         [ &lt;lBtnMax: BTN_MAXIMIZE&gt; ]
+         [ &lt;lBtnMin: BTN_MINIMIZE&gt; ]
+
+    </pre>
+    <p>
+    <br>
+    This commands is helpfull for creating a<br>
+    suitable "Night modus" in your application,<br>
+    for "eye friendly" display, if working<br>
+    with the computer at low illumination.<br>
+    For Details see sample program "demonight.prg".<br>
+    <br>
+    Parameter "COORS" sets the left position (xt) of header text.
+    </p>
+
+    <br><a name="statuspanel" href="#_statuspanel"> ADD STATUS PANEL</a>
+    <p></p>
+    <pre class="code">
+    ADD STATUS PANEL [ &lt;oPanel&gt; ] TO &lt;oWnd&gt;
+    	 [ ID &lt;nId&gt; ]
+         HEIGHT &lt;height&gt;
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ HSTYLE &lt;oStyle&gt; ]
+         [ PARTS &lt;aparts,...&gt; ]
+
+    </pre>
+
+    <br><a name="browse" href="#_browse"> @ &lt;x&gt;,&lt;y&gt; BROWSE</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; BROWSE &lt;oBrowse&gt;
+    	 [ ARRAY ]
+    	 [ DATABASE ]          && Default
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ ON RIGHTCLICK &lt;bRClick&gt; ]
+    	 [ ON GETFOCUS &lt;bGetFocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLostFocus&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+         [ &lt;lNoVScr: NO VSCROLL&gt; ]
+         [ &lt;lNoBord: NO BORDER&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+         [ APPEND ]
+         [ AUTOEDIT ]
+         [ ON UPDATE &lt;bUpdate&gt; ]
+         [ ON KEYDOWN &lt;bKeyDown&gt; ]
+         [ ON POSCHANGE &lt;bPosChg&gt; ]
+         [ MULTISELECT ]
+    </pre>
+
+    <br><a name="browsefilter" href="#_browsefilter"> @ &lt;x&gt;,&lt;y&gt; BROWSE &lt;oBrw&gt; FILTER</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; BROWSE &lt;oBrowse&gt; FILTER
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ ON RIGHTCLICK &lt;bRClick&gt; ]
+    	 [ ON GETFOCUS &lt;bGetFocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLostFocus&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+         [ &lt;lNoVScr: NO VSCROLL&gt; ]
+         [ &lt;lNoBord: NO BORDER&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+         [ APPEND ]
+         [ AUTOEDIT ]
+         [ ON UPDATE &lt;bUpdate&gt; ]
+         [ ON KEYDOWN &lt;bKeyDown&gt; ]
+         [ ON POSCHANGE &lt;bPosChg&gt; ]
+         [ MULTISELECT ]
+         [ DESCEND> ]
+         [ WHILE &lt;bWhile&gt; ]
+         [ FIRST &lt;bFirst&gt; ]
+         [ LAST &lt;bLast&gt; ]
+         [ FOR &lt;bFor&gt; ]
+    </pre>
+    <p>
+    <b>Additional instructions for filter usage:</b><br>
+    The Harbour filter command "SET FILTER TO ..." can be normally used with the common<br>
+    BROWSE command for databases. Use it with no trouble inside an active browse window.<br>
+    After modifiying or deleting a filter setting, refresh the browse list with oBrw:Refresh() and<br>
+    you see the browse list with the new filter setting.<br>
+    Need more examples ?<br>
+    Look at project "CLLOG" on Sourceforge (with search project function).<br>
+    There you find many settings for "SET FILTER TO ..." and an editor for filter files as<br>
+    a Harbour console or terminal application.<br>
+    </p>
+
+
+    <br><a name="addcolumn" href="#_addcolumn"> ADD COLUMN</a>
+    <p></p>
+    <pre class="code">
+    ADD COLUMN &lt;block&gt; &lt;
+    	 TO &lt;oBrowse&gt;
+    	 [ HEADER &lt;cTitle&gt; ]
+    	 [ TYPE &lt;type&gt; ]
+    	 [ LENGTH &lt;length&gt; ]
+    	 [ DEC &lt;dec&gt; ]
+         [ &lt;lEdit: EDITABLE&gt; ]
+         [ JUSTIFY HEAD &lt;nJusHead&gt; ]
+         [ JUSTIFY LINE &lt;nJusLine&gt; ]
+         [ PICTURE &lt;cPict&gt; ]
+         [ VALID &lt;bValid&gt; ]
+         [ WHEN &lt;bWhen&gt; ]
+         [ ITEMS &lt;aItem&gt; ]
+         [ COLORBLOCK &lt;bClrBlck&gt; ]
+         [ BHEADCLICK &lt;bHeadClick&gt; ]
+    </pre>
+
+    <br><a name="inscolumn" href="#_inscolumn"> INSERT COLUMN</a>
+    <p></p>
+    <pre class="code">
+    INSERT COLUMN &lt;block&gt; &lt;
+    	 TO &lt;oBrowse&gt;
+    	 [ HEADER &lt;cTitle&gt; ]
+    	 [ TYPE &lt;type&gt; ]
+    	 [ LENGTH &lt;length&gt; ]
+    	 [ DEC &lt;dec&gt; ]
+         [ &lt;lEdit: EDITABLE&gt; ]
+         [ JUSTIFY HEAD &lt;nJusHead&gt; ]
+         [ JUSTIFY LINE &lt;nJusLine&gt; ]
+         [ PICTURE &lt;cPict&gt; ]
+         [ VALID &lt;bValid&gt; ]
+         [ WHEN &lt;bWhen&gt; ]
+         [ ITEMS &lt;aItem&gt; ]
+         [ COLORBLOCK &lt;bClrBlck&gt; ]
+         INTO &lt;nPos&gt;
+    </pre>
+
+    <br><a name="ownerbtn" href="#_ownerbtn"> @ &lt;x&gt;,&lt;y&gt; OWNERBUTTON</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; OWNERBUTTON &lt;oOwnBtn&gt;
+    	 [ OF &lt;oWnd&gt ];  (WinAPI only)
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ HSTYLES &lt;aStyles,...&gt; ]
+    	 [ FLAT ]             (WinAPI only)
+    	 [ DISABLED ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ TEXT &lt;cText&gt;
+    	    [ COLOR &lt;color&gt; ] [ FONT &lt;font&gt; ]
+    	    [ COORDINATES &lt;xt&gt;, &lt;yt&gt;, &lt;widthtt&gt;, &lt;heightt&gt; ]
+    	 ]
+    	 [ BITMAP &lt;bmp&gt [ FROM RESOURCE ] [ TRANSPARENT [COLOR  &lt;trcolor&gt; ] ]
+    	    [ COORDINATES &lt;xb&gt;, &lt;yb&gt;, &lt;widthtb&gt;, &lt;heightb&gt; ]
+    	 ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+         [ CHECK ]
+    </pre>
+    <p>
+    <br>
+    &nbsp; - If FLAT or OF ... used on GTK/LINUX, the ownerbuttons or the images are not visible.<br>
+    &nbsp; - Be care of supported image formats, see documentation of HBitmap CLASS.<br>
+    &nbsp; - BITMAP COORDINATES: On GTK/LINUX pass the real size of image:<br>
+    &nbsp; &nbsp; &nbsp;  &nbsp;3rd and 4th parameter<br>
+    &nbsp; &nbsp; &nbsp;  &nbsp;Set 1st and 2nd to centered image in the ownerbutton.<br>
+    &nbsp; &nbsp; &nbsp;  On Windows, the value 0,4,0,0 is OK for all.<br>
+    <br>
+    </p>
+
+
+    <br><a name="shadebtn" href="#_shadebtn"> @ &lt;x&gt;,&lt;y&gt; SHADEBUTTON</a>
+    <p></p>
+    (Windows only)<br>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; SHADEBUTTON &lt;oOwnBtn&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ EFFECT &lt;shadeID&gt;  [ PALETTE &lt;palet&gt; ]
+              [ GRANULARITY &lt;granul&gt; ] [ HIGHLIGHT &lt;highl&gt; ]
+              [ COLORING &lt;coloring&gt; ] [ SHCOLOR &lt;shcolor&gt; ] ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FLAT ]
+    	 [ DISABLED ]
+    	 [ TEXT &lt;cText&gt;
+    	    [ COLOR &lt;color&gt; ] [ FONT &lt;font&gt; ]
+    	    [ COORDINATES &lt;xt&gt;, &lt;yt&gt;, &lt;widthtt&gt;, &lt;heightt&gt; ]
+    	 ]
+    	 [ BITMAP &lt;bmp&gt [ FROM RESOURCE ] [ TRANSPARENT [COLOR  &lt;trcolor&gt; ] ]
+    	    [ COORDINATES &lt;xb&gt;, &lt;yb&gt;, &lt;widthtb&gt;, &lt;heightb&gt; ]
+    	 ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+         [ CHECK ]
+    </pre>
+
+    <br><a name="nicebtn" href="#_nicebtn"> @ &lt;x&gt;,&lt;y&gt; NICEBUTTON</a>
+    <p></p>
+    (Windows only)<br>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; NICEBUTTON [ &lt;oBut&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ EXSTYLE &lt;nStyleEx&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    	 [ RED &lt;r&gt; ]
+    	 [ GREEN &lt;g&gt; ]
+    	 [ BLUE &lt;b&gt; ]
+   </pre>
+
+    <br><a name="groupbox" href="#_groupbox"> @ &lt;x&gt;,&lt;y&gt; GROUPBOX</a>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GROUPBOX [ &lt;oGroup&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    </pre>
+
+    <br><a name="datepick" href="#_datepick"> @ &lt;x&gt;,&lt;y&gt; DATEPICKER</a>
+    (Windows only)
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DATEPICKER [ &lt;oPicker&gt; ]
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ INIT &lt;value&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON GETFOCUS &lt;bGetFocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLostFocus&gt; ]
+    	 [ ON CHANGE &lt;bChange&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <p>
+    <br> The crossplatform alternative is @ &lt;x&gt;,&lt;y&gt; DATESELECT
+    <br>
+    </p>
+
+
+    <br><a name="updown" href="#_updown"> @ &lt;x&gt;,&lt;y&gt; UPDOWN</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; UPDOWN [ &lt;oUpDown&gt; INIT ] &lt;nInit&gt;
+    	 RANGE &lt;nLower&gt;, &lt;nUpper&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ WIDTH &lt;nUpdWidth&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <p></p><br>
+    The UPDOWN command creates an element to select<br>
+    a numerial value in a specified range:<br>
+    <br>
+    <img src="./image/UpDownWin.png" align=center wborder=0
+    alt="UPDOWN element"><br>
+    <br>
+    But there is some trouble to return the seleted value.<br>
+    For details see test program "Ticket92.prg" in the<br>
+    "test" directory in the comment lines.<br>
+    Instead of<br>
+    @ &lt;x&gt;,&lt;y&gt; UPDOWN ...<br>
+    use<br>
+    LOCAL numeric := 6   && Preset value instead of INIT &lt;n&gt;<br>
+    @ &lt;x&gt;,&lt;y&gt; GET UPDOWN odown1 VAR numeric ...<br>
+    ...<br>
+    and get the entered value after<br>
+    dialog is closed in the variable<br>
+    "numeric".<br>
+    <br>
+    </p>
+
+    <br><a name="tab" href="#_tab"> @ &lt;x&gt;,&lt;y&gt; TAB</a>
+    <p>
+    The setting of colors not yet available (see REDEFINE TAB)<br>
+    The background color of a tab is forever white.<br>
+    </p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; TAB [ &lt;oTab&gt; ITEMS ] &lt;aTabs&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ ON CHANGE &lt;bChange&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+    	 [ BITMAP &lt;aBmp&gt; [ FROM RESOURCE] [ BITCOUNT &lt;nBC&gt; ] ]
+    </pre>
+
+    <br><a name="beginpage" href="#_beginpage"> BEGIN PAGE</a>
+    <p></p>
+    <pre class="code">
+    BEGIN PAGE &lt;cname&gt; OF &lt;oTab&gt;
+    [ TOOLTIP &lt;cTooltip&gt; ]
+    </pre>
+    <p>
+    Sample for setting up a tooltip:<br><br>
+    @ x, y TAB oTab ITEMS {} SIZE nx, ny<br>
+    <br>
+    BEGIN PAGE "Tab 1" of oTab  Tooltip cTooltip1<br>
+       ...<br>
+    END PAGE of oTab
+    <br>
+    BEGIN PAGE "Tab 2" of oTab Tooltip cTooltip2<br>
+       ...<br>
+    END PAGE of oTab<br>
+    <br>
+    #ifndef __GTK__<br>
+    * On WinAPI, the correct tooltip must be synchronized with the shown first tab<br>
+    * at program start.<br>
+    oTab:ChangePage(1)<br>
+    #endif<br>
+    <br>
+    ACTIVATE WINDOW ...<br>
+    <br>
+    Advice to mouse position:<br>
+    The tooltip is forever displayed of the active tab,<br>
+    if the mouse pointer is positioned on the headline of another tab.<br>
+    We suggest to add to the headline text the name of the tab in the tooltext string.<br>
+    This should show the user, for which tab the displayed tooltip is valid.<br>
+    <br>
+    For details see sample program "demotabtools.prg".<br>
+    <br>
+    </p>
+
+    <br><a name="endpage" href="#_endpage"> END PAGE, ENDPAGE</a>
+    <p>Two variants of the same command. End of a TAB page:</p>
+    <pre class="code">
+    END PAGE OF &lt;oTab&gt;
+      &egrave;&euml;&egrave;  <!-- 0xE8 0xEB 0xE8 -->
+    ENDPAGE OF &lt;oTab&gt;
+    </pre>
+    <p></p>
+
+    <br><a name="tree" href="#_tree"> @ &lt;x&gt;,&lt;y&gt; TREE</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; TREE [ &lt;oTree&gt; ]
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+             [ EDITABLE ]
+             [ BITMAP &lt;aBmp&gt;  [ FROM RESOURCE ] [ BITCOUNT &lt;nBC&gt; ] ]
+    </pre>
+    <br><a name="insnode" href="#_insnode">4.3.27.  INSERT NODE</a>
+    <p></p>
+    <pre class="code">
+    INSERT NODE [ &lt;oNode&gt; TITLE ] &lt;cTitle&gt;
+    	 TO &lt;oTree&gt;
+    	 [ AFTER &lt;oPrev&gt; ]
+    	 [ BEFORE &lt;oNext&gt; ]
+    	 [ BITMAP &lt;aBmp&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+    </pre>
+
+    <br><a name="bitmap" href="#_bitmap"> @ &lt;x&gt;,&lt;y&gt; BITMAP</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; BITMAP [ &lt;oBmp&gt; SHOW ] &lt;bitmap&gt;
+             [&lt;res: FROM RESOURCE&gt; ]
+                [ OF &lt;oWnd&gt; ]
+                [ ID &lt;nId&gt; ]
+                [ SIZE &lt;width&gt;, &lt;height&gt; ]
+                [ STRETCH &lt;nStretch&gt;]
+                [ TRANSPARENT> [COLOR  &lt;trcolor&gt; ]]
+                [ ON INIT &lt;bInit&gt; ]
+                [ ON SIZE &lt;bSize&gt; ]
+                [ ON CLICK &lt;bClick&gt; ]
+                [ ON DBLCLICK &lt;bDblClick&gt; ]
+                [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <p>
+    Supported image formats see documentation for CLASS HBITMAP.<br>
+    <br>
+    The parameters &lt;oBmp&gt; SHOW and SIZE
+    are on GTK mandatory, otherwise the image does not appear !
+    For details see sample program "bincnts.prg".<br>
+    For the SIZE parameter pass the real size of the image to display.<br>
+    <br>
+    Attention !<br>
+    Do not positionize a BUTTON into the image,<br>
+    otherwise the ON CLICK block does not work,<br>
+    for details see sample program "stretch.prg".<br>
+    <br>
+    Attention !<br>
+    The object of a bitmap for display is corrupted after first usage.<br>
+    So need to create the object variable new after usage !<br>
+    For details look into sample program<br>
+    samples/bitmapbug.prg<br>
+    and get information about handling !<br>
+    <br>
+    TRANSPARENT:<br>
+    Is yet not usable on GTK !<br>
+    (bugfix will coming soon).<br>
+    The parameter can be set, but it is ignored there.<br>
+    <br>
+    For correct display, a color must be defined for switch to tranparency.<br>
+    It is strictly recommended, to add the COLOR option.<br>
+    Default on WinAPI is 0x00FFF, on GTK 0xFFFFFF after bugfix.<br>
+    A sample program with one transparent bitmap is:<br>
+    samples\stretch.prg<br>
+    </p>
+
+    <br><a name="icon" href="#_icon"> @ &lt;x&gt;,&lt;y&gt; ICON</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; ICON [ &lt;oBmp&gt; SHOW ] &lt;icon&gt;
+             [&lt;res: FROM RESOURCE&gt; ]
+                [ OF &lt;oWnd&gt; ]
+                [ ID &lt;nId&gt; ]
+                [ SIZE &lt;width&gt;, &lt;height&gt; ]
+                [ ON INIT &lt;bInit&gt; ]
+                [ ON SIZE &lt;bSize&gt; ]
+                [ ON CLICK &lt;bClick&gt; ]
+                [ ON DBLCLICK &lt;bDblClick&gt; ]
+                [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <p>
+    Supported image formats see documentation for CLASS HICON.<br>
+    <br>
+    Because of bugs in recent version:<br>
+    GTK:<br>
+    At this time, the resizing of icons does not work.<br>
+    The icon is displayed forever in original size.<br>
+    Will be fixed as soon als possible.<br>
+    WinAPI:<br>
+    The SIZE parameter has no effect. Do not use it.<br>
+    Size parameters must be set at creating HICON object (example calls):<br>
+    oIcon := HIcon():AddFile(cImgok,75,75)<br>
+    oIcon := HIcon():AddResource("ICON_1",75,75)<br>
+    oIcon := HIcon():AddString("ok",cValok,75,75 )<br>
+    <br>
+    Hint:<br>
+    Because icons are used normally for display in link on the desktop,<br>
+    Windows task bar or head bar of a main window or dialog window,<br>
+    it is recommended not to display an icon in a window.<br>
+    Please convert the *.ico to *.bmp and use the @ x,y BITMAP command instead.<br>
+    <br>
+    Background:<br>
+    The background of an icon is forever transparent. But the<br>
+    background is forever displayed in white color.<br>
+    </p>
+
+    <br><a name="image" href="#_image"> @ &lt;x&gt;,&lt;y&gt; IMAGE</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; IMAGE [ &lt;oBmp&gt; SHOW ] &lt;image&gt;
+                [ OF &lt;oWnd&gt; ]
+                [ ID &lt;nId&gt; ]
+                [ ON INIT &lt;bInit&gt; ]
+                [ ON SIZE &lt;bSize&gt; ]
+                [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <p>The usage of this command requires the FreeImage library<br>
+      (as static lib linked in your application or<br>
+       as shared library like Windows DLL or *.so on LINUX).<br>
+       If you only need *.bmp or *.jpg, you can use the command<br>
+      @ &lt;x&gt;,&lt;y&gt; BITMAP without usage of FreeImage.
+    </p>
+
+    <br><a name="line" href="#_line"> @ &lt;x&gt;,&lt;y&gt; LINE</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; LINE [ &lt;oLine&gt; ]
+                [ LENGTH &lt;length&gt; ]
+                [ OF &lt;oWnd&gt; ]
+                [ ID &lt;nId&gt; ]
+                [ VERTICAL]
+                [ ON SIZE &lt;bSize&gt; ]
+    </pre>
+
+    <br><a name="richedit" href="#_richedit"> @ &lt;x&gt;,&lt;y&gt; RICHEDIT</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; RICHEDIT [ &lt;oEdit&gt; TEXT ] &lt;vari&gt;
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ ON INIT &lt;bInit&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+         [ ON CHANGE &lt;bChange&gt;]
+         [[ON OTHER MESSAGES &lt;bOther&gt;]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="splitter" href="#_splitter"> @ &lt;x&gt;,&lt;y&gt; SPLITTER</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; SPLITTER [ &lt;oSplit&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ HSTYLE &lt;oStyle&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ DIVIDE  &lt;aLeft&gt; FROM &lt;aRight&gt; ]
+         [ LIMITS [&lt;nFrom&gt;][,&lt;nTo&gt;] ]
+    </pre>
+
+    <br><a name="graph" href="#_graph"> @ &lt;x&gt;,&lt;y&gt; GRAPH</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GRAPH [ &lt;oGraph&gt; DATA ] &lt;aData&gt;
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="progressbar" href="#_progressbar"> @ &lt;x&gt;,&lt;y&gt; PROGRESSBAR</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; PROGRESSBAR &lt;oPBar&gt;
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ BARWIDTH &lt;maxpos&gt; ]
+         [ QUANTITY &lt;nRange&gt; ]
+    </pre>
+    <p> <br>
+    Direct support for progressbar is WinAPI only.<br>
+    For LINUX and MacOS an external tool "wmctrl" is needed to<br>
+    draw progress bars, while program is busy running FOR ... NEXT or<br>
+    DO WHILE ... ENDDO loops.<br>
+    A multi platform sample program see directory<br>
+    samples/progressbar<br>
+    (TNX to Alain Aupaix)<br>
+    </p>
+
+    <br><a name="monthcalen" href="#_monthcalen"> @ &lt;x&gt;,&lt;y&gt; MONTHCALENDAR</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; MONTHCALENDAR [ &lt;oCalendar&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+         [ INIT &lt;dInit&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ ON INIT &lt;bInit&gt; ]
+         [ ON CHANGE &lt;bChange&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+         [ NOTODAY ]
+         [ NOTODAYCIRCLE ]
+         [ WEEKNUMBERS ]
+    </pre>
+    <p><br>
+     Year range:<br>
+     - The initial value for MONTHCALENDAR must be delivered of type D.<br>
+     &nbsp;So the range from 0 ... 99 was modified to the setting of "SET CENTURY TO ...".<br>
+     - WinAPI: 1601 ... 9999<br>
+     - LINUX/GTK: If the month calender is displayed, you can scroll to years out of some limits.<br>
+     &nbsp; Values greater than 9999 or negative year values are accepted.<br>
+     &nbsp; The leap year rules are processed concerning the rules of the Gregorian calendar,<br>
+     &nbsp; but for all years.<br>
+     &nbsp; So it make sense, to check the range from 1582 ... 9999 by<br>
+     &nbsp; range check for entry fields (for example for VALID functions in GET or simular commands).<br>
+     &nbsp; For details about the leap year rules see description of function hwg_IsLeapYear().<br>
+    </p>
+
+    <br><a name="listbox" href="#_listbox"> @ &lt;x&gt;,&lt;y&gt; LISTBOX</a>
+    <p></p>
+    (Windows only)<br>
+    Because of a bug in GTK, the LISTBOX feature could not be ported to GTK.<br>
+    For multi platform use the BROWSE class of an array instead.<br>
+    Look into samples "samples\demolistboxsub.prg" and "samples\TwoLstSub.prg" for usage.<br>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; LISTBOX [ &lt;oList&gt; ITEMS ] &lt;aItems&gt;
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+         [ INIT &lt;dInit&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ ON INIT &lt;bInit&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGE &lt;bChange&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+         [ ON KEYDOWN &lt;bKeyDown&gt; ]
+         [ ON DBLCLICK &lt;bDblClick&gt; ]
+         [[ON OTHER MESSAGES &lt;bOther&gt;]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="splash" href="#_splash"> SPLASH</a>
+    <p></p>
+    <pre class="code">
+    SPLASH [ &lt;oPBar&gt; TO ] &lt;oBitmap&gt;
+                [ FROM RESOURCE ]
+                [ TIME &lt;otime&gt; ]
+                [WIDTH &lt;w&gt; ]
+                [HEIGHT &lt;h&gt; ]
+    </pre>
+
+    <br><a name="trackbar" href="#_trackbar"> @ &lt;x&gt;,&lt;y&gt; TRACKBAR</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; TRACKBAR [ &lt;oTrack&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ RANGE &lt;nLow&gt;, &lt;nHigh&gt; ]
+         [ INIT &lt;dInit&gt; ]
+         [ ON INIT &lt;bInit&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGE &lt;bChange&gt; ]
+         [ ON DRAG &lt;bDrag&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+         [ VERTICAL ]
+         [ AUTOTICKS ]
+         [ NOTICKS ]
+         [ BOTH ]
+         [ TOP ]
+         [ LEFT ]
+    </pre>
+
+    <br><a name="animation" href="#_animation"> @ &lt;x&gt;,&lt;y&gt; ANIMATION</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; ANIMATION [ &lt;oAnimation&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ FILE &lt;cFile&gt; ]
+         [ AUTOPLAY ]
+         [ CENTER ]
+         [ TRANSPARENT ]
+    </pre>
+
+    <br><a name="grid" href="#_grid"> @ &lt;x&gt;,&lt;y&gt; GRID</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GRID [ &lt;oGrid&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ ON INIT &lt;bInit&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CLICK &lt;bClick&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+         [ ON KEYDOWN &lt;bKeyDown&gt; ]
+         [ ON POSCHANGE &lt;bPosChg&gt; ]
+         [ ON DISPINFO &lt;bdisp&gt; ]
+         [ ITEMCOUNT &lt;nItemCount&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ NOSCROLL> ]
+         [ NOBORDER> ]
+         [ NOGRIDLINES> ]
+         [ NO HEADER> ]
+         [BITMAP &lt;aBit&gt;]
+    </pre>
+
+    <br><a name="colgrid" href="#_colgrid"> ADD COLUMN TO GRID</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    ADD COLUMN TO GRID &lt;oGrid&gt;
+         [ HEADER &lt;cHeader&gt; ]
+         [ WIDTH &lt;nWidth&gt; ]
+         [ JUSTIFY HEAD &lt;nJusHead&gt; ]
+         [ BITMAP &lt;n&gt; ]
+    </pre>
+
+    <br><a name="rowgrid" href="#_rowgrid"> ADDROW TO GRID</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    ADD ROW TO GRID &lt;oGrid&gt;
+         [ HEADER &lt;cHeader&gt; ]
+         [ JUSTIFY HEAD &lt;nJusHead&gt; ]
+         [ BITMAP &lt;n&gt; ]
+         [ HEADER &lt;cHeadern&gt; ]
+         [ JUSTIFY HEAD &lt;nJusHeadn&gt; ]
+         [ BITMAP &lt;nn&gt; ]
+    </pre>
+
+    <br><a name="rect" href="#_rect"> @ &lt;x&gt;,&lt;y&gt; RECT</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    @ &lt;X&gt;, &lt;Y&gt;, &lt;X2&gt;, &lt;Y2&gt; RECT <oRect>
+         [ PRESS ]
+         [OF &lt;oWnd&gt;]
+         [RECT_STYLE &lt;nST&gt;]
+    </pre>
+
+    <br><a name="link" href="#_link"> @ &lt;x&gt;,&lt;y&gt; SAY (LINK)</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; SAY [ &lt;oSay&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt; ];
+    	 LINK &lt;cLink&gt;
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ TRANSPARENT ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bDraw&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+         [ VISITCOLOR &lt;vcolor&gt; ]
+         [ LINKCOLOR &lt;lcolor&gt; ]
+         [ HOVERCOLOR &lt;hcolor&gt; ]
+    </pre>
+
+    <br><a name="toolbar" href="#_toolbar"> @ &lt;x&gt;,&lt;y&gt; TOOLBAR</a> (GTK only)
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; TOOLBAR [ &lt;oTool&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ ITEMS &lt;aItems&gt; ]
+    </pre>
+    <p>
+    For multiplatform applications use PANEL and OWNERBUTTON.<br>
+    For details see sample programs "bincnts.prg and "escrita.prg".<br>
+    </p>
+
+    <br><a name="toolbtn" href="#_toolbtn"> TOOLBUTTON, ADD TOOLBUTTON</a>  (GTK only)
+    <p></p>
+    <pre class="code">
+    TOOLBUTTON  &lt;oTool&gt; ;
+         ID &lt;nId&gt; ;
+         [ BITMAP &lt;nBitIp&gt; ];
+    	 [ STYLE &lt;nStyle&gt; ]
+         [ STATE &lt;bstate&gt;]
+         [ TEXT &lt;ctext&gt; ]
+         [ TOOLTIP &lt;c&gt; ]
+         [ MENU &lt;d&gt;]
+         ON CLICK &lt;bclick&gt;
+    </pre>
+    <p>
+    For multiplatform applications use PANEL and OWNERBUTTON.<br>
+    For details see sample programs "bincnts.prg and "escrita.prg".<br>
+    </p>
+
+    <br><a name="pager" href="#_pager"> @ &lt;x&gt;,&lt;y&gt; PAGER</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; PAGER [ &lt;oPager&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ VERTICAL ]
+    </pre>
+
+    <br><a name="rebar" href="#_rebar"> @ &lt;x&gt;,&lt;y&gt; REBAR</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; REBAR [ &lt;oRebar&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    </pre>
+
+    <br><a name="addband" href="#_addband"> ADDBAND &lt;oWnd&gt; TO &lt;oPage&gt; </a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    ADDBAND &lt;hWnd&gt; TO &lt;opage&gt;
+         [BACKCOLOR &lt;b&gt; ] [FORECOLOR &lt;f&gt;]
+         [STYLE &lt;nstyle&gt;] [TEXT &lt;t&gt;]
+    </pre>
+
+    <br><a name="shape" href="#_shape"> @ &lt;x&gt;,&lt;y&gt; SHAPE</a>
+    <p>(Windows only)</p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; SHAPE [ &lt;oShape&gt; ]
+         [ OF &lt;oWnd&gt; ]
+         [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ BORDERWIDTH &lt;nBorder&gt; ]
+         [ CURVATURE &lt;nCurvature&gt;]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ BORDERSTYLE &lt;nbStyle&gt;]
+         [ FILLSTYLE &lt;nfStyle&gt;]
+         [ BACKSTYLE &lt;nbackStyle&gt;]
+         [ ON INIT &lt;bInit&gt; ]
+         [ ON SIZE &lt;bSize&gt; ]
+    </pre>
+
+    <br><a name="hcedit" href="#_hcedit"> @ &lt;x&gt;,&lt;y&gt; HCEDIT</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; HCEDIT [ &lt;oEdit&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+         [ NOBORDER ]
+         [ NO VSCROLL ]
+    	 [ FONT &lt;oFont&gt; ]
+    </pre>
+
+    <br><a name="track" href="#_track"> @ &lt;x&gt;,&lt;y&gt; TRACK</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; TRACK [ &lt;oTrack&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ SLIDER SIZE &lt;nsize&gt; ]
+         [ SLIDER HSTYLE &lt;ostyles&gt; ]
+         [ BAR HSTYLE &lt;ostyleb&gt; ]
+         [&lt;laxis: AXIS&gt;]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    </pre>
+
+    <br><a name="lenta" href="#_lenta"> @ &lt;x&gt;,&lt;y&gt; LENTA</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; LENTA [ &lt;oLenta&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CLICK &lt;bClick&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ ITEMS &lt;aItems&gt; ]
+         [ ITEMSIZE &lt;nItemSize&gt; ]
+         [ HSTYLES &lt;aItemStyle&gt; ]
+    </pre>
+
+    <br><a name="dateselect" href="#_dateselect"> @ &lt;x&gt;,&lt;y&gt; DATESELECT</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DATESELECT [ &lt;oDate&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ INIT &lt;dValue&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGE &lt;bChange&gt; ]
+    </pre>
+
+    <br><a name="board" href="#_board"> @ &lt;x&gt;,&lt;y&gt; BOARD</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; BOARD [ &lt;oBoard&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CLICK &lt;bClick&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="drawn" href="#_drawn"> @ &lt;x&gt;,&lt;y&gt; DRAWN</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ HSTYLES &lt;aStyles&gt; ]
+         [ TEXT &lt;cText&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CLICK &lt;bClick&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+    </pre>
+
+    <br><a name="drawncheck" href="#_drawncheck"> @ &lt;x&gt;,&lt;y&gt; DRAWN CHECK</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN CHECK [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ HSTYLES &lt;aStyles&gt; ]
+         [ TEXT &lt;cText&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CLICK &lt;bClick&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+    </pre>
+
+    <br><a name="drawnradio" href="#_drawnradio"> @ &lt;x&gt;,&lt;y&gt; DRAWN RADIO</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN RADIO [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ HSTYLES &lt;aStyles&gt; ]
+         [ TEXT &lt;cText&gt; ]
+         [ INIT &lt;lInit&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CLICK &lt;bClick&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+    </pre>
+
+    <br><a name="drawntrack" href="#_drawntrack"> @ &lt;x&gt;,&lt;y&gt; DRAWN TRACK</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN TRACK [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ SLIDER SIZE &lt;nsize&gt; ]
+         [ SLIDER HSTYLE &lt;ostyles&gt; ]
+         [ BAR HSTYLE &lt;ostyleb&gt; ]
+         [ &lt;laxis: AXIS&gt;]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    </pre>
+
+    <br><a name="drawnedit" href="#_drawnedit"> @ &lt;x&gt;,&lt;y&gt; DRAWN EDIT</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN EDIT [ &lt;oEdit&gt; CAPTION ] &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ PICTURE &lt;cPicture&gt; ]
+    </pre>
+
+    <br><a name="drawnlenta" href="#_drawnlenta"> @ &lt;x&gt;,&lt;y&gt; DRAWN LENTA</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN LENTA [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON CLICK &lt;bClick&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ ITEMS &lt;aItems> ]
+         [ ITEMSIZE &lt;nItemSize&gt; ]
+         [ HSTYLES &lt;aItemStyle&gt; ]
+    </pre>
+
+    <br><a name="drawncombo" href="#_drawncombo"> @ &lt;x&gt;,&lt;y&gt; DRAWN COMBO</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN COMBO [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ HSTYLES &lt;aStyles&gt; ]
+         [ INIT  &lt;xValue&gt; ]
+         [ &lt;lText: TEXT&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGE &lt;bChange&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ DISPLAYCOUNT &lt;nRows&gt;]
+    </pre>
+
+    <br><a name="drawnupdown" href="#_drawnupdown"> @ &lt;x&gt;,&lt;y&gt; DRAWN UPDOWN</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN UPDOWN [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+         [ INIT &lt;xInit&gt; ]           ;
+         [ ARRAY &lt;arr&gt; ]            ;
+         [ RANGE &lt;nLower&gt;,&lt;nUpper&gt;] ;
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ HSTYLES &lt;aStyles&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+    </pre>
+
+    <br><a name="drawnbrowse" href="#_drawnbrowse"> @ &lt;x&gt;,&lt;y&gt; DRAWN BROWSE</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN BROWSE [ &lt;oDrawn&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ &lt;lVscroll: VSCROLL&gt; ]    ;
+         [ &lt;lHscroll: HSCROLL&gt; ]    ;
+    </pre>
+
+    <br><a name="drawndate" href="#_drawndate"> @ &lt;x&gt;,&lt;y&gt; DRAWN DATE</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; DRAWN DATE [ &lt;oDate&gt; ]
+    	 [ OF &lt;oWnd&gt ];
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+         [ HSTYLES &lt;aStyles&gt; ]
+         [ FONT &lt;oFont&gt; ]
+         [ INIT &lt;dValue&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+         [ ON CHANGE &lt;bChange&gt; ]
+         [ ON CHANGESTATE &lt;bChg&gt; ]
+    </pre>
+
+    <strong class="subhead"><a name="Commands4" href="hwgdoc.html#_Commands4">
+    4.4.  Get system commands</a></strong>
+   <ul>
+     <li><a name="_get" href="#get"> @ &lt;x&gt;,&lt;y&gt; GET</a>
+     <li><a name="_getcheck" href="#getcheck"> @ &lt;x&gt;,&lt;y&gt; GET CHECKBOX</a>
+     <li><a name="_getcombo" href="#getcombo"> @ &lt;x&gt;,&lt;y&gt; GET COMBOBOX</a>
+     <li><a name="_getradio" href="#getradio"> GET RADIOGROUP</a>
+     <li><a name="_getradiogr" href="#getradiogr"> @ &lt;x&gt;,&lt;y&gt; GET RADIOGROUP</a>
+     <li><a name="_getdatepick" href="#getdatepick"> @ &lt;x&gt;,&lt;y&gt; GET DATEPICKER</a>
+     <li><a name="_getupdown" href="#getupdown"> @ &lt;x&gt;,&lt;y&gt; GET UPDOWN</a>
+     <li><a name="_getip" href="#getip"> @ &lt;x&gt;,&lt;y&gt; GET IPADDRESS</a>
+     <li><a name="_getlistbox" href="#getlistbox"> @ &lt;x&gt;,&lt;y&gt; GET LISTBOX</a>
+     <li><a name="_setkey" href="#setkey"> SET KEY</a>
+   </ul>
+
+    <p>Get system doesn't use a special class, something like HGet. It uses the same
+    control classes ( HEdit, HCheckButton, etc. ), as usual control creating commands,
+    only add there some new behavour.
+    </p>
+
+    <br><a name="get" href="#_get"> @ &lt;x&gt;,&lt;y&gt; GET</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET [ &lt;oEdit&gt; VAR ] &lt;vari&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ PICTURE &lt;cPicture&gt; ]
+    	 [ WHEN &lt;bWhen&gt; ]
+    	 [ VALID &lt;bValid&gt; ]
+         [ NOBORDER ]
+         [ PASSWORD ]
+         [ MAXLENGTH &lt;lMaxLength&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+    <p>
+    <b>Additional instructions for GET:</b><br>
+    VALID: use always a block term, otherwise the GET command crashes with EVAL error,<br>
+    for example:<br>
+    11,22 GET cVar VALID { | | valid_func(cVar) }<br>
+    <br>
+    For fixing a special GET problem on GTK look for function hwg_GET_Helper() in the<br>
+    function documentation.<br>
+    There you find the description of the symptom and the instructions for fix.<br>
+    <br>
+    <b>More special problems:</b><br>
+    1.) PICTURE in GET statement<br>
+    If your dialog uses in the last GET command a PICTURE clause,<br>
+    the dialog is closed immediately, if the end of field is filled and reached.<br>
+    To avoid this, use the NOEXIT clause in INIT DIALOG command.<br>
+    <br>
+    2.) Obscure behavior entering ASCII characters with "Alt Gr" key.<br>
+    Very important !!!<br>
+    To avoid side effects while entering characters only reachable by "AltGr" key<br>
+    (&nbsp;for example on german keyboard layout: ~&micro;@{[]}\&euro;&nbsp;),<br>
+    be shure that the size of the GET control field (X value of SIZE parameter)<br>
+    is big enough to display all characters of edit field.<br>
+    The symptom is, that the character is ignored and on Windows<br>
+    a ding sound appears.<br>
+    <br>
+    More information:<br>
+    The solution is very simple,
+    be shure, that the SIZE of the input field
+    is so dimensioned, that can accommodate all characters.
+    For details see instructions in the<br>
+    comment line of sample program "demostrrev.prg".<br>
+    Here a screenshot from this program to<br>
+    demonstrate how to check.<br>
+    <img src="./image/strrev_screenshot.png" align=center wborder=0
+    alt="GET check SIZE"><br>
+    <br>
+    3.) Euro currency sign (&euro;)<br>
+    How to handle the input of the Euro sign with GET statement<br>
+    and display it with SAY see instructions in the<br>
+    comment line of sample program "demostrrev.prg".<br>
+    For more information about this item,<br>
+    and storing this character in DBF's<br>
+    look into source code of "CLLOG"<br>
+    (https://sourceforge.net/projects/cllog/)<br>
+    <br>
+    <b>Important:</b><br>
+    <br>
+    GET commands started with overwrite mode for editing.<br>
+    Set<br>
+     &nbsp;READINSERT(.T.)<br>
+    to switch to insert editing mode.<br>
+    The best way is, to insert this command into the main section in your<br>
+    HWGUI application as one of the first commands.<br>
+    <br>
+    Scrolling feature with PICTURE "@Snn" is not supported.<br>
+    <br>
+    On GTK, it is possible, that the complete modified value<br>
+    is not stored in the variable.<br>
+    For test of display length, enter a number string like<br>
+    "12345678901234567890 ...." with the desired length in C type fields.<br>
+    Add a security reserve of 5 ... 10%.<br>
+    For empty fields initialize the variables with empty values<br>
+    like these examples before use of the GET command:<br>
+    <br>
+    cField := SPACE(30)<br>
+    dField := CTOD("") or better with todays date : dField := DATE()<br>
+    nField := 0<br>
+    lField := .F.<br>
+    <br>
+    For editing MEMO type fields use the HCEDIT class.<br>
+    <br>
+    <b>Parameters COLOR and BACKCOLOR for GTK,<br>
+    (Color setting for foreground (text color) and background):</b><br>
+    <br>
+    In GET entry fields the colors can not be modified.<br>
+    See GTK 2 reference for gtk_entry_* class.<br>
+    There are no parameters "color" explained.<br>
+    Sorry, we must wait, if this feature is realized in future versions of GTK.<br>
+    <br>
+    Here screenshots for sample command<br>
+    "@ x, y GET oGet VAR cGet COLOR hwg_ColorC2N("FF0000") SIZE xx,yy":<br>
+    <br>
+    WinAPI:<br>
+    <img src="./image/ticket79win.png" align=center wborder=0 alt="GET color WinAPI"><br>
+    Windows GTK cross development environment:<br>
+    <img src="./image/ticket79gtk_win.png" align=center wborder=0 alt="GET color WinGtKCrossEnv"><br>
+    LINUX:<br>
+    <img src="./image/ticket79linux.png" align=center wborder=0 alt="GET color LINUX"><br>
+    </p>
+
+    <p><br>
+    <b>More restrictions on GTK:</b><br>
+    1.) VALID: Outputs in the called VALID functions are not displayed<br>
+    (functions like hwg_MsgInfo() or hwg_MsgStop() )<br>
+    2.) MAXLENGTH:<br>
+    The Input field can be filled with more characters than with the<br>
+    parameter MAXLENGTH defined, but they are not stored in the variable.<br>
+    Moving the focus to another input field and go back to the input field<br>
+    with the length rectricted field, the content is displayed with the defined MAXLENGTH.<br>
+    3.) The function hwg_SetColorinFocus() does not work correct.<br>
+    The entry field in focus became only a simple border.<br>
+    </p>
+
+    <br><a name="getcheck" href="#_getcheck"> @ &lt;x&gt;,&lt;y&gt; GET CHECKBOX</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET CHECKBOX [ &lt;oEdit&gt; VAR ] &lt;vari&gt;
+             CAPTION  &lt;caption&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ TRANSPARENT ]
+    	 [ VALID,ON CLICK &lt;bValid&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    	 [ WHEN &lt;bWhen&gt; ]
+    </pre>
+
+    <br><a name="getcombo" href="#_getcombo"> @ &lt;x&gt;,&lt;y&gt; GET COMBOBOX</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET COMBOBOX [ &lt;oCombo&gt; VAR ] &lt;vari&gt;
+         ITEMS ] &lt;aItems&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON CHANGE &lt;bChange&gt; ]
+         [ WHEN &lt;bWhen&gt; ]
+         [ VALID &lt;bValid&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ EDIT ]&nbsp;&nbsp;&nbsp;&nbsp;(Windows only)
+    	 [ TEXT ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    	 [ DISPLAYCOUNT &lt;nDisplay&gt;]
+    </pre>
+
+    <br><a name="getradio" href="#_getradio"> GET RADIOGROUP</a>
+    <p></p>
+    <pre class="code">
+       GET RADIOGROUP [ &lt;ogr&gt; VAR ] &lt;vari&gt;
+    </pre>
+
+    <br><a name="getradiogr" href="#_getradiogr"> @ &lt;x&gt;,&lt;y&gt; GET RADIOGROUP</a>
+    <p></p>
+    <pre class="code">
+       @ &lt;x&gt;,&lt;y&gt; GET RADIOGROUP [ &lt;ogr&gt; VAR ] &lt;vari&gt;
+         [ CAPTION  &lt;caption&gt; ]
+    	 [ OF &lt;oWnd&gt;]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    </pre>
+
+    <br><a name="getdatepick" href="#_getdatepick"> @ &lt;x&gt;,&lt;y&gt; GET DATEPICKER</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET DATEPICKER [ &lt;oPick&gt; VAR ] &lt;vari&gt;
+    	 [ OF &lt;oWnd&gt;]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ WHEN &lt;bWhen&gt; ]
+    	 [ VALID &lt;bValid&gt; ]
+    	 [ ON CHANGE &lt;bChange&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="getupdown" href="#_getupdown"> @ &lt;x&gt;,&lt;y&gt; GET UPDOWN</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET UPDOWN[ &lt;oUpDown&gt; VAR ] &lt;vari&gt;
+    	 RANGE &lt;nLower&gt;, &lt;nUpper&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ WIDTH &lt;nUpdWidth&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ PICTURE &lt;cPicture&gt; ]
+    	 [ WHEN &lt;bWhen&gt; ]
+    	 [ VALID &lt;bValid&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+    </pre>
+
+    <br><a name="getip" href="#_getip"> GET IPADDRESS</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET IPADDRESS [ &lt;oIp&gt; VAR ] &lt;vari&gt;
+    	 [ OF &lt;oWnd&gt;]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ ON GETFOCUS &lt;bGfocus&gt; ]
+    	 [ ON LOSTFOCUS &lt;bLfocus&gt; ]
+    </pre>
+
+    <br><a name="getlistbox" href="#_getlistbox"> GET LISTBOX</a>
+    <p></p>
+    <pre class="code">
+    @ &lt;x&gt;,&lt;y&gt; GET LISTBOX[ &lt;oList&gt; VAR ] &lt;vari&gt;
+    	 ITEMS &lt;aItems&gt;
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;nId&gt; ]
+    	 [ SIZE &lt;width&gt;, &lt;height&gt; ]
+    	 [ COLOR &lt;tcolor&gt; ]
+    	 [ BACKCOLOR &lt;bcolor&gt; ]
+    	 [ ON INIT &lt;bInit&gt; ]
+    	 [ ON SIZE &lt;bSize&gt; ]
+    	 [ ON PAINT &lt;bPaint&gt; ]
+    	 [ ON CHANGE &lt;bChg&gt; ]
+    	 [ WHEN &lt;bWhen&gt; ]
+    	 [ VALID &lt;bValid&gt; ]
+    	 [ STYLE &lt;nStyle&gt; ]
+    	 [ FONT &lt;oFont&gt; ]
+    	 [ TOOLTIP &lt;ctoolt&gt; ]
+         [ ON KEYDOWN &lt;bKeyDown&gt; ]
+         [ ON DBLCLICK &lt;bDblClick&gt; ]
+         [[ON OTHER MESSAGES &lt;bOther&gt;]
+    </pre>
+
+    <br><a name="setkey" href="#_setkey">4.4.13.  SET KEY</a>
+    <p></p>
+    <pre class="code">
+     SET KEY &lt;nctrl&gt;, &lt;nkey&gt; [ OF &lt;oDlg&gt; ] [ TO &lt;func&gt; ]
+    </pre>
+
+    <br><strong class="subhead"><a name="Commands5" href="hwgdoc.html#_Commands5">
+    4.5.  Print commands</a></strong>
+     <ul>
+       <li><a name="_initprinter" href="#initprinter"> INIT PRINTER</a>
+       <li><a name="_initdefprinter" href="#initdefprinter"> INIT DEFAULT PRINTER</a>
+     </ul>
+    <p>
+    Attention !<br>
+    Some trouble with printing of bitmaps, for details see class documentation of<br>
+    CLASS HWINPRN !<br>
+    </p>
+    <br><a name="initprinter" href="#_initprinter"> INIT PRINTER </a>
+    <p></p>
+    <pre class="code">
+    INIT PRINTER &lt;oPrinter&gt;
+             [ NAME &lt;cPrinter&gt; ]
+             [ PIXEL ]
+    </pre>
+
+    <br><a name="initdefprinter" href="#_initdefprinter"> INIT DEFAULT PRINTER </a>
+    <p></p>
+    <pre class="code">
+    INIT DEFAULT PRINTER &lt;oPrinter&gt;
+             [ PIXEL ]
+    </pre>
+
+    <br><strong class="subhead"><a name="Commands6" href="hwgdoc.html#_Commands6">
+    4.6.  Other commands</a></strong>
+     <ul>
+       <li><a name="_settimer" href="#settimer"> SET TIMER</a>
+       <li><a name="_setresour" href="#setresour"> SET RESOURCES TO</a>
+       <li><a name="_setrescont" href="#setrescont"> SET RESOURCES CONTAINER TO</a>
+       <li><a name="_preparefont" href="#preparefont"> PREPARE FONT</a>
+     </ul>
+
+    <br><a name="settimer" href="#_settimer"> SET TIMER</a>
+    <p></p>
+    <pre class="code">
+    SET TIMER [ &lt;oTimer&gt; ]
+    	 [ OF &lt;oWnd&gt; ]
+    	 [ ID &lt;id&gt; ]
+    	 VALUE &lt;value&gt;
+    	 ACTION &lt;bAction&gt;
+    </pre>
+
+    <br><a name="setresour" href="#_setresour"> SET RESOURCES TO</a>
+    <p></p>
+    <pre class="code">
+       SET RESOURCES TO [&lt;cName&gt;]
+    </pre>
+
+    <br><a name="setrescont" href="#_setrescont"> SET RESOURCES CONTAINER TO</a>
+    <p>Opens a file <i>cName</i> of a binary container and sets is as a current fot resources retrieving.
+    Appropriate function: <a href="hwgdoc_functions.html#Functions8f">hwg_SetResContainer( cName )</a></p>
+    <pre class="code">
+       SET RESOURCES CONTAINER TO [&lt;cName&gt;]
+    </pre>
+
+    <br><a name="preparefont" href="#_preparefont"> PREPARE FONT</a>
+    <p></p>
+    <pre class="code">
+    PREPARE FONT &lt;oFont&gt;
+         NAME &lt;cName&gt;
+         [ WIDTH &lt;nWidth&gt; ]
+         [ HEIGHT &lt;nHeight&gt; ]
+         [ WEIGHT &lt;nWeight&gt; ]
+         [ CHARSET &lt;charset&gt; ]
+         [ ITALIC ]
+         [ UNDERLINE ]
+         [ STRIKEOUT ]
+    </pre>
+
+<hr align="left" width="100%">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="33%" align="left"><a href="hwgdoc.html#Introduction">prev</a></td>
+    <td width="34%" align="center"><a href="hwgdoc.html">table of contents</a></td>
+    <td width="33%" align="right"><a href="hwgdoc_functions.html">next</a></td>
+  </tr>
+  <tr>
+    <td width="33%" align="left">introduction</td>
+    <td width="34%" align="center">&nbsp;</td>
+    <td width="33%" align="right">functions</td>
+  </tr>
+</table>
+
+</body>
+</html>
+

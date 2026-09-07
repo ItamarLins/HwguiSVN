@@ -1,0 +1,21 @@
+#
+# $Id: bindbf.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+# Special parameters for LINUX/GTK
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+-n -w3
+
+# -o../../bin/
+-obindbf
+
+bindbf.prg
+
+..\..\hwgui.hbc
+
+# ===================== EOF of bindbf.hbp ====================
+

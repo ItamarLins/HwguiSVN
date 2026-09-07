@@ -1,0 +1,17 @@
+#
+# $Id: testget2.hbp 3623 2025-04-21 04:07:27Z josequintas $
+#
+# auto included hbmk.hbm
+#
+
+-stop={win}
+
+../../hwgui.hbc
+
+-n
+
+-otestget2
+
+testget2.prg
+
+# ==================== EOF of testget2.hbp ===============

@@ -1,0 +1,13 @@
+#
+# ticket170.hbp
+#
+# $Id: ticket170.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+# hbct.hbc
+
+-oTicket170
+
+Ticket170.prg
+
+# ==================== EOF of ticket188.hbp =========================

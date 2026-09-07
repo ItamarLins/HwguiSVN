@@ -1,0 +1,12 @@
+#
+# $Id: testfilehex.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-otestfilehex
+
+testfilehex.prg
+
+..\hwgui.hbc
+
+# ===================== EOF of testfilehex.hbp ====================
+

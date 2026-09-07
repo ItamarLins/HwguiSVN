@@ -1,0 +1,24 @@
+#
+# $Id: sample.hbp 3623 2025-04-21 04:07:27Z josequintas $
+#
+# auto included hbmk.hbm
+#
+
+# Modify "sample" ( 2 x ) to the name of program to compile
+
+#-b
+-stop={win}
+
+-n
+
+#-L../..
+-L..
+hwgui.hbc
+
+-osample
+
+sample.prg
+
+
+# ===================== EOF of sample.hbp ====================
+

@@ -1,0 +1,118 @@
+#
+# allhbp.hbp
+#
+# $Id$
+#
+# File for hbmk2 utility for building:
+# - HWGUI
+# - Utils
+# - All sample programs and contrib's
+#
+
+-hbcontainer
+
+#
+# Basic HWGUI libraries
+#
+../hwgui.hbp
+../procmisc.hbp
+../hbxml.hbp
+../hwgdebug.hbp
+#
+# Only for MinGW and Borland C compiler
+#../hwguidyn.hbp
+#
+# Contrib
+#
+../contrib/hwg_misc.hbp
+#
+# ----- Out of support , not for Windows 7 and higher , outdated -----
+# See Readme.txt in directory "samples"
+# - MS Agent
+#   Not contained in Windows 7 and higher, support ended
+#../contrib/hbactivex.hbp
+#../contrib/hwg_extctrl.hbp
+#
+# Be shure, that QHTM is installed before build -- Windows only --
+#../contrib/hwg_qhtm.hbp
+#
+{win}../contrib/hwmake/hwmake.hbp
+# HWMAKE uses Windows only functions, port to GTK needed:
+# HB_GT_GUI_DEFAULT(), HWG_SAVEFILE(), HWG_SELECTMULTIPLEFILES()
+
+# Under construction, MinGW OK, LINUX/GTK port needed !
+../contrib/hwreport/hwreport.hbp
+# Sample program freezes after start printing
+#../contrib/hwreport/example.hbp
+#
+# Samples WinAPI and LINUX/GTK
+#
+../samples/demoall.hbp
+../samples/bincnts.hbp
+../samples/dbview.hbp
+../samples/graph.hbp
+../samples/helpstatic.hbp
+../samples/hexbincnt.hbp
+../samples/pseudocm.hbp
+../samples/stretch.hbp
+../samples/winprn.hbp
+#
+# Samples WinAPI only
+#
+../samples/a.hbp
+../samples/buildpelles.hbp
+../samples/demomdi.hbp
+../samples/demoonother.hbp
+../samples/hello.hbp
+../samples/testrtf.hbp
+../samples/tstscrlbar.hbp
+../samples/tstsplash.hbp
+#
+# Programs not runable
+# ../samples/nice2.prg
+# ../samples/propsh.prg
+# ../samples/testchild.prg ## moved to test/samples/
+#../samples/testtray.prg
+#
+# use Postgres Library, you need to link libpq.lib and libhbpg.lib
+# ../samples/grid_2.prg
+# ../samples/grid_3.prg
+#
+# --- Outdated ---
+# ../samples/helpdemo.prg
+# ../test/iesample.hbp ## moved to test/samples/
+# ../samples/tstprdos.prg
+# ../samples/testhgt.hbp ## moved to test/samples/
+#
+# Samples LINUX/GTK
+#
+../samples/gtk_samples/a.hbp
+../samples/gtk_samples/dbview.hbp
+../samples/gtk_samples/escrita.hbp
+../samples/gtk_samples/example.hbp
+../samples/gtk_samples/GetWinVers.hbp
+../samples/gtk_samples/graph.hbp
+../samples/gtk_samples/progbars.hbp
+../samples/gtk_samples/pseudocm.hbp
+# Only as template !
+#../samples/gtk_samples/sample.hbp
+../samples/gtk_samples/winprn.hbp
+#
+# Utils
+#
+../utils/bincnt/bincnt.hbp
+../utils/bincnt/file2hex.hbp
+../utils/dbc/dbchw.hbp
+../utils/debugger/hwgdebug.hbp
+../utils/debugger/sample.hbp
+../utils/designer/designer.hbp
+#../utils/designer/designer2.hbp ==> only for BCC
+# harbour 3.4 do not have codepage DE858/DEWIN
+# It is very important for Euro currency sign !
+# use recent code snapshot of Harbour for editor
+../utils/editor/editor.hbp
+../utils/tutorial/hwgrun.hbp
+../utils/tutorial/tutor.hbp
+
+# =========================== EOF of allhbp.hbp =================================
+

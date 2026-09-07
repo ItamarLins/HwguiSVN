@@ -1,0 +1,16 @@
+#
+# $Id: qrencode.hbp 3583 2025-04-13 10:57:36Z josequintas $
+#
+# auto included hbmk.hbm
+
+# hbwin.hbc
+# xhb.hbc
+
+-lqrcodegen
+-lhbqrencode
+
+-oqrencode
+
+qrencode.prg
+
+# ==================== EOF of qrencode.hbp ===============

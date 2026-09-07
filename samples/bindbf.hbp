@@ -1,0 +1,13 @@
+#
+# $Id: bindbf.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+# -stop={linux}
+
+-obindbf
+
+bindbf.prg
+{win}bindbf.rc
+
+# ==================== EOF of bindbf.hbp ===============

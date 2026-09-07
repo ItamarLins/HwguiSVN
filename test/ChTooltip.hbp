@@ -1,0 +1,12 @@
+#
+# $Id$
+#
+
+-oChTooltip
+
+ChTooltip.prg
+
+..\hwgui.hbc
+
+# ===================== EOF of ChTooltip.hbp ====================
+

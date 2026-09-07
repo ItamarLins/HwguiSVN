@@ -1,0 +1,9 @@
+#
+# $Id: gtk_err93.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-ogtk_err93
+
+gtk_err93.prg
+
+# ==================== EOF of gtk_err93.hbp ===============

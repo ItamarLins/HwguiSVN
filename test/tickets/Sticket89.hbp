@@ -1,0 +1,10 @@
+#
+# $Id: Sticket89.hbp 3672 2025-04-27 13:56:50Z df7be $
+#
+# auto included hbmk.hbm
+
+-oSticket89
+
+Sticket89.prg
+
+# ==================== EOF of Sticket89.hbp ===============

@@ -1,0 +1,28 @@
+#
+# $Id: hwguidyn.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-stop={linux}
+
+hwgui.hbc
+
+-hbdynvm
+
+-shared
+
+-o{bcc}lib/hwguidyn-bcc
+
+-o{!bcc}lib/hwguidyn
+
+-w3
+
+# -cflag=-DHWG_USE_POINTER_ITEM
+# "{unix}-cflag=`pkg-config --cflags gtk+-2.0`"
+-cflag={bcc}-a8
+-cflag=-D__EXPORT__
+
+@hwgui.hbm
+
+
+# ============================== EOF of hwguidyn.hbp ===================================
+

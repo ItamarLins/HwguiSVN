@@ -1,0 +1,4520 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>HwGUI documentation - functions</title>
+  <link rel="stylesheet" type="text/css" href="table.css">
+</head>
+<body bgcolor="#ffffff" text="#000000">
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="15%" align="left"><a href="http://www.kresin.ru">Home page</a></td>
+    <td width="70%" align="center"><strong class="title"> HwGUI 2.23 reference manual </strong></td>
+    <td width="15%" align="right">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="15%" align="left"><a href="hwgdoc_commands.html">prev</a></td>
+    <td width="70%" align="center">Alexander S.Kresin, July 2026</td>
+    <td width="15%" align="right"><a href="hwgdoc_classes.html">next</a></td>
+  </tr>
+</table>
+<hr align="left" width="100%">
+
+   <br><strong class="title"><a name="Functions" href="hwgdoc.html#_Functions">
+    5.  Functions</a></strong><br>
+
+   <ul>
+     <li><a name="_Functions1" href="#Functions1">5.1.  Common dialogs</a>
+     <li><a name="_Functions2" href="#Functions2">5.2.  MessageBoxes and HwGUI dialogs</a>
+     <li><a name="_Functions3" href="#Functions3">5.3.  Drawing functions.</a>
+     <li><a name="_Functions4" href="#Functions4">5.4.  Windows handling functions.</a>
+     <li><a name="_Functions5" href="#Functions5">5.5.  Controls handling functions.</a>
+     <li><a name="_Functions6" href="#Functions6">5.6.  Menu functions.</a>
+     <li><a name="_Functions7" href="#Functions7">5.7.  Windows registry.</a>
+     <li><a name="_Functions8" href="#Functions8">5.8.  Miscellaneous functions.</a>
+     <li><a name="_Functions81" href="#Functions81">5.8.1 Unit conversions.</a>
+     <li><a name="_Functions82" href="#Functions82">5.8.2 Date and time functions.</a>
+     <li><a name="_Functions83" href="#Functions83">5.8.3 Raw bitmap support and QR code.</a>
+     <li><a name="_FunctionsA" href="hwgdoc_func2.html#FunctionsA">5.A.  Functions, not included in documentation</a>
+     <li><a name="_References"  href="#References">References</a>
+   </ul>
+
+   <br><strong class="subhead"><a name="Functions1" href="hwgdoc.html#_Functions1">
+   5.1.  Common dialogs</a></strong><br>
+
+   <br><strong class="subhead"> hwg_SelectFont( [ oFont ] )</strong>
+   <br>This function calls the standard dialog for font selecting.
+   <ul>
+     <li> oFont - optional parameter, the current font object ( HFont instance ).
+     <li> Return value - the array with selected font characteristics ( nHandle, fontName, nWidth, nHeight ,fnWeight, fdwCharSet, fdwItalic, fdwUnderline, fdwStrikeOut )
+          or Nil, if the font wasn't selected.
+   </ul>
+   <br>Usually it isn't needed to call this function directly, use <code>HFont():Select( oFont )<code>
+   instead.<br>
+
+  <br><strong>
+  Attention !  </strong><br>
+All file and directory selection dialogs<br>
+execute an internal change directory<br>
+(this is, where the selected file is locacted).<br>
+After opening the selected file or database<br>
+(FCREATE(),FOPEN(),USE xxx )<br>
+you must return to the previous directory,<br>
+also in case of a cancelled selection.<br>
+Here the sample code snippet:<br>
+<br>
+LOCAL fname, colddir, ctemp<br>
+* Get current directory as previous directory<br>
+colddir := hwg_CurDir()<br>
+#ifdef __GTK__<br>
+   &nbsp;&nbsp;&nbsp;fname := hwg_SelectFileEx(,,{{ "xBase databases( *.dbf )","*.dbf" },{ "All files" ,"*"}} )<br>
+#else<br>
+   &nbsp;&nbsp;&nbsp;fname := hwg_Selectfile("xBase databases( *.dbf )" , "*.dbf", cstartvz )<br>
+#endif<br>
+* Check for cancel<br>
+IF EMPTY( fname )<br>
+    &nbsp;&nbsp;&nbsp;* Return to previous directory<br>
+    &nbsp;&nbsp;&nbsp;hwg_ChDir(hwg_CleanPathname(colddir))<br>
+    &nbsp;&nbsp;&nbsp;RETURN NIL<br>
+ENDIF<br>
+* Open the selected DBF<br>
+ctemp := hwg_BaseName(hwg_ProcFileExt(cdbfmod,""))<br>
+SELECT 1<br>
+USE &ctemp<br>
+* Return to previous directory<br>
+hwg_ChDir(hwg_CleanPathname(colddir))<br>
+<br>
+Find this code also in "utils\devtools\dbfcompare.prg".<br>
+<br>
+
+
+
+
+   <br><strong class="subhead"> hwg_SelectFile( cDescript,cMask,[ cInitDir ], [ cTitle ] )</strong>
+   <br>This function calls the standard dialog for file selecting.
+   <ul>
+     <li> cDescript - this string appears in the dialog as a description of a file type. In
+          Windows version this parameter may be an array of descriptions (<code>{ &quot;All files&quot;, &quot;Dbf files&quot;}</code>);
+     <li> cMask - string type parameter, describing the file mask (<code>&quot;*.dbf&quot;</code>, for example). In
+          Windows version this parameter may be an array of masks (<code>{ &quot;*.*&quot;, &quot;*.dbf&quot;}</code>);
+          The length of this array must be the same as of <code>cDescript</code>;
+     <li> cInitDir - optional string parameter, the initial directory for file selecting.
+     <li> cTitle - optional string parameter, the title of a dialog box.
+     <li> Return value - a string with a selected file name, or an empty string, if a file wasn't selected.
+   </ul>
+   The user can select an existing file or input a new file name, if application will<br>
+   create an new file.<br>
+
+
+   On GTK:<br>
+   hwg_Selectfile() ignores the mask and shows all files.<br>
+   Use hwg_SelectfileEx() instead.<br>
+   File extensions are not handled by this function.<br>
+   Please use Harbour function RAT() to detect, if no file extension is entered and
+   add it in this case after returning of this function.<br>
+   <br>
+   See sample program "samples/demodlgbox.prg" for usage of all file selection dialogs.<br>
+   For Multi Platform purposes use the compiler switch "#ifdef __GTK__".<br>
+   <br>
+   An example:
+   <pre class="code">
+   cFileName := hwg_Selectfile( {"dbf files( *.dbf )","All files(*.*)"}, ;
+      {"*.dbf","*.*"}, cPath )</pre>
+
+   <br><strong class="subhead"> hwg_SelectFileEx( [cTitle] [,cInitDir] [,aDescript] )</strong> (GTK only)
+   <br>Another standard dialog for file selection.
+   <ul>
+     <li> cTitle - optional string parameter, the title of a dialog box.
+     <li> cInitDir - optional string parameter, the initial directory for file selecting.
+     <li> aDescript - an array like <code>{ { "Dbf files", "*.dbf" }, { "All files", "*" } }</code> with
+       file masks and descriptions;
+     <li> Return value - a string with a selected file name, or an empty string, if a file wasn't selected.
+   </ul>
+   Use this function instead of hwg_SelectFile() or hwg_SaveFile() with GTK.<br>
+   Only for selecting an existing file, for creating a new file use hwg_SelectFile().<br>
+   See sample program "samples/demodlgbox.prg" for usage of all file selection dialogs.<br>
+   For Multi Platform purposes use the compiler switch "#ifdef __GTK__".<br>
+   <br>
+   An example:
+   <pre class="code">
+   cFileName := hwg_SelectFileEx( ,, { { "Dbf files", "*.dbf" }, { "All files", "*" } } )</pre>
+
+
+   <br><strong class="subhead"> hwg_SelectFolder( cTitle )</strong>
+   <br>The standard dialog for folder selection.
+   <ul>
+     <li> cTitle - optional string parameter, the title of a dialog box.
+     <li> Return value - a string with a selected folder name, or an empty string, if a folder wasn't selected.
+   </ul>
+   See sample program "samples/demodlgbox.prg" for usage of all file selection dialogs.<br>
+   <br>
+
+   <br><strong class="subhead"> hwg_SaveFile( cPrompt,cDescript,cMask,cInitDir,cTitle )</strong> (Windows only)
+   <br>This function calls the standard dialog for file saving.
+   <ul>
+     <li> cPrompt - this string appears as a prompt of a file name.
+     <li> cDescript - this string appears in the dialog as a description of a file type.
+     <li> cMask - string type parameter, describing the file mask.
+     <li> cInitDir - optional string parameter, the initial directory for file selecting.
+     <li> cTitle - optional string parameter, the title of a dialog box.
+     <li> Return value - a string with a selected file name, or an empty string, if a file wasn't selected.
+   </ul>
+   <br>
+   This function is a suitable solution, if an application needs to overwrite an existing<br>
+   file or create a new one, so that the user can input a file name of a non exiting file.<br>
+   See sample program "samples/demodlgbox.prg" for usage of all file selection dialogs.<br>
+   On GTK, use hwg_Selectfile() instead.<br>
+   For Multi Platform purposes use the compiler switch "#ifdef __GTK__".<br>
+   <br>
+
+   An example:
+   <pre class="code">
+   fname := hwg_Savefile( "*.htm","( *.htm )","*.htm", cPath )</pre>
+
+   <br><strong class="subhead"> hwg_PrintSetup( @cPrinterName )</strong> (Windows only)
+   <br>This function calls the standard dialog for printer selecting.
+   <ul>
+     <li> Return value - handle to device context ( hDC ) of selected printer, 0 - if a printer wasn't selected.
+     <li> Writes to the cPrinterName parameter the name of a selected printer.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ChooseColor( nColorCurrent )</strong>
+   <br>This function calls the standard dialog for color selecting.
+   <ul>
+     <li> nColorCurrent - a numeric parameter, initial value of a color,
+     <li> Return value ( numeric ) - selected color, Nil - if a color wasn't selected.
+   </ul>
+
+   <br><strong class="subhead"><a name="Functions2" href="hwgdoc.html#_Functions2">
+   5.2.  MessageBoxes and HwGUI dialogs</a></strong><br>
+
+   <br><strong class="subhead"> hwg_MsgInfo( cMessage,cTitle )</strong>
+   <br><strong class="subhead"> hwg_MsgStop( cMessage,cTitle )</strong>
+   <br><strong class="subhead"> hwg_MsgOkCancel( cMessage,cTitle )</strong>
+   <br><strong class="subhead"> hwg_MsgYesNo( cMessage,cTitle )</strong>
+   <br><strong class="subhead"> hwg_MsgYesNoCancel( cMessage,cTitle )</strong>
+   <br><strong class="subhead"> hwg_MsgNoYes( cMessage,cTitle )</strong> (Windows only)
+   <br><strong class="subhead"> hwg_MsgRetryCancel( cMessage,cTitle )</strong> (Windows only)
+   <br><strong class="subhead"> hwg_MsgExclamation( cMessage,cTitle )</strong>
+   <p>These all are standard message boxes with a different buttons set.</p>
+   <ul>
+     <li> cMessage - a message text;
+     <li> cTitle - a title of a box;
+     <li> Return value ( logical ) - for those of them, which has more than one button.
+    </ul>
+    <p>
+    <br>
+    Special return values:<br>
+    hwg_MsgYesNoCancel() : cancel = 0 , yes = 1 , no = 2<br>
+    WinAPI: hwg_MsgOkCancel() : OK = 1 , Cancel = 2 , GTK: .T., .F.<br>
+    </p>
+
+   <br><strong class="subhead"> hwg_MsgBeep( nSound )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShellAbout( cText1, cText2 [,hIcon] )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_MsgGet( cTitle, cText, nStyle, nLeft, nTop, nDlgStyle, cInitStr )</strong>
+   <br>Creates a dialog box to input a string.
+   <ul>
+     <li> cTitle - a title of a box;
+     <li> cText - a prompt for the input;
+     <li> nStyle - a WinAPI style for a GET item (ES_PASSWORD, for example);
+     <li> nLeft, nTop - coordinates of the left upper corner of a dialog box;
+     <li> nDlgStyle - a WinAPI style for a dialog;
+     <li> cInitStr - init value of a string;
+     <li> Return value ( string ) - the string, which you entered, empty - if you press CANCEL.
+   </ul>
+
+   <br><strong class="subhead"> hwg_WChoice( arr, cTitle, nLeft, nTop, oFont, clrT, clrB, clrTSel, clrBSel, cOk, cCancel,nwline)</strong>
+   <br>Creates a dialog box to select from a list.
+   <ul>
+     <li> arr - an array, one-dimensional or multidimensional, which represents the list;
+     <li> cTitle - a header of a dialog box;
+     <li> nLeft, nTop - dialog box left upper corner coordinates;
+     <li> oFont - a font for a dialog, an object of HFont class;
+     <li> clrT, clrB - colors ( text and background ) of a browse;
+     <li> clrTSel, clrBSel - colors ( text and background ) of a selected row of a browse;
+     <li> cOk - a caption of a button to confirm selecting. If this parameter is omitted, the button will not present;
+     <li> cCancel - a caption of a button to cancel selecting. If this parameter is omitted, the button will not present;
+     <li> Return value - the number of selected row, 0 - if nothing is selected.
+   </ul>
+
+   Important !<br>
+   Workaround for bug in GTK (GetTextMetric does not work correct):<br>
+   The new parameter "nwline" is ignored on WinAPI,<br>
+   because the functions works correct on Windows,<br>
+   it is the height for every line in the array to browse.<br>
+   The default value is 21, this seems to be suitable for default font<br>
+   "Times", 0, 14 .<br>
+   Please make experiments with this parameter if<br>
+   other fonts are used.<br>
+   For details and symptom description see<br>
+   test program test/tickets/Ticket90.prg.<br>
+
+    <p></p>
+
+   <br><strong class="subhead"><a name="Functions3" href="hwgdoc.html#_Functions3">
+   5.3.  Drawing functions.</a></strong><br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DefinePaintStru()</strong>
+   <ul>
+     <li> Return value - a pointer to a paint structure.
+   </ul>
+   It is called during the painting (usually it is a <code>Paint()</code> method),
+   together with two next functions, <code>hwg_BeginPaint( handle, pps )</code> and
+   <code>hwg_EndPaint( handle, pps )</code>.
+
+   <p></p>
+   <br><strong class="subhead"> hwg_BeginPaint( handle, pps )</strong>
+   <br>This function starts painting.
+   <ul>
+     <li> handle - handle of a painted object;
+     <li> pps - a pointer to a paint structure;
+     <li> Return value - handle of a device context (hDC).
+   </ul>
+
+   <br><strong class="subhead"> hwg_EndPaint( handle, pps )</strong>
+   <br>This function ends painting.
+   <ul>
+     <li> handle - handle of a painted object;
+     <li> pps - a pointer to a paint structure.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Getdrawiteminfo( lpDis )</strong> (Windows only)
+   <br>If a control has SS_OWNERDRAW style and messages for him aren't handled by HwGUI
+   (look at <a href="hwgdoc.html#Using9"> 3.9. Inside HwGUI</a>),
+   the handler of <i>ON PAINT</i> gets as a second parameter a pointer to
+       <code>DRAWITEMSTRUCT</code> WinAPI structure, which contains an information, needed
+       to draw this control. A function <code>hwg_GetDrawItemInfo( lpDis )</code> extracts this info
+       and returns to a programmer as an array.
+   <br>While drawing these controls functions <code>hwg_DefinePaintStru()</code>,
+       <code>hwg_BeginPaint()</code>, <code>hwg_EndPaint()</code> shouldn't be used.
+   <ul>
+     <li> lpDis - a pointer to <code>DRAWITEMSTRUCT</code>;
+     <li> Return value - an array <code>aDrawItem</code> with an information about widget being painted;
+          <br><code>aDrawItem[3]</code> - hDC;
+          <br><code>aDrawItem[4]</code> - nLeft, left border of drawing area;
+          <br><code>aDrawItem[5]</code> - nTop, top border of drawing area;
+          <br><code>aDrawItem[6]</code> - nRight, right border of drawing area;
+          <br><code>aDrawItem[7]</code> - nBottom, bottom border of drawing area;
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetClientRect( handle )</strong>
+   <ul>
+     <li> handle - handle of a control;
+     <li> Return value - an array <code>aArea</code> with a control client area coordinates;
+          <br><code>aArea[1]</code> - nLeft, left border of client area;
+          <br><code>aArea[2]</code> - nTop, top border of client area;
+          <br><code>aArea[3]</code> - nRight, right border of client area;
+          <br><code>aArea[4]</code> - nBottom, bottom border of client area;
+   </ul>
+
+   <br><strong class="subhead"> hwg_SelectObject( hDC, handle )</strong>
+   <br>This function selects an object of HFont, HPen or HBrush class as current for
+   drawing area, i.e., all subsequent drawing operations will use it.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> handle - a variable <code>handle</code> of an object of HFont, HPen or HBrush class.
+   </ul>
+   For example:
+   <pre class="code">
+    // Create HPen object: a line thickness - 2px, a color - red
+    oPen := HPen():Add( BS_SOLID, 2, 255 )
+    // Select this object as current for hDC
+    hwg_Selectobject( hDC, oPen:handle )
+    // Draw a 2px red line
+    hwg_Drawline( hDC, 5, 1, 100, 1 )</pre>
+
+   <br><strong class="subhead"> hwg_DeleteObject( handle )</strong>
+   <br>Deletes a font, a pen, a brush, a bitmap or an icon. Pay attention that this function works
+   on WinAPI/GTK level, it deletes not a HwGUI object, but WinaPI/GTK's.
+   Ususlly it isn't needed to call it directly from your application, the <code>Release()</code>
+   method of an appropriate HwGUI class does all necessary operations.
+   <ul>
+     <li> handle - a variable <code>handle</code> of an object of HFont, HPen, HBrush, HBitmap or HIcon class.
+   </ul>
+
+   <br><strong class="subhead"> hwg_MoveTo( hDC, x1, y1 )</strong>
+   <br> Changes current position of a pen on a drawing area.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - point coordinates.
+   </ul>
+
+   <br><strong class="subhead"> hwg_LineTo( hDC, x1, y1 [, lClose] )</strong>
+   <br> Draws a line from a current position to a point with given coordinates. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - point coordinates.
+     <li> lClose - an optional pframeter, GTK only, causes cairo_stroke() call.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Rectangle( hDC, x1, y1, x2, y2 [, hPen] )</strong>
+   <br> Draws a rectangle with given coordinates. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> parameter is not passed.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates.
+     <li> hPen - pen handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_Rectangle_Filled( hDC, x1, y1, x2, y2 [, hPen | lPen] [, hBrush] )</strong>
+   <br> Draws a rectangle with given coordinates and fills it. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> parameter is not passed. If
+   logical .F. passed instead, the rectangle border will be absent.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates.
+     <li> hPen - pen handle
+     <li> hBrush - brush handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_Triangle( hDC, x1, y1, x2, y2, x3, y3 [, hPen] )</strong>
+   <br> Draws a triangle with given coordinates. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> parameter is not passed.
+   If logical .F. passed instead, the triangle border will be absent.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1, x2, y2, x3, y3 - coordinates;
+     <li> hPen - pen handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_Triangle_Filled( hDC, x1, y1, x2, y2, x3, y3 [, hPen | lPen] [, hBrush] )</strong>
+   <br> Draws a triangle with given coordinates. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> parameter is not passed.
+   If logical .F. passed instead, the triangle border will be absent.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1, x2, y2, x3, y3 - coordinates;
+     <li> hPen - pen handle
+     <li> hBrush - brush handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_RoundRect( hDC, x1, y1, x2, y2, iRadius [, hPen] )</strong>
+   <br> Draws a rectangle with rounded corners. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> parameter is not passed.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates;
+     <li> iRadius - a radius of an ellipse used to draw rounded corners.
+     <li> hPen - pen handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_RoundRect_Filled( hDC, x1, y1, x2, y2, iRadius [, hPen | lPen] [, hBrush] )</strong>
+   <br> Draws a rectangle with rounded corners. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> parameter is not passed.
+   If logical .F. passed instead, the rectangle border will be absent.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates;
+     <li> iRadius - a radius of an ellipse used to draw rounded corners.
+     <li> hPen - pen handle
+     <li> hBrush - brush handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_Ellipse( hDC, x1, y1, x2, y2 [, hPen] )</strong>
+   <br> Draws an ellipse in a rectangle with given coordinates. Uses a pen and a brush,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> is not passed.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates of a bounding rectangle;
+     <li> x2, y2 - right bottom corner coordinates of a bounding rectangle;
+     <li> hPen - pen handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_Ellipse_Filled( hDC, x1, y1, x2, y2 [, hPen | lPen] [, hBrush] )</strong>
+   <br> Draws an ellipse in a rectangle with given coordinates and fills area inside. Uses a pen and a brush,
+   selected with the help of <code>hwg_SelectObject()</code>, if <code>hPen</code> or
+   <code>hBrush</code> parameter are not passed.
+   If logical .F. passed instead of <code>hPen</code>, the border will be absent.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates of a bounding rectangle;
+     <li> x2, y2 - right bottom corner coordinates of a bounding rectangle;
+     <li> hPen - pen handle
+     <li> hBrush - brush handle
+   </ul>
+
+   <br><strong class="subhead"> hwg_DrawLine( hDC, x1, y1, x2, y2 )</strong>
+   <br> Draws a line from one point to another. Uses a pen,
+   selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - first point coordinates.
+     <li> x2, y2 - second point coordinates.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Pie( hDC, x1, y1, x2, y2, xr1, yr1, xr2, yr2 )</strong> (Windows only)
+   <br> Draws a pie-shaped wedge bounded by the intersection of an ellipse and two radials and fills area inside. Uses a pen and a brush,
+   selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates of a bounding rectangle;
+     <li> x2, y2 - right bottom corner coordinates of a bounding rectangle;
+     <li> xr1, yr1 - coordinates of the endpoint of the first radial;
+     <li> xr2, yr2 - coordinates of the endpoint of the second radial.
+   </ul>
+
+   <br><strong class="subhead"> hwg_FillRect( hDC, x1, y1, x2, y2, hBrush )</strong>
+   <br> Fills a rectangle with given coordinates, using a passed brush.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates;
+     <li> hBrush - a handle of a brush ( may be <code>oBrush:handle</code> ).
+   </ul>
+
+   <br><strong class="subhead"> hwg_Drawbutton( hDC, x1, y1, x2, y2, nFlag )</strong>
+   <br> Draws a button.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates;
+     <li> nFlag - determines, how to draw a button:
+       <br> &nbsp;&nbsp; 1 - normal;
+       <br> &nbsp;&nbsp; 2 - pressed;
+       <br> &nbsp;&nbsp; 5 - flat;
+       <br> &nbsp;&nbsp; 6 - flat pressed.
+   </ul>
+
+   <br><strong class="subhead"> hwg_DrawEdge( hDC, x1, y1, x2, y2, nFlag, nBorder )</strong> (Windows only)
+   <br>Draws one or more edges of rectangle.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates;
+     <li> nFlag - the type of inner and outer edges, it is a combination of one
+       inner-border flag and one outer-border flag. For details look at the MSDN documentation for
+       <a target="_blank" href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd162477%28v=vs.85%29.aspx">DrawEdge() function</a>.
+     <li> nBorder - the type of border, For details look at the MSDN documentation for DrawEdge() function.
+   </ul>
+
+   <br><strong class="subhead"> hwg_gtk_DrawEdge( hDC, x1, y1, x2, y2, nFlag )</strong> (GTK only)
+   <br>Draws one or more edges of rectangle.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - left top corner coordinates;
+     <li> x2, y2 - right bottom corner coordinates;
+     <li> nFlag - determines, how to draw.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Arc( hDC, xc, yc, radius, iAngleStart, iAngleEnd )</strong>
+   <br>Draws an arc with a center in xc, yc, with a radius from an angle
+       iAngleStart to iAngleEnd.
+   <ul>
+     <li> Angles are passed in degrees.
+     <li> Corresponds to the standard X axis, drawing direction is clockwise.
+   </ul>
+
+
+   <a name="Functions3h"></a><br><strong class="subhead"> hwg_drawGradient( hDC, x1, y1, x2, y2, int type, array colors, array stops, array radiuses )</strong>
+   <br> This function draws rectangle with rounded corners and fill it with gradient pattern.
+   <ul>
+     <li>hDC - handle of device context;
+     <li>x1 and y1 - coordinates of upper left corner;
+     <li>x2 and y2 - coordinates of bottom right corner;
+     <li>type - the type of gradient filling:
+       <br>&nbsp;&nbsp; 1 - vertical and down;
+       <br>&nbsp;&nbsp; 2 - vertical and up;
+       <br>&nbsp;&nbsp; 3 - horizontal and to the right;
+       <br>&nbsp;&nbsp; 4 - horizontal and to the left;
+       <br>&nbsp;&nbsp; 5 - diagonal right-up;
+       <br>&nbsp;&nbsp; 6 - diagonal left-down;
+       <br>&nbsp;&nbsp; 7 - diagonal right-down;
+       <br>&nbsp;&nbsp; 8 - diagonal left-up;
+       <br>&nbsp;&nbsp; 9 - radial gradient;
+     <li>colors - our colors (maximum - 16 colors), a color can be represented as 0xBBGGRR;
+     <li>stops - fractions on interval [0;1] that correspond to the colors,
+           a stop determines the position where the corresponding color reaches its maximum;
+     <li>radiuses - for our rounded corners:
+       <br>&nbsp;&nbsp; first  - for upper left;
+       <br>&nbsp;&nbsp; second - for upper right;
+       <br>&nbsp;&nbsp; third  - for bottom right;
+       <br>&nbsp;&nbsp; fourth - for bottom left;
+   </ul>
+
+   <br><strong class="subhead"> hwg_OpenImage( cName | cBody [, lMem] )</strong>
+   <br>Create a bitmap from the data stored in an image file or in a passed data.
+   In most cases you don't need to call this function directly, use <code>HBitmap():AddFile(cName)</code> instead.
+   <ul>
+     <li> cName | cBody - the name of an image file or a string with a previously loaded image file content;
+     <li> lMem - a logical variable must be set to .T., if a first parameter is a string with an image file content;
+     <li> Return value - handle of a bitmap;
+   </ul>
+
+   <br><strong class="subhead"> hwg_OpenBitmap( cName [, hDC] )</strong>
+   <br>Creates a bitmap from the data stored in the <i>bmp</i> file.
+   In most cases you don't need to call this function directly, use <code>HBitmap():AddFile(cName)</code> instead.
+   <ul>
+     <li> cName - name of a <i>bmp</i> file;
+     <li> hDC - (optional) handle to a current device context.
+     <li> Return value - handle of a bitmap;
+   </ul>
+
+   <br><strong class="subhead"> hwg_SaveBitmap( cName, hBitmap )</strong>
+   <p>
+   <br>
+   Function only for internal usage.<br>
+   To save a bitmap object into a file,<br>
+   use FUNCTION hwg_oBitmap2file().<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_StockBitmap( cName [,nSizeType] )</strong> (GTK only)
+   <br> GTK has a number of predefined stock icons, which can be used in application.
+     It is very convenient because it saves the programmer from having to store the image files included with the executable.
+     This function creates a bitmap from a stock object.
+     In most cases you don't need to call this function directly, use <code>HBitmap():AddStandard(cName)</code> instead.
+   <ul>
+     <li> cName - name of a stock object. The set of names you may see, for example,
+      with the help of Tutorial utility, chapter &quot;Advanced using of controls&quot;, module &quot;Browse of bitmaps&quot; ;
+     <li> nSizeType - (optional) type of a size, may be one of following:
+       <br>&nbsp;&nbsp; GTK_ICON_SIZE_MENU,
+       <br>&nbsp;&nbsp; GTK_ICON_SIZE_SMALL_TOOLBAR,
+       <br>&nbsp;&nbsp; GTK_ICON_SIZE_LARGE_TOOLBAR,
+       <br>&nbsp;&nbsp; GTK_ICON_SIZE_BUTTON (default),
+       <br>&nbsp;&nbsp; GTK_ICON_SIZE_DND,
+       <br>&nbsp;&nbsp; GTK_ICON_SIZE_DIALOG;
+     <li> Return value - handle of a bitmap;
+   </ul>
+
+   <br><strong class="subhead"> hwg_DrawBitmap( hDC, hBitmap, style, x, y [, width, height] )</strong>
+   <br> Draws a bitmap.
+   <ul>
+     <li> hDC - handle of device context;
+     <li> hBitmap - handle of a bitmap (<code>oBitmap:handle</code> usually);
+     <li> style - (optional parameter, for WinAPI only). By default the value is SRCCOPY: copies the source rectangle directly to the destination rectangle;
+     <li> x, y - coordinates of a point where to start drawing bitmap (left top corner);
+     <li> width, height - width and height of a destination image (optional parameters, by default - original bitmap size).
+   </ul>
+
+   <br><strong class="subhead"> hwg_DrawTransparentBitmap( hDC, hBitmap, x, y [,trColor] [, width, height] )</strong>
+   <br> Draws a transparent bitmap.
+   <ul>
+     <li> hDC - handle of device context;
+     <li> hBitmap - handle of a bitmap (<code>oBitmap:handle</code> usually);
+     <li> x, y - coordinates of a point where to start drawing bitmap (left top corner);
+     <li> trcolor - transparent color;
+     <li> width, height - width and height of a destination image (optional parameters, by default - original bitmap size).
+   </ul>
+
+   <br><strong class="subhead"> hwg_Drawgraybitmap( hDC, hBitmap, x, y )</strong> (Windows only)
+   <br> Draws a bitmap in grayscale mode.
+   <ul>
+     <li> hDC - handle of device context;
+     <li> hBitmap - handle of a bitmap (<code>oBitmap:handle</code> usually);
+     <li> x, y - coordinates of a point where to start drawing bitmap (left top corner).
+   </ul>
+
+   <a name="Functions3k"></a><br><strong class="subhead"> hwg_SpreadBitmap( hDC, hBitmap [, nLeft, nTop, nRight, nBottom] )</strong>
+   <br> This funtion spreads a bitmap over all the drawing area or within rectangle with passed coordinates by multiplying.
+   <ul>
+     <li> hDC - handle of device context;
+     <li> hBitmap - handle of a bitmap (<code>oBitmap:handle</code> usually);
+     <li> nLeft, nTop, nRight, nBottom - coordinates of a rectangle (optional).
+   </ul>
+
+   <br><strong class="subhead"> hwg_Drawicon( hDC, hIcon, x1, y1 )</strong> (Windows only)
+   <br> Draws an icon.
+   <ul>
+     <li> hDC - handle of device context;
+     <li> hIcon - handle of an icon (<code>oIcon:handle</code> usually);
+     <li> x, y - coordinates of a point where to start drawing an icon (left top corner);
+   </ul>
+
+   <br><strong class="subhead"> hwg_CenterBitmap( hDC, hWnd, hBitmap, style, brush )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetBitmapSize( hBitmap )</strong>
+   <br>Returns an array with the size (width and height) of a bitmap.
+   <ul>
+     <li> hBitmap - handle of a bitmap (<code>oBitmap:handle</code> usually);
+     <li> Return value - an array:
+          <br><code>aArray[1]</code> - width of a bitmap;
+          <br><code>aArray[2]</code> - height of a bitmap.
+   </ul>
+
+    <br><strong class="subhead"> hwg_GetBitmapHeight( hBitmap )</strong>
+   <p>
+   hBitmap : Handle of a bitmap object, for example "oBitmap:handle".<br>
+   Returns the height of a bitmap.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_GetBitmapWidth( hBitmap )</strong>
+   <p>
+   hBitmap : Handle of a bitmap object, for example "oBitmap:handle".<br>
+   Returns the width of a bitmap.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_GetIconSize( hIcon )</strong> (Windows only)
+   <br>Returns an array with the size (width and height) of an icon.
+   <ul>
+     <li> hBitmap - handle of an icon (<code>oIcon:handle</code> usually);
+     <li> Return value - an array:
+          <br><code>aArray[1]</code> - width of an icon;
+          <br><code>aArray[2]</code> - height of an icon.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Getsyscolor( nCode )</strong>
+   <br>Retrieves the current color of the specified display element. Display elements are the parts of a window and the display that appear on the system display screen.
+   In GTK version always return a background color of a main window.
+   <ul>
+     <li> nCode - look at MSDN,
+       <a target="_blank" href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724371%28v=vs.85%29.aspx">GetSysColor() function</a>.
+     <li> Return value - numeric color representation.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetsyscolorBrush( nCode )</strong> (Windows only)
+   <br>Retrieves a brush handle, corresponding to a current color of the specified display element. Display elements are the parts of a window and the display that appear on the system display screen.
+   <ul>
+     <li> nCode - look at MSDN,
+       <a target="_blank" href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724371%28v=vs.85%29.aspx">GetSysColor() function</a>.
+     <li> Return value - a brush handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Createpen( nStyle, nWidth, nColor )</strong>
+   <br>Creates a pen with given parameters.
+   Usually it isn't needed to call this function directly, use <code>HPen():Add()</code> instead.
+   <ul>
+     <li> nStyle - a pen style ( PS_SOLID, PS_DASH, PS_DOT, ... );
+     <li> nWidth - a pen thickness;
+     <li> nColor - numeric color representation;
+     <li> Return value - a pen handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Createsolidbrush( nColor )</strong>
+   <br>Creates a brush that has the specified color.
+   Usually it isn't needed to call this function directly, use <code>HBrush():Add()</code> instead.
+   <ul>
+     <li> nColor - numeric color representation;
+     <li> Return value - a brush handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Createhatchbrush( nHatch, nColor )</strong> (Windows only)
+   <br>Creates a brush that has the specified hatch pattern and color.
+   Usually it isn't needed to call this function directly, use <code>HBrush():Add()</code> instead.
+   <ul>
+     <li> nHatch - the hatch style of the brush, look at MSDN,
+       <a target="_blank" href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd183504%28v=vs.85%29.aspx">CreateHatchBrush() function</a>.;
+     <li> nColor - numeric color representation;
+     <li> Return value - a brush handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetDC( hWnd )</strong>
+   <br>Returns handle of device context of GUI element. After using this handle
+     must be released with a help of hwg_ReleaseDC( hWnd, hDC ).
+   <ul>
+     <li> hWnd - handle of GUI element;
+     <li> Return value - handle of device context.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ReleaseDC( hWnd, hDC )</strong>
+   <br>Releases handle of device context, which was created using hwg_GetDC( hWnd ).
+   <ul>
+     <li> hWnd - handle of appropriate GUI element;
+     <li> hDC - handle of device context.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SaveDC( hDC )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DeleteDC( hDC )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Restoredc( hDC, nSavedDC )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_CreateCompatibleDC( hDC )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_CreateCompatibleBitmap( hDC, nWidth, nHeight )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Patblt( hDc, a, s, d, f, g )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Bitblt( hDc, x, y, nWidth, nHeight,  pSrcDC, xSrc,  ySrc, nFlag )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setmapmode( hDC, nMapMode )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setwindoworgex( hDC, x, y, @point )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setwindowextex( hDC, x, y, @point )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setviewportorgex( hDC, x, y, @point )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setviewportextex( hDC, x, y, @point )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setarcdirection( hDC, nArcDirection )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setrop2( hDC, nDrawMode )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DrawFrameControl( hDC, nType, nState )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_TextOut( hDC, x, y, cText )</strong>
+   <br>Draws a text. Uses a font, selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> x1, y1 - coordinates of a start point.
+     <li> cText - the text string to draw.
+   </ul>
+
+   <br><strong class="subhead"> hwg_DrawText( hDC, cText, x1 | aRect [, y1, x2, y2, nStyle [,aRect]] )</strong>
+   <br>Draws a text in a given rectangle, aligned accorgingly to a passed parameter.
+    Uses a font, selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> cText - the text string to draw.
+     <li> x1, y1, x2, y2 - text area coordinates;
+     <li> aRect - an array with text area coordinates, may be passed instead of x1, y1, x2, y2;
+     <li> nStyle - alignment style: DT_LEFT (by default), DT_CENTER, DT_RIGHT.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetTextMetric( hDC )</strong>
+   <br>Returns an array with geometric text parameters for a given device contect, for a font, selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> Return value - an array:
+       <br> &nbsp;&nbsp; array[1] - a text height,
+       <br> &nbsp;&nbsp; array[2] - average character width;
+       <br> &nbsp;&nbsp; array[3] - maximal character width; (WinAPI only)
+       <br> &nbsp;&nbsp; array[4] - tmExternalLeading; (WinAPI only)
+       <br> &nbsp;&nbsp; array[5] - tmInternalLeading; (WinAPI only)
+       <br> &nbsp;&nbsp; array[6] - tmAscent; (WinAPI only)
+       <br> &nbsp;&nbsp; array[7] - tmDescent; (WinAPI only)
+       <br> &nbsp;&nbsp; array[8] - tmWeight. (WinAPI only)
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetTextSize( hDC, cText )</strong>
+   <br>Returns an array with geometric text size for a given device contect, for a font, selected with the help of <code>hwg_SelectObject()</code>.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> Return value - an array:
+       <br> &nbsp;&nbsp; array[1] - a text width,
+       <br> &nbsp;&nbsp; array[2] - a text height;
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetClientRect( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetWindowRect( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetTextColor( hDC, nColor )</strong>
+   <br>Sets text color for a drawing.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> nColor - new color value;
+     <li> Return value - previous color value.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetTextColor( hDC )</strong>
+   <br>Returns current text color setting for a drawing area.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> Return value - previous color value.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetBkColor( hDC, nColor )</strong>
+   <br>Sets background color for a drawing.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> nColor - new color value;
+     <li> Return value - previous color value.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetBkColor( hDC )</strong>
+   <br>Returns current background color setting for a drawing area.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> Return value - previous color value.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetTransparentMode( hDC, lTransparent )</strong>
+   <br>Sets or unsets a transparent mode for a writing text on a drawing area.
+   <ul>
+     <li> hDC - handle of the device context;
+     <li> lTransparent - boolean value, sets a transparent mode if true, unsets  - if false.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Exttextout( hDC, x, y, x1, y1, x2, y2, cText )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_WindowFromDC( hDC )</strong> (Windows only)
+   <br>Retrieves a handle of GUI element by it hDC.
+   <ul>
+     <li> hDC - handle of device context;
+     <li> Return value - handle of GUI element.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Loadimage( hInstance, cName, nType, nWidth, nHeight, nFlags )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Loadbitmap( nId | cName [,l] )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Window2bitmap( hWnd, x1, y1, width, height )</strong>
+   <br>Creates a bitmap from a given region of a window or control. If coordinates aren't
+       passed, the whole window is used.
+   <ul>
+     <li> hWnd - window handle;
+     <li> x1, y1 - coordinates of a top left corner of a selected region;
+     <li> width, height - width and height of a selected region;
+     <li> Return value - handle of a bitmap.
+   </ul>
+
+   <br><strong class="subhead"> hwg_RedrawWindow( handle, nFlags, x1, y1, nWidth, nHeight )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Invalidaterect( handle, lEraseBack, x1, y1, x2, y2 )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetPpsRect( pps )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetPpsErase( pps )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetUpdateRect( hWnd )</strong> (Windows only)
+   <p></p>
+
+
+   <br><strong class="subhead"><a name="Functions4" href="hwgdoc.html#_Functions4">
+   5.4.  Windows handling functions.</a></strong><br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetModalDlg()</strong>
+   <ul>
+     <li> Return value - an object of HDialog class, a current modal dialog;
+          Nil - if there is no opened modal dialog.
+   </ul>
+
+   <br><strong class="subhead"> hwg_EndDialog( [handle] )</strong>
+   <br> Closes a dialog with a <code>handle</code>; if <code>handle</code> isn't passed,
+        the current modal dialog is closed.
+   <ul>
+     <li> handle - optional parameter, a handle of a dialog window, which should be closed.
+   </ul>
+
+   <br><strong class="subhead"> hwg_EndWindow()</strong>
+   <br> Closes the main window.
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isWindow( hWnd )</strong> (Windows only)
+   <br>Determines whether the specified window handle identifies an existing window.
+   <ul>
+     <li> Return value (logical) - .T., if the window handle identifies an existing window.
+   </ul>
+
+   <br><strong class="subhead"> hwg_FlashWindow( hWnd )</strong> (Windows only)
+   <br>Flashes the specified window one time - change the appearance of its caption bar
+    as if the window were changing from inactive to active status, or vice versa.
+   <ul>
+     <li> hWnd - window handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetActiveWindow()</strong>
+   <ul>
+     <li> Return value - handle of an active window.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetInstance</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetWindowStyle( handle, nStyle )</strong> (Windows only)
+   <br>This function sets a WinAPI style to GUI element.
+   <ul>
+     <li> handle - handle of GUI element;
+     <li> nStyle - WinAPI style.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetWindowStyle( handle )</strong> (Windows only)
+   <br>This function returns a WinAPI style of GUI element.
+   <ul>
+     <li> handle - handle of GUI element;
+     <li> Return value - (numeric) WinAPI style.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetWindowExStyle( handle, nStyle )</strong> (Windows only)
+   <br>This function sets an extended WinAPI style to GUI element.
+   <ul>
+     <li> handle - handle of GUI element;
+     <li> nStyle - an extended WinAPI style.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetWindowExStyle( handle )</strong> (Windows only)
+   <br>This function returns an extended WinAPI style of GUI element.
+   <ul>
+     <li> handle - handle of GUI element;
+     <li> Return value - (numeric) an extended WinAPI style.
+   </ul>
+
+   <br><strong class="subhead"> hwg_FindWindow( cClassName, cWindowName)</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetForegroundWindow( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_BringToTop( handle )</strong> (Windows only)
+   <br> Sets the window over all other windows.
+   <ul>
+     <li> handle - window handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ResetWindowPos( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_UpdateWindow( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_CenterWindow( handle )</strong>
+   <br> Centers a window on a screen.
+   <ul>
+     <li> handle - window handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_RestoreWindow( handle )</strong>
+   <br> Restores the default window size.
+   <ul>
+     <li> handle - window handle.
+   </ul>
+
+   <br><strong class="subhead"> hwg_EnableWindow( handle, lEnable )</strong>
+   <br> Enables or disables GUI element (window or control).
+   <ul>
+     <li> handle - handle of a GUI element;
+     <li> lEnable - (logical) enable, if .T., disable if .F..
+   </ul>
+
+   <br><strong class="subhead"> hwg_isWindowEnabled( handle )</strong>
+   <br> Checks, if the GUI element (window or control) is enabled.
+   <ul>
+     <li> handle - handle of a GUI element;
+     <li> Return value - (logical) .T., if GUI element is enabled.
+   </ul>
+
+   <br><strong class="subhead"> hwg_HideWindow( handle )</strong>
+   <br> Hide GUI element (window or control).
+   <ul>
+     <li> handle - handle of a GUI element.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ShowWindow( handle )</strong>
+   <br> Show GUI element (window or control).
+   <ul>
+     <li> handle - handle of a GUI element.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ProcessMessage( [lMdi] [, nSleep] )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_PeekMessage( hWnd )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DoEvents()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SendMessage( handle, nMessage, wParam, lParam )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_PostMessage( handle, nMessage, wParam, lParam )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetWindowObject( handle, object )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetWindowObject( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetWindowText( handle, cTitle )</strong>
+   <br> Changes the text of the specified window's title bar or the text of a control.
+   <ul>
+     <li> handle - handle of a GUI element;
+     <li> cTitle - the text.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetWindowText( handle )</strong>
+   <br> Returns the text of the specified window's title bar or the text of a control.
+   <ul>
+     <li> handle - handle of a GUI element;
+     <li> Return value - the text.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetWindowFont( handle, hFont, l )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetLastError()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isIconic( hWnd )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isWindowVisible( hWnd )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ExitProcess()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_WindowSetResize( hWnd, lResizeable )</strong>
+   <br> Sets the window resizeable or no resizeable.
+   <ul>
+     <li> hWnd - handle of a window;
+     <li> lResizeable - boolean argument.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetTopmost( hWnd )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RemoveTopmost( hWnd )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ChildWindowFromPoint( hWnd, x, y )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_WindowFromPoint( hWnd, x, y )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetFontDialogUnits( hWnd )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetWindowPlacement( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ClearKeyboard()</strong> (Windows only)
+   <p></p>
+
+   <p></p>
+   <br><strong class="subhead"><a name="Functions5" href="hwgdoc.html#_Functions5">
+   5.5.  Controls handling functions.</a></strong><br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetFocus( handle )</strong>
+   <br>Sets the keyboard focus to the specified GUI element (window or control).
+   <ul>
+     <li> handle - handle of a GUI element;
+     <li> Return value - handle to the GUI element that previously had the keyboard focus.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetFocus()</strong>
+   <br>Retrieves the handle to the GUI element (window or control) that has the keyboard focus.
+   <ul>
+     <li> Return value - handle to the GUI element that has the keyboard focus.
+   </ul>
+
+   <br><strong class="subhead"> hwg_WriteStatus( oWnd, nPart, cText, lRedraw )</strong>
+   <br>Writes a text string to a fragment of a status pane. This function works for a standard <i>Status</i>
+   and or a <i>Status Panel</i>.
+   <ul>
+     <li> oWnd - the window with the status pane, an object of one of subclasses of HWindow class;
+     <li> nPart - a number of a fragment of the status pane;
+     <li> CText - a text for the status pane;
+     <li> lRedraw - .T., to redraw status pane immedeately.
+   </ul>
+
+   <br><strong class="subhead"> hwg_FindParent( hCtrl )</strong>
+   <br>Returns an object of a parent GUI element for a widget by it handle.
+   <ul>
+     <li> hCtrl - a handle of a widget;
+     <li> Return value - an object of a parent GUI element.
+   </ul>
+
+   <br><strong class="subhead"> hwg_FindSelf( hCtrl )</strong>
+   <br>Returns an object of a widget by it handle.
+   <ul>
+     <li> hCtrl - a handle of a widget;
+     <li> Return value - an object of a widget.
+   </ul>
+
+   <br><strong class="subhead"> hwg_getParentForm( oCtrl )</strong>
+   <br>Returns an object of a window, which includes a given widget. The distinction from <code>hwg_FindParent()</code>
+   is the following: <code>hwg_FindParent()</code> looks for a direct parent, it may be another widget, such as <i>Tab</i>,
+   <i>Panel</i> or <i>Toolbar</i>. <code>hwg_getParentForm()</code> always returns a window, which includes the given widget.
+   <ul>
+     <li> oCtrl - an object of a widget;
+     <li> Return value - an object of a window.
+   </ul>
+
+   <br><strong class="subhead"> hwg_MoveWindow( handle, nLeft, nTop, nWidth, nHeight, lRepaint )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DestroyWindow( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Createarlist( oBrw, arr )</strong>
+   <p>
+    For BROWSE of arrays:<br>
+    Copies the array to browse into the<br>
+    browse object.<br>
+    Usage see sample program "demobrowsearr.prg".<br>
+    arr: an array with 2 dimensions, for example<br>
+    al_DOKs :=  { {"1"} , {"2"} , {"3"} , {"4"} }<br>
+    ...<br>
+    <br>
+    Sample for read out the edited array:<br>
+    <br>
+    @ 360,410 BUTTON oBtn4 CAPTION "OK " SIZE 80,26 ;<br>
+    ON CLICK { | | bCancel := .F. , ;<br>
+    al_DOKs := oBrwArr:aArray , ;<br>
+    hwg_EndDialog() }<br>
+   <br>
+   </p>
+
+   <br><strong class="subhead"> hwg_CreateList( oBrw, lEditable )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_VScrollPos( oBrw, nType, lEof, nPos )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_HScrollPos( oBrw, nType, lEof, nPos )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ColumnArBlock()</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShowProgress( nStep, maxPos, nRange, cTitle, oWnd, x1, y1, width, height )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_UpdateProgressBar( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetProgressBar( handle, nPos )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetRangeProgressBar( handle, nValue )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_trackbarsetrange( handle, nLow, nHigh )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetMonthCalendarDate( handle , dValue )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetMonthCalendarDate( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setctrlfont( parentHandle, nId, hFont )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Setctrlfont( handle, hFont )</strong> (GTK only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DefaultFont()</strong>
+   <p>
+   Returns an object with a suitable default font<br>
+   for Windows and LINUX, OS dependent.<br>
+   <br>
+   </p>
+
+   <br><strong class="subhead"> hwg_AddTooltip( handle, cTooltip )</strong>
+   <br>Add a tooltip to the control.
+   <ul>
+     <li> handle - handle of the control;
+     <li> cTooltip - a text of a tooltip.
+   </ul>
+
+   <br><strong class="subhead"> hwg_DelTooltip( handle )</strong>
+   <br>Delete a tooltip of the control.
+   <ul>
+     <li> handle - handle of the control.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetTooltipTitle( handle, cTooltip )</strong>
+   <br>Update the text of a tooltip.
+   <ul>
+     <li> handle - handle of the control;
+     <li> cTooltip - a new text of a tooltip.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetUpdown( handle, nValue )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetRangeUpdown( handle, n1, n2 )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetDatePicker( handle, dValue )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetDatePickerNull( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetDatePicker( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetTimePicker( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetTimePicker( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_pCalendar(dstartdate, cTitle , cOK, cCancel , nx , ny , wid, hei )
+   </strong>
+   <p>
+   This function calls the calendar for date selection<br>
+   in design like the WinAPI datepicker.<br>
+   Based on the MONTHCALENDAR command.<br>
+   <br>
+    &nbsp;dstartdate : Date of start, if NIL, the default is "today" from system date.<br>
+    &nbsp;cTitle     : Title for this dialog, default is "Calendar"<br>
+    &nbsp;cOK        : Caption for OK button, default is "OK"<br>
+    &nbsp;cCancel    : Caption for cancel button, default is "Cancel"<br>
+    &nbsp;nx , ny    : Position in calling Window (default 0, 0)<br>
+    &nbsp;wid, hei   : Width and height of the calendar window, add 23 pixels<br>
+    &nbsp;&nbsp;&nbsp;           to height for size of dialog (space for buttons needed).<br>
+    &nbsp;&nbsp;&nbsp;           Default is 200, 160.<br>
+    <br>
+    &nbsp;Returns the selected date (type "D").<br>
+    <br>
+    For details see inline comments of sample program<br>
+    "samples/testget1.prg".<br>
+    Here you find instructions to create a multiplatform substitute
+    for the Windows only DATEPICKER.<br>
+    <br>
+    Some Screenshots:<br>
+    <br>
+    Datepicker Windows:<br>
+    (Heute = today)<br>
+    <img src="./image/Win_Datepicker.png" align=center wborder=0 alt="Datepicker Windows"><br>
+    <br>
+    Datepicker substitute Windows all screens:<br>
+    <img src="./image/Win_DatepickerSubst_full.png" align=center wborder=0 alt="Datepicker substitute Windows all screens"><br>
+    <br>
+    Datepicker LINUX (Sample program demoget1.prg):<br>
+    <img src="./image/Datepicker_LINUX.png" align=center wborder=0 alt="Datepicker LINUX"><br>
+    <br>
+    Windows MONTHCALENDAR command:<br>
+    (Fertig = Ready, Abbruch = Cancel)<br>
+    <img src="./image/Win_MonthCal.png" align=center wborder=0 alt="Windows MONTHCALENDAR command"><br>
+    <br>
+    LINUX MONTHCALENDAR command:<br>
+    <img src="./image/LINUX_MonthCalendar.png" align=center wborder=0 alt="LINUX MONTHCALENDAR command"><br>
+    <br>
+    <br>
+    </p>
+
+
+   <br><strong class="subhead"> hwg_AddTab( handle, cName )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DeleteTab( handle, nPage )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetCurrentTab( handle )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetCurrentTab( handle, nPage )</strong> (GTK only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetTabSize( handle, nWidth, nHeight )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetTabHeight( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetTabName( handle, nPage, cName )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_CreateImageList( aImages, nWidth, nHeight, nGrow, nFlags )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DestroyImageList( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Imagelist_Add( handle, hBitmap )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Imagelist_AddMasked( handle, hBitmap, nMask )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ImageList_GetImageCount( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_getParent( handle )</strong>
+   <br>Returns handle of a parent GUI element, using a system call WinAPI/GTK - so,
+   it is faster, than with the help of <code>oParent</code> variable of appropriate object.
+   <ul>
+     <li> handle - handle of a control;
+     <li> Return value - handle of a parent GUI element.
+   </ul>
+
+   <br><strong class="subhead"> hwg_getAncestor( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_LoadCursor( cursor )</strong>
+   <p>
+   Loads a cursor from stock and returns its handle.<br>
+   <br>
+   GTK: Parameter "cursor" is a numeric value for identifying<br>
+   the standard cursor from stock.<br>
+   Allowed values are defined in HWGUI include file "gtk.ch" as<br>
+   GDK_* definitions, for example:<br>
+   GDK_ARROW Standard arrow<br>
+   GDK_SB_V_DOUBLE_ARROW Double pointed arrow pointing north and south<br>
+   GDK_SB_H_DOUBLE_ARROW Double pointed arrow pointing west and east<br>
+   Attention !<br>
+   Invalid value may cause crash or freeze of program.<br>
+   <br>
+   WinAPI: Parameter "cursor" is a numerical value.
+   It is evaluated from a string for the second parameter of WinAPI function<br>
+   "LoadCursor(hInstance,lpCursorName)"<br>
+   by macro<br>
+   MAKEINTRESOURCE(n) (used in HWGUI source file "control.c").<br>
+   The allowed values are defined in include "winuser.h"<br>
+   as IDC_* definitions, for example:<br>
+   &nbsp;IDC_ARROW  Standard arrow<br>
+   &nbsp;IDC_SIZENS Double pointed arrow pointing north and south<br>
+   &nbsp;IDC_SIZEWE Double pointed arrow pointing west and east<br>
+   (not the same cursors as described for GTK above)<br>
+   <br>
+   For setting of parameter for hwg_LoadCursor()<br>
+   look into the WinAPI include file "winuser.h"<br>
+   to get the numerical value, for example:<br>
+   &nbsp;IDC_ARROW  : 32512<br>
+   &nbsp;IDC_SIZENS : 32645<br>
+   &nbsp;IDC_SIZEWE : 32644<br>
+   Invalid value loads the IDC_ARROW, it is the default cursor.<br>
+   <br>
+   To display the cursor, call functions<br>
+   hwg_SetCursor() and hwg_ShowCursor().<br>
+   <br>
+   Use the compiler switch "#ifdef __GTK__" for<br>
+   use in multi platform applications.<br>
+   See sample program "demosplit.prg".<br>
+   <br>
+   </p>
+
+   <br><strong class="subhead"> hwg_LoadCursorFromFile(ccurFname)</strong>  (Windows only)
+   <p>
+   Loads a cursor from a "*.cur" type file and returns its handle.<br>
+   ccurFname : Filename (and path) of cursor file name.<br>
+   In case of errors the handle for default cursor "Arrow" is<br>
+   returned.<br>
+   Cursor files are created and edited with special
+   cursor editor programs.<br>
+   So it is possible to use customized cursor's in an HWGUI application.<br>
+   <br>
+   To display the cursor, call functions<br>
+   hwg_SetCursor() and hwg_ShowCursor().<br>
+   <br>
+   Use the compiler switch "#ifdef __GTK__" for<br>
+   use in multi platform applications.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_LoadCursorFromFile(ccurFname,x,y)</strong>  (GTK only)
+   <p>
+   Loads a cursor from a "*.cur" type file and returns its handle.<br>
+   This is the special version for GTK and has the additional parameters x and y.<br>
+   All other descriptions see WinAPI version of this function.<br>
+   <br>
+   Uses the following GTK function for creating the cursor:<br>
+   GdkCursor* gdk_cursor_new_from_pixbuf(GdkDisplay *display,GdkPixbuf *pixbuf, gint x, gint y)<br>
+   <br>
+   The parameters x and y are mandatory.<br>
+   <br>
+   x: the horizontal offset of the 'hotspot' of the cursor<br>
+   y: the vertical offset of the 'hotspot' of the cursor<br>
+   <br>
+   We suggest, to try for x and y the half size value of pixels.<br>
+   The value of the resulting pixbuf (not the file size of the *.cur file)<br>
+   may not exceed 4095 bytes.<br>
+   <br>
+   For details read the GTK 2 reference.<br>
+   <br>
+   Use the compiler switch "#ifdef __GTK__" for<br>
+   use in multi platform applications.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_LoadCursorFromString(cVal, nx , ny)</strong>
+   <p>
+   Loads a cursor from a binary variable and returns its handle.<br>
+   It is an equivalent to functions "hwg_LoadCursorFromFile()" for WinAPI and GTK.<br>
+   For details look to the descriptions of this functions.<br>
+   Parameters nx and ny are ignored on WinAPI, but set them for multi platform applications.<br>
+   <br>
+   Strategy:<br>
+   <blockquote>
+     1) Create the *.cur file with an suitable cursor editor.<br>
+     2) Create an hex value from this file with utility "file2hex.prg"<br>
+          in directory "utils\bincnt".<br>
+     3) In your program, convert the hex values into binary with function "hwg_cHex2Bin()".<br>
+        Create the handle of cursor by calling function "hwg_LoadCursorFromString()".<br>
+     4) To display the cursor, call functions hwg_SetCursor() and hwg_ShowCursor().<br>
+</blockquote>
+<br>
+See sample program "demosplit.prg" for details.<br>
+
+   </p>
+
+   <br><strong class="subhead"> hwg_SetCursor( cursor, hCtrl )</strong>
+   <p></p>
+   <ul>
+     <li> cursor - cursor handle;
+     <li> hCtrl - handle of the widget under cursor (GTK only).
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetCursor()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetTooltipBalloon( lBalloon )</strong> (Windows only)
+   <br><br>
+      &nbsp;The tooltip balloon is a nice gimmick of Windows and is not available in GTK,<br>
+      &nbsp;so this function is an "empty function".<br>
+      &nbsp;For compatible purposes you can set<br>
+      &nbsp;&nbsp;hwg_Settooltipballoon(.T.)<br>
+      &nbsp;as you like in your app, but the function call has no effect in GTK.<br>
+      &nbsp;In GTK, the tooltip is always displayed in an rectangle.<br>
+   <br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetTooltipBalloon()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetDlgItemText( parentHandle, nId, cText )</strong> (Windows only)
+   <br>Sets the title or text of a control.
+   <ul>
+     <li> parentHandle - handle of a parent window (<code>oCtrl:oParent:handle</code>);
+     <li> nId - id of a control (<code>oCtrl:id</code>);
+     <li> cText - text string to be set.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetDlgItemText( parentHandle, nId )</strong> (Windows only)
+   <br>Retrieves the title or text associated with a control.
+   <ul>
+     <li> parentHandle - handle of a parent window (<code>oCtrl:oParent:handle</code>);
+     <li> nId - id of a control (<code>oCtrl:id</code>);
+     <li> Return value - text string, displayed in a control.
+   </ul>
+
+   <br><strong class="subhead"> hwg_GetEditText( parentHandle, nId )</strong> (Windows only)
+   <br>Retrieves the text associated with an edit control.
+   <ul>
+     <li> parentHandle - handle of a parent window (<code>oCtrl:oParent:handle</code>);
+     <li> nId - id of a control (<code>oEdit:id</code>);
+     <li> Return value - text string, displayed in an edit control.
+   </ul>
+
+   <br><strong class="subhead"> hwg_edit_Getpos( handle )</strong>
+   <br>Returns the cursor position in an edit control.
+   <ul>
+     <li> handle - handle of an edit control (<code>oEdit:handle</code>);
+     <li> Return value - a number 1 ... - a cursor position.
+   </ul>
+
+   <br><strong class="subhead"> hwg_edit_Setpos( handle, nPos )</strong>
+   <br>Sets the cursor position in an edit control.
+   <ul>
+     <li> handle - handle of an edit control (<code>oEdit:handle</code>);
+     <li> nPos - number 1 ... - a cursor position.
+   </ul>
+
+   <br><strong class="subhead"> hwg_CheckDlgButton( parentHandle, nId, lValue )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isDlgButtonChecked( parentHandle, nId )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ComboAddString( handle, cText )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ComboInsertString( handle, nPos, cText )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ComboSetString( handle, nPos )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ListboxAddString( handle, cValue )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ModifyStyle( hWnd, nStyleDel, nStyleAdd )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_SetCharFormat( hCtrl, n1, n2, nColor, cName, nHeight, lBold, lItalic, lUnderline, nCharset, lSuperScript/lSubscript, lProtected )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_SetDefault( hCtrl, nColor, cName, nHeight, lBold, lItalic, lUnderline, nCharset )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_CharFromPos( hEdit, xPos, yPos )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_GetTextRange( hEdit, n1, n2 )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_GetLine( hEdit, nLine )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_InsertText( hEdit, cText )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_FindText( hEdit, cFind, nStart, bCase, bWholeWord, bSearchUp )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_SetZoom( hEdit, nNum, nDen )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_ZoomOff( hEdit )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_re_GetZoom( hEdit, @nNum, @nDen )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_PrintRtf( hEdit, hDC )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SaveRichedit( hEdit, cFileName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_LoadRichedit( hEdit, cFileName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"><a name="Functions6" href="hwgdoc.html#_Functions6">
+   5.6.  Menu functions.</a></strong><br>
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_AddMenuItem( aMenu, cItem, nMenuId, lSubMenu, bItem, nPos )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_DefineMenuItem( cItem, nId, bItem, lDisabled, accFlag, accKey, lBitmap, lResource, lCheck )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_DefineAccelItem( nId, bItem, accFlag, accKey )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_InsertBitmapMenu( aMenu, nId, lBitmap, oResource )</strong>  (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_SetMenuItemBitmaps( aMenu, nId, abmp1, abmp2 )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DeleteMenuItem( oWnd, nId )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_FindMenuItem( aMenu, nId, nPos )</strong>
+   <p>
+    Searches menu item with id "nId" in an menu array "aMenu" inclusive<br>
+    all submenus (recursive search).<br>
+    Returns the array with match of nId, if no match NIL.<br>
+    nPos returns via call by reference the position in the menu found:<br>
+    For example:<br>
+    &nbsp;&nbsp;&nbsp;LOCAL nPos<br>
+    &nbsp;&nbsp;&nbsp;nPos := 1<br>
+    &nbsp;&nbsp;&nbsp;Hwg_FindMenuItem( aMenu[ 1,nPos ] , nId, @nPos1 )<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_CheckMenuItem( xWnd, nId, lValue )</strong>
+   <br>Checks or unchecks a menu item
+   <ul>
+     <li> xWnd - it may be a handle of a window - menu owner, or a context menu object,
+                 if it is an empty value (Nil), the main window menu is used;
+     <li> nId - id of a menu item;
+     <li> lCheck - logical value: if .T. item will be checked, if .F. - unckecked.
+   </ul>
+
+   <br><strong class="subhead"> hwg_IsCheckedMenuItem( xWnd, nId )</strong>
+   <br>Return the state of a window (checked or unchecked)
+   <ul>
+     <li> xWnd - it may be a handle of a window - menu owner, or a context menu object,
+                 if it is an empty value (Nil), the main window menu is used;
+     <li> nId - id of a menu item;
+     <li> Return value - logical value: if .T. the item is checked, if .F. - unckecked.
+   </ul>
+
+   <br><strong class="subhead"> hwg_EnableMenuItem( xWnd, nId, lValue )</strong>
+   <br>Enables or disables a menu item
+   <ul>
+     <li> xWnd - it may be a handle of a window - menu owner, or a context menu object,
+                 if it is an empty value (Nil), the main window menu is used;
+     <li> nId - id of a menu item;
+     <li> lValue - logical value: if .T. item will be enabled, if .F. - disabled.
+   </ul>
+
+   <br><strong class="subhead"> hwg_IsEnabledMenuItem( xWnd, nId )</strong>
+   <br>Return the state of a window (enabled or disabled)
+   <ul>
+     <li> xWnd - it may be a handle of a window - menu owner, or a context menu object,
+                 if it is an empty value (Nil), the main window menu is used;
+     <li> nId - id of a menu item;
+     <li> Return value - logical value: if .T. the item is enabled, if .F. - disabled.
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetMenuCaption( xWnd, nId, cText )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetMenuCaption( xWnd, nId )</strong>
+   <p>
+   &lt;not available&gt; <br>
+   Returns the caption (string) of a menu item defined by the id of a menu item<br>
+    <ul>
+     <li> xWnd - it may be a handle of a window - menu owner, or a context menu object,
+                 if it is an empty value (Nil), the main window menu is used;
+     <li> nId - id of a menu item.
+   </ul>
+   </p>
+
+   <br><strong class="subhead"> hwg_DrawMenuBar( hWnd )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> </strong>
+   <p></p>
+
+   <br><strong class="subhead"><a name="Functions7" href="hwgdoc.html#_Functions7">
+   5.7.  Windows registry.</a></strong><br>
+   <p>
+   <br>
+   Comment for multi platform programs:<br>
+   It is not a good idea, to store program settings in the registry.<br>
+   Use configuration files instead, following formats are possible:<br>
+   - &nbsp;XML files (best choice, strictly recommended for new applications),<br>
+   - &nbsp;Ini files (*.ini), see comment for function Hwg_WriteIni(),<br>
+   - &nbsp;Clipper MEM files, are supported by Harbour of course,<br>
+   - &nbsp;Pure text files.<br>
+   <br>
+   The registry functions can be useful for writing a multi platform setup program<br>
+   with HWGUI.<br>
+   Use the compiler switch "#ifndef __GTK__" to hide the registry functions on
+   non Windows systems.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_RegCreateKey( handle, cKeyName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RegOpenKey( handle, cKeyName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RegCloseKey( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RegSetString( handle, cKeyName, cKeyValue )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RegSetBinary( handle, cKeyName, cBinValue )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RegGetValue( handle, cKeyName [,nType] )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"><a name="Functions8" href="hwgdoc.html#_Functions8">
+   5.8.  Miscellaneous functions.</a></strong><br>
+
+   <p></p>
+   <br><strong class="subhead">ft_origin()</strong>
+   <p>
+   Get origin path and name (this were the exe file is located).<br>
+   ft_origin() is only available in Harbour 3.4 and up, but<br>
+   here the solution for multi platform usage<br>
+   and Harbour 3.2 and up !<br>
+   (for both HWGUI and Harbour terminal/console applications)<br>
+   <br>
+   argv[0]: The argv[0] argument passed to the main()<br>
+   function contains the path and name of the executable file.<br>
+   <br>
+    int main(int argc, char *argv[]) {<br>
+        printf("Executable path: %s", argv[0]);<br>
+        return 0;<br>
+    }<br>
+    but this is reachable from Harbour and HWGUI by following sequence:<br>
+    <br>
+    LOCAL coriginp, coriginchdir<br>
+    <br>
+    * Get the origin path and name<br>
+    coriginp := hb_argV( 0 )<br>
+    <br>
+    * Change to origin directory<br>
+    IF .NOT. EMPTY(coriginp)<br>
+     coriginchdir := hwg_Dirname(coriginp)<br>
+     //ft_ChDir( coriginp )<br>
+     hwg_CHDIR(coriginchdir)<br>
+    ENDIF<br>
+    ==&gt; find this sequence in sample program "demofunc.prg"<br>
+    and test program "test/test_origin_cons".<br>
+    <br>
+    Purpose:<br>
+    Go to the origin directory before opening files and databases in this directory,<br>
+    now you can call the programm by using an absolute path !<br>
+    <br>
+    This is checked on LINUX and MacOS with GCC,<br>
+    Windows with MinGW and BCC.<br>
+    Ignore warning with BCC:<br>
+    Call to function 'chdir' with no prototype in function HB_FUN_HWG_CHDIR<br>
+    Not checked on other Compilers (Pelles C, ...)<br>
+    We will add the test results as soon as possible) <br>
+   </p>
+
+   <p></p>
+   <br><strong class="subhead">hwg_GetDirSep()</strong>
+   <br>Returns the directory seperator character OS dependant.
+   <ul>
+     <li> Windows: &nbsp; &nbsp;"\"
+     <li> UNIX/LINUX and MacOS: &nbsp; &nbsp; "/"
+   </ul>
+
+  <p></p>
+  <br><strong class="subhead"> hwg_CurDrive()</strong>
+  <br>Windows:<br>
+     &nbsp; &nbsp;Returns the current drive letter with suffix ":\",<br>
+     &nbsp; &nbsp;so that complete path values can be easy concatenated.<br>
+     &nbsp; &nbsp;This function works also on GTK cross development environment.<br>
+     UNIX/LINUX:<br>
+     &nbsp; &nbsp;Returns for multi platform usage an empty String "".<br>
+     &nbsp; &nbsp;Use this function like the Windows version.<br>
+
+  <p></p>
+  <br><strong class="subhead"> hwg_CurDir()</strong><br>
+   Returns full path of current directory.<br>
+   The Harbour function CurDir() does not return the<br>
+   leading "\" or "/" Character.<br>
+   To assemble a full path and filename, follow this example:<br>
+   &nbsp;href="hwgdoc.html#_Functions81">cp := hwg_CurDir() + hwg_GetDirSep() + "sample.txt"<br>
+   <br>
+   This function returns the complete path with drive letter on Windows.<br>
+   This function works also on GTK cross development environment.<br>
+
+   <p></p>
+   <br><strong class="subhead"> hwg_EOLStyle()</strong>
+   <br> Returns the "End Of Line" (EOL) character(s) OS dependent.<br>
+    Windows: 0D0A (CRLF)<br>
+    LINUX/UNIX:   0A (LF)<br>
+    This function works also on GTK cross development environment.<br>
+    MacOS not supported yet.<br>
+    Must then return 0D (CR).<br>
+
+   <p></p>
+   <br><strong class="subhead">hwg_strrev()</strong>
+   <br>
+   Reverse strings with UTF-8<br>
+   <br>
+   Reverses a string.<br>
+   This is the equivalent strrev() function from the standard C library,<br>
+   but extended to understand UTF-8.<br>
+   cstring may not exceed 511 bytes, inclusive length of all<br>
+   used UTF-8 characters.<br>
+
+   <p></p>
+
+   <br><strong class="subhead">hwg_GetEpoch()</strong>
+    <br>
+   Returns the recent value of<br>
+   SET EPOCH TO ...<br>
+   as integer value.<br>
+   This is helpful to recover a<br>
+   previous setting of the epoch<br>
+   processing code with alternative setting.<br>
+   <br>
+   Sample:<br>
+   &nbsp;LOCAL nsetepoch, csetepoch<br>
+   &nbsp;nsetepoch := hwg_GetEpoch()<br>
+   &nbsp; * Default value is 1900<br>
+   &nbsp; SET EPOCH TO 2000
+   &nbsp; * ... && processing with new EPOCH setting<br>
+   &nbsp; * Now restore old setting:<br>
+   &nbsp; csetepoch := ALLTRIM(STR(nsetepoch) )<br>
+   &nbsp; SET EPOCH TO &csetepoch<br>
+   <br>
+   Important advice for HWGUI programmers:<br>
+   Found this function in<br>
+   source/common/procmisc/cfuncs.c:<br>
+   The function hb_setGetEpoch() is existing in Harbour 3.2,<br>
+   but not apearing in a *.h file of Harbour as prototype,<br>
+   so need to include "hb_missing.h" in HWGUI.<br>
+   <br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetItemByName( arr, cName )</strong>
+   <br>Returns an object from an array by its name, which is kept as :objname.
+   <ul>
+     <li> arr - an array with HwGUI objects,
+     <li> cName - a name of HwGUI object.
+   </ul>
+
+   <p></p>
+   <br><strong class="subhead"> hwg_Version( n )</strong>
+   <br>Returns an information about current HwGUI version. The optional parameter defines
+   the kind of information:
+   <ul>
+     <li> n == 1:  returns a short string with version number, e.g. &quot;2.20&quot;,
+     <li> n == 2:  returns an integer build number,
+     <li> n == 3:  returns a logical value, which tells, if this is a UNICODE build,
+     <li> n is omitted: returns a string with full information.
+   </ul>
+   <p><b>Instructions for programmer, who publishes a new HWGUI release:</b><br>
+    Set release and build number in this include file before a new release is created:<br>
+    include\guilib.ch<br>
+    Reset the values of HWG_VERSION to "Code Snapshot" and<br>
+    HWG_BUILD to 0 after publification of a new HWGUI release.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_Trace()</strong>
+   <br>The function is intended for debugging purposes. It returns a current procedures stack.
+   <br>
+
+   <br><strong class="subhead"> hwg_WriteLog( cText [, fname] )</strong>
+   <br>Adds a text to a file, the function is intended for debugging purposes.
+   <ul>
+     <li> cText - the text to be written;
+     <li> fname - (optional) a file name, the default is &quot;a.log&quot;.
+   </ul>
+
+  <br><strong class="subhead"> void hwg_writelog( const char * sFile, const char * sTraceMsg, ... )( cText [, fname] )</strong><br>
+   C function simular to hwg_WriteLog, for use in C modules of your application.<br>
+   Adds a text to a file, the functions is intended for debugging purposes.
+   <ul>
+     <li> sTraceMsg - pointer to a string with the text to be written;
+     <li> sFile - (optional) pointer to a string with file name, the default is "ac.log", set to NULL for default value.
+   </ul>
+   <p>
+   A sample code snippet to log numeric values:<br>
+   &nbsp;&nbsp;&nbsp;char debug[100];<br>
+   &nbsp;&nbsp;&nbsp;int num = 1000;<br>
+   &nbsp;&nbsp;&nbsp;itoa(num,&debug,10);<br>
+   &nbsp;&nbsp;&nbsp;hwg_writelog(NULL,&debug);<br>
+   </p>
+
+
+   <br><strong class="subhead"> hwg_SetDlgKey( [oDlg], nCtrl, nKey, block [, lGlobal] )</strong>
+   <br>Sets a &quot;hot key&quot; for a window/dialog or globally - for all the application. There is
+   appropriate command, which is preprocessed into this function: <a href="hwgdoc_commands.html#Commands4-13"> SET KEY</a>.
+   <ul>
+     <li> oDlg - (optional, default value is default parent window) an object of subclass of HWindow, the window, a key is set for;
+     <li> nCtrl - a code of a control key (e.g. <code>FCONTROL</code>), 0 - if not defined;
+     <li> nKey  - a key code,
+     <li> block - a codeblock, which should be evaluated while pressing the key;
+     <li> lGlobal - (optional, default is .F.) - logical value, which determines, if the &quot;hot key&quot; is set globally.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ColorC2N( cColor )</strong>
+   <br>Converts color representation from string to numeric format.
+   <ul>
+     <li> cColor - a string in <code>#RRGGBB</code> format, describing the color;
+     <li> Return value - an integer representation of a color.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ColorN2C( nColor )</strong>
+   <br>Converts color representation from numeric to string format.
+   <ul>
+     <li> nColor - an integer representation of a color;
+     <li> Return value - a string in <code>RRGGBB</code> format, describing the color.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ColorN2RGB( nColor [, @nRed, @nGreen, @nBlue] )</strong>
+   <br>Converts color representation from one numeric value to three, which corresponds to red, green and blue.
+   You may get the result by passing parameters by reference or using the return value.
+   <ul>
+     <li> nColor - an integer representation of a color;
+     <li> nRed - (optional) red component, passed by reference;
+     <li> nGreen - (optional) green component, passed by reference;
+     <li> nBlue - (optional) blue component, passed by reference;
+     <li> Return value - an array of three numbers, which corresponds to red, green and blue color components.
+   </ul>
+
+   <br><strong class="subhead"> hwg_ColorRgb2N( nRed, nGreen, nBlue )</strong>
+   <br>Converts three color components (red, green and blue) to a numeric value.
+   <ul>
+     <li> nRed - red component;
+     <li> nGreen - green component;
+     <li> nBlue - blue component;
+     <li> Return value - a numeric color representation.
+   </ul>
+
+
+
+   <br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   Binary Container functions<br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   <br>
+   <br>
+   The usage of the Binary Container is demonstrated in sample program<br>
+   "samples/bincnts.prg".<br>
+   <br>
+   <br>
+
+   <br><strong class="subhead"> hwg_BmpFromRes( cBmp )</strong>
+   <br>Creates a bitmap from the data stored in the resources or in the binary container (if it is previously opened with hwg_SetResContainer() function).
+   In most cases you don't need to call this function directly, use <code>HBitmap():AddResource(cBmp)</code> instead.
+   <ul>
+     <li> cName - name of a <i>bmp</i> resource;
+     <li> Return value - handle of a bitmap;
+   </ul>
+
+   <br><strong class="subhead"> hwg_SetResContainer( cName )</strong>
+   <br>Opens a file of a binary container and sets is as a current for resources retrieving.
+   Corresponding command: <a href="hwgdoc_commands.html#Commands6-3"> SET RESOURCES CONTAINER TO</a>.
+   <ul>
+     <li>cName - a full path and name of a binary container;
+     <li>Return value - (logical) .T., if a file is opened successfully and .F. - in other case.
+   </ul>
+   <br>
+
+   <br><strong class="subhead"> hwg_GetResContainerOpen()</strong>
+   <br>Returns .T., if a binary container is open.<br>
+   <br>
+
+   <br><strong class="subhead"> hwg_GetResContainer()</strong>
+   <br>Returns the object of opened container, otherwise NIL.<br>
+   (because the object variable is static).<br>
+   <br>
+
+   <br><strong class="subhead"> hwg_ExtractResContItem2file(cfilename,cname)</strong>
+   <br>Extracts an item with name "cname" of an opened container to file "cfilename"<br>
+   (get file extension with function hwg_ExtractResContItemType() before)<br>
+   Returns .T., if success, otherwise .F.<br>
+   (for example if no match or container not open).<br>
+   <br>
+
+   <br><strong class="subhead"> hwg_ExtractResContItemType(cname)</strong>
+   <br>Extracts the type of item with name "cname" of an open container.<br>
+   Returns the type (bmp,png,ico,jpg) as a string.<br>
+   Empty string "", if container not open or no match<br>
+   <br>
+
+   <br><strong class="subhead"> hwg_ResContItemPosition(cname)</strong>
+   <br>Extracts the position number of item with name cname of an open container.<br>
+    Returns the position name of item in the container (numeric), <br>
+    0 , if no match or container not open.<br>
+    <br>
+
+   <br><strong class="subhead"> hwg_Bitmap2tmpfile(objBitmap , cname , cfextn)</strong>
+   <br> Creates a temporary file from a bitmap object<br>
+   Avoids trouble with imcompatibility of image displays.<br>
+   Almost needed for binary container.<br>
+   <br>Parameters:<br>
+   <ul>
+     <li>objBitmap    - object from resource container (from HBitmap class);
+     <li>cname        - resource name of object;
+     <li>cfextn       - file extension, for example "bmp" (Default);
+     <li>Return value - (logical) .T., if a file is opened successfully and .F. - in other case.
+   </ul>
+   <br>
+  Returns:<br>
+  <br>
+  &nbsp;The temporary file name,<br>
+  &nbsp;empty string, if error occured.<br>
+  &nbsp;Don't forget to delete the temporary file after usage.<br>
+  <br>
+  &nbsp;Example:<br>
+  <br>
+  &nbsp; LOCAL ctmpbmpf<br>
+  &nbsp; ctmpbmpf := hwg_Bitmap2tmpfile(obitmap , "sample" , "bmp")<br>
+  &nbsp; hwg_MsgInfo(ctmpbmpf,"Temporary image file") && display temporary filename for test<br>
+  &nbsp; IF .NOT. EMPTY(ctmpbmpf)<br>
+  &nbsp;&nbsp;...<br>
+  &nbsp; ENDIF<br>
+  &nbsp; ERASE &ctmpbmpf<br>
+  <br>
+  <br><strong class="subhead"> Reference:</strong><br>
+  &nbsp;Read more about the usage of this functions in the documentation<br>
+  &nbsp;of the Binary Container Manager in the utils/bincnt directory and<br>
+  &nbsp;in the inline comments of sample program "samples/bincnts.prg".<br>
+  <br>
+
+
+
+   <br><br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   End of Binary Container functions<br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   <br>
+
+   <br><strong class="subhead"> hwg_SetCtrlName( oCtrl, cName )</strong>
+   <p>
+   </p>
+
+   <br><strong class="subhead"> hwg_MemoEdit(mpmemo , cTextTitME , cTextSave ,  cTextClose ,
+  cTTSave , cTTClose , oHCfont )</strong>
+   <p>
+   Standard dialog for editing memo fields.<br>
+   Usage see sample program demodlgbox.prg.<br>
+   (Simple file editor).<br>
+   Can be also used for editing memo fields in a database by
+   the usage of an UDF (user defined function).<br>
+   Could substitute the internal memo edit dialog of the<br>
+   HBROWSE class, if necessary by UDF usage.<br>
+   <br>
+   Parameters (Default values in brackets):<br>
+   mpmemo : The memo field to edit<br>
+   <br>
+   For National Language Support (NLS),<br>
+   for title, button's caption and tooltips (cTT..) :<br>
+   <br>
+   cTextTitME : Title of Dialog ("Memo Edit")<br>
+   cTextSave  : ("Save")<br>
+   cTextClose : ("Close")<br>
+   cTTSave    : ("Save modifications and close")<br>
+   cTTClose   : ("Close without saving modifications")<br>
+   <br>
+   oHCfont    : Font object for HCEDIT in dialog(&lt;NONE&gt;)<br>
+   <br>
+   Returns the edited memo. If cancelled, the previous memo value<br>
+   is returned.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_RefreshAllGets( oDlg )</strong>
+   <br>Refresh the state of all GET-elements in a window.
+   <ul>
+     <li> oDlg - the window with GET-elements, an object of one of subclasses of HWindow.
+   </ul>
+
+   <br><strong class="subhead"> hwg_IsCtrlShift( lCtrl, lShift )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetSkip( oParent, hCtrl, nSkip, lClipper )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetGetUpdated( o )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetColorinFocus( lDef, tColor, bColor )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Chr( nCode )</strong>
+   <br><strong class="subhead"> hwg_Substr( cString, nPos, nLen )</strong>
+   <br><strong class="subhead"> hwg_Left( cString, nLen )</strong>
+   <br><strong class="subhead"> hwg_Len( cString )</strong>
+   <p></p>
+   <br><strong class="subhead"> hwg_Array_Len(ato_check)</strong>
+   <p>
+      Returns the number of elements of an array.<br>
+      Fixes the following problem:<br>
+      LEN(array) crashes with<br>
+      "Argument error", if array initialized<br>
+      with empty value: array := {}<br>
+      In this case, this function<br>
+      returns correctly 0.<br>
+      Also returns 0, if array is NIL.<br>
+      Example:<br>
+      To create and fill an array the following<br>
+      example sequence is most suitable:<br>
+      &nbsp;LOCAL anewarray<br>
+      &nbsp;anewarray := {}<br>
+      &nbsp;* --- let array empty for test<br>
+      &nbsp;* AADD(anewarray,"One")<br>
+      &nbsp;* AADD(anewarray,"Two")<br>
+      Now get the length:<br>
+      &nbsp;? LEN(anewarray)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; && crashes here<br>
+      &nbsp;? HWG_ARRAY_LEN(anewarray) &nbsp;&nbsp; && 0<br>
+   </p>
+
+   <br><strong class="subhead"> hwg__isUnicode()</strong>
+   <p>Returns .T., if program is running with UTF-8 support.<BR>
+      This function works also on GTK cross development environment.<BR>
+      Windows operating system does not support Unicode.<BR>
+      Result may decide the setting of the local codepage for correct display.
+  </p>
+
+   <br><strong class="subhead"> hwg_GetPrinters()</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Createfont( fontName, nWidth, nHeight, fnWeight, fdwCharSet, fdwItalic, fdwUnderline, fdwStrikeOut )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetFontsList()</strong>
+   <p>
+    Windows 10: Always returns an empty list.<br>
+    GTK: Do not use yet, crashes with core dump. Need to fix.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_HdSerial( cDrive )</strong> (Windows only)
+   <p>
+   Returns the drive serial number as hex value.<br>
+   cDrive must be a path to the device, for<br>
+   example "C:\".<br>
+   cDrive may be empty for recent drive.<br>
+   For compatibility purposes on GTK this function<br>
+   exists and returns forever an empty string "".<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_HdGetSerial( cDrive )</strong> (Windows only)
+   <p>
+   Returns the drive serial number as numeric value.
+   cDrive must be a path to the device, for
+   example "C:\".
+   cDrive may be empty for recent drive.
+   This is the same as Harbour function VolSerial() on contrib/hbct.
+   In case of errors, the funtion return -1.
+   For compatibility purposes on GTK this function
+   exists and returns forever -1.
+   </p>
+
+   <br><strong class="subhead"> Hwg_GetIni( cSection, cEntry, cDefault, cFile )</strong> (Windows only)
+   <p>
+   Reads a value from an ini file.<BR>
+   See additional instructions at description of Hwg_WriteIni().
+   </p>
+
+   <br><strong class="subhead"> Hwg_WriteIni( cSection, cEntry, cValue, cFile )</strong> (Windows only)
+   <p>Stores and modifies an ini file. The storage location of the file<BR>
+      depends on the the Windows version.<BR>
+      Example for Windows 10:<BR>
+      C:\Users\&lt;user&gt;\AppData\Local\VirtualStore\Windows\HwGui.ini<BR>
+      This is the directory, where the sample program<BR>
+      "samples\demoini.prg" creates the ini file.<BR>
+      <BR>
+      For multi platform use:<BR>
+      Look into the Source code of Harbour:<BR>
+      The following files contains classes and functions for<BR>
+      handling Windows style ini files:<BR>
+       - src\rtl\hbini.prg<BR>
+       - tests\inifiles.prg : Class library from Matthew Hamilton (CLASS TIniFile).<BR>
+      For an extented version with additional functions look at project CLLOG:<BR>
+       https://sourceforge.net/projects/cllog/<BR>
+       File: src\libini.prg<BR>
+      The main section is in file "logw.prg".<BR>
+      Use this as sample for creating your own system<BR>
+      handling ini files. The program code contains<BR>
+      many inline comment with instructions for use<BR>
+      in english and german language.<BR>
+    </p>
+
+   <br><strong class="subhead"> hwg_TxtRect( cTxt, oWin, oFont )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ErrMsg( oError )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShellNotifyIcon( lAdd, hWnd, hIcon, cTooltip )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShellModifyIcon( hWnd, hIcon, cTooltip )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShellExecute( cFile, cOperation, cParams, cDir, nFlag )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetLocaleInfo()</strong><br>
+   Returns the recent language setting (National Language Support,<br>
+   for setting the language of your application).<br>
+   Windows: Returns the value of function call GetLocaleInfo(LOCAL_USER_DEFAULT,...).<br>
+   This is forever ";".
+   LINUX: Returns the value of setlocale(LC_CTYPE,NULL)<br>
+   To get all possible values on your system, look to the output of the command "locale -a".<br>
+   The type of return value is a string.
+   <p></p>
+
+   <br><strong class="subhead"> Hwg_SetDlgResult( handle, nValue )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetCapture( hWnd )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ReleaseCapture()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_CopyStringToClipboard( cString )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetClipboardText( hWnd )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetStockObject( nId )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_LoWord( n )</strong>
+   <br>Retrieves the low-order word from the specified 32-bit value.
+   <ul>
+     <li> n - the value to be converted;
+     <li> Return value - the low-order word of the specified value.
+   </ul>
+
+   <br><strong class="subhead"> hwg_HiWord( n )</strong>
+   <br>Retrieves the high-order word from the specified 32-bit value.
+   <ul>
+     <li> n - the value to be converted;
+     <li> Return value - the high-order word of the specified value.
+   </ul>
+
+   <br><strong class="subhead"> hwg_BitOr( n1, n2 )</strong>
+   <br><strong class="subhead"> hwg_BitOr_Int( n1, n2 )</strong>
+   <br><strong class="subhead"> hwg_BitAnd( n1, n2 )</strong>
+   <br><strong class="subhead"> hwg_BitAndInverse( n1, n2 )</strong>
+   <br><strong class="subhead"> hwg_SetBit( n, nBit )</strong>
+   <br><strong class="subhead"> hwg_CheckBit( n, nBit )</strong>
+   <br>Bit functions as in Harbour ( hb_bitand(),... ).
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetBitByte(nbyte,npos,nvalue)</strong>
+   <br> Sets a bit in one byte<br>
+   nbyte  : The input byte as numeric value, transform from C with Harbour function ASC(), 0 ... 255<br>
+   npos   : The position of byte to set, 1 ... 8<br>
+   nvalue : Set to 0 or 1, all other bytes returns the input value<br>
+   <br>
+   Returns the new byte of the modified byte as numeric<br>
+   value, convert it with CHR() to C.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Sin( n )</strong>
+   <br><strong class="subhead"> hwg_Cos( n )</strong>
+   <br><strong class="subhead"> hwg_PI()</strong>
+   <br>Three mathematical functions.
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ClientToScreen( handle, x1, y1 )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ScreenToClient( handle, x1, y1 )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetCursorPos()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetCursorPos( x, y )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_WinExec( cCommand, nFlag )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetKeyboardState( nState )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Getkeystate( nKey )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetKeyNameText( nCode )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Pts2Pix( nPoints [,hDC] )</strong> (Windows only)
+   <p></p>
+
+
+   <br><strong class="subhead"> hwg_ShowCursor(lcursor , hwindow , ndefaultcsrtype)</strong>
+   <p>
+   Hides or recovers (displays) the mouse cursor.<br>
+   No return value.<br>
+   <br>
+   This feature is also helpful for computers with touchscreen.<br>
+   The behavior on GTK and Windows differs.<br>
+   First parameter: .F. hides the cursor, .T. recovers it.<br>
+   Do not forget, that the mouse action is forever active, only you<br>
+   cannot see the cursor.<br>
+   Use compiler switch "#ifdef __GTK__" to activate the individual function call<br>
+   on WinAPI or GTK for multi platform applications.<br>
+   For details see inline comments in sample program<br>
+   "demofunc.prg".<br>
+   <br>
+   WinAPI:<br>
+   Use this function only with first parameter, the second and third parameter are ignored.<br>
+   If used the 2nd and 3rd parameter (as a dummy for multi platform),<br>
+   be shure that they are not NIL,<br>
+   because the program crashes with argument error.<br>
+   The function has effect on all windows of the application<br>
+   (main window and child windows),<br>
+   also on internal HWGUI dialogs like hwg_msginfo().<br>
+   so only one call of this function is needed for the whole application.<br>
+   Parameter lcursor:<br>
+   - .T. increases the cursor display counter by 1.<br>
+   - .F. decrement it by 1.<br>
+   return value:<br>
+   Type = int, specifies the new display counter.<br>
+   The cursor is displayed, if greater or equal 0.<br>
+   Initial value is 0, if mouse is installed,<br>
+   otherwise -1.<br>
+   <br>
+   GTK:<br>
+   The function has only effect on one window, the handle of the window<br>
+   desired for hiding the cursor must be delivered in parameter 2.<br>
+   The parameter 3 is needed for recovery.<br>
+   Repeat function for every window.<br>
+   Has no effect on special HWGUI dialogs like hwg_msginfo().<br>
+   Return values:<br>
+   0:  cursor visible<br>
+   -1: cursor hidden.
+   <br>
+   State of development: Only on LINUX the recovery crashes (range overflow).<br>
+   As a substitute, the cursor is recovered with type GDK_ARROW, which<br>
+   seems to be standard cursor.<br>
+   This function works also on GTK cross development environment.<BR>
+   </p>
+
+   <br><strong class="subhead"> hwg_GetCursorType()</strong> (GTK only)
+   <p>
+   In usage together with hwg_ShowCursor().<br>
+   Call this function in main section to save the old mouse cursor style<br>
+   in a numeric variable for later recovery after hiding it.<br>
+   For details see hwg_ShowCursor() and inline comments in sample program<br>
+   "demofunc.prg".<br>
+   Use compiler switch "#ifndef __GTK__" to hide the function call on WinAPI<br>
+   for multi platform applications.<br>
+   For recent bug in GTK on LINUX see description of hwg_ShowCursor().<br>
+   <br>
+   Some standard curser styles are defined in:<br>
+   include\gtk-2.0\gdk\gdkcursor.h<br>
+   This function works also on GTK cross development environment.<BR>
+   </p>
+
+   <br><strong class="subhead"> hwg_SetApplocale(cLocale)</strong> (GTK only)
+   <p>
+   cLocale: The locale string.<br>
+   Sets the locale for the HWGUI program.<br>
+   For WinAPI available, but function body is empty<br>
+   for compatibility purpose.<br>
+   Before calling this function, the desired locale must<br>
+   be requested with the REQUEST command.<br>
+   </p>
+
+
+   <br><strong class="subhead"> hwg_BaseName ( pFullpath )</strong>
+   <p>
+   Extracts the filename from a path string.<br>
+   Returns the extracted path.<br>
+   Is equivalent to the UNIX command "basename".<br>
+   A trailing / or \ is deleted.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_Dirname ( pFullpath )</strong>
+   <p>
+   Extracts the filename from a path string.<br>
+   Returns the extracted file name.<br>
+   Is equivalent to the UNIX command "dirname".<br>
+   A trailing \ or / is deleted.<br>
+   At recent directory it returns "." .<br>
+   <br>
+   With this rules a path can be combined like this sample:<br>
+   newname = hwg_Dirname("C:\") + "\" + "hugo.txt"<br>
+   <br>
+   Special case on Windows for example<br>
+   (should appear seldom):<br>
+   Fullpath ="C:hugo.txt"<br>
+   <br>
+   Handle this case as following:<br>
+   IF RAT(hwg_GetDirSep(),Fullpath) == 0 .AND. RAT(":",Fullpath) != 0<br>
+   &nbsp; newname = hwg_Dirname("Fullpath") + "hugo.txt"<br>
+   ELSE<br>
+   &nbsp; newname = hwg_Dirname("Fullpath") + "\" + "hugo.txt"<br>
+   ENDIF<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_CleanPathname ( pSwithdbl )</strong>
+   <p>
+   Reduce \\ to \  or // to / in pSwithdbl<br>
+   (depends on operating system).<br>
+   For handling of file and path names.<br>
+   Returns the path value with reduced number of slashes or backslashes.<br>
+   Avoids for example "C:\\".
+   </p>
+
+
+   <br><strong class="subhead"> hwg_GetWindowsDir()</strong> (Windows only)
+   <p>
+   In most cases, the value is "C:\Windows".<BR>
+   This function works also on GTK cross development environment.<BR>
+   Is available on other operating systems for compatibility,<BR>
+   then returns forever an empty string ("").
+   </p>
+
+   <br><strong class="subhead"> hwg_GetSystemDir()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetTempDir()</strong>
+   <p>
+   Returns the path of the temporary directory.<BR>
+   Value depends on the version of the operating system.<BR>
+   This function works also on GTK cross development environment.<BR>
+   Windows: In most cases, the value is "C:\Users\&lt;userid&gt;\AppData\Local\Temp\".<BR>
+   LINUX/UNIX: In most cases, the value is "/tmp" or "/var/tmp".<BR>
+   First the function reads the environment variable "TMPDIR" and<BR>
+   returns this value. If the TMPDIR variable does not exist, it returns<BR>
+   as default value "/tmp".<br>
+   This function works also on GTK cross development environment.<BR>
+    </p>
+
+   <br><strong class="subhead"> hwg_CreateTempfileName(cPrefix , cSuffix)</strong>
+   <p>
+    Generates a unique full path and file name string for a temporary file.<br>
+    Format is:<br>
+    &lt;path to temporary directory&gt;+&lt;cPrefix&gt;999999&lt;cSuffix&gt;<br>
+    <br>
+    - The number is derived from return value of the SECONDS() function,<br>
+      &nbsp;&nbsp;&nbsp;so every hundreth second an new name is created.<br>
+      &nbsp;&nbsp;&nbsp;The returned number is of type integer.<br>
+      &nbsp;&nbsp;&nbsp;Range is from 0 to 8639900 (86399 * 100).<br>
+    - Parameters cPrefix and cSuffix are optional.<br>
+    - Default values: cPrefix = "e", cSuffix = ".tmp".<br>
+    - &lt;path to temporary directory&gt; is returned from hwg_GetTempDir().<br>
+      &nbsp;&nbsp;&nbsp;Directory separator is suitable to used operating system.<br>
+    - If you need more than one temporary file at one time,<br>
+      &nbsp;&nbsp;&nbsp;use different prefixes or suffixes.<br>
+    <br>
+    Sample:<br>
+    &nbsp;&nbsp;&nbsp;cTmp := hwg_CreateTempfileName("pre",".ext")<br>
+    <br>
+    Don't forget to delete the created file(s) after usage by<br>
+    &nbsp;&nbsp;&nbsp;FErase( cTmp )<br>
+    <br>
+    All characters for cPrefix and cSuffix are allowed, if supported by <br>
+    operating system for file and directory names (without directory separators).<br>
+    For best multi platform compatibilty we recommend to use only<br>
+    ASCII letters in lower case (a ... z).<br>
+    This function works also on GTK cross development environment.<BR>
+   </p>
+
+   <br><strong class="subhead"> hwg_CompleteFullPath()</strong>
+   <p>
+    Don't matter about a path string returned by several functions,<br>
+    if they are terminated with a trailing directory separator or not.<br>
+    This function adds the trailing directory separator,<br>
+    if it is not existing.<br>
+    So you can concatenate a normal file name<br>
+    to get full file name + path.<br>
+    Example:<br>
+    &nbsp;&nbsp;&nbsp;cp := hwg_CompleteFullPath( hwg_GetWindowsDir() ) + "filename.bin"<br>
+    hwg_GetWindowsDir() returns "C:\Windows", then<br>
+    cp was completed to:
+    &nbsp;&nbsp;&nbsp;"C:\Windows\filename.bin".<br>
+    Other example:<br>
+    hwg_GetTempDir() returns:<br>
+    &nbsp;&nbsp;&nbsp;"C:\Users\alex\AppData\Local\Temp\"<br>
+    so <br>
+    &nbsp;&nbsp;&nbsp;cp := hwg_CompleteFullPath( hwg_GetTempDir()  ) + "filename.bin"<br>
+    was completed to:<br>
+    &nbsp;&nbsp;&nbsp;"C:\Users\alex\AppData\Local\Temp\filename.bin".<br>
+    On UNIX/LINUX the functions handle the separator "/"<br>
+    in the same way as "\".<br>
+    This function works also on GTK cross development environment.<BR>
+   </p>
+
+
+   <br><strong class="subhead"> hwg_ProcFileExt(pFiname,pFiext,lupper,ctestdirsep)</strong>
+   <p>
+     Process file name extension:<br>
+     Add file extension, if not available<br>
+     or replace an existing extension.<br>
+     pFiname : The filename to be processed<br>
+     pFiext  : The new file extension<br>
+     lupper  : Windows only (parameter ignored on UNIX/LINUX):<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set to .T. , if extension is set to upper case<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .F. : preserve case (default)<br>
+     ctestdirsep : Only for test purposes:<br>
+     Modifies the directory separator, default<br>
+     is the return value of function hwg_GetDirSep(),<br>
+     so it is assigned correct by the used operating system.<br>
+     <br>
+     Sample call: hwg_ProcFileExt("TEST.TXT","PRG")<br>
+     returns the value "TEST.PRG"<br>
+     pFiname may contain a full path.<br>
+     DOS, Windows and UNIX/LINUX filenames<br>
+     are supported.<br>
+     Sample usage the sample program "samples\demofunc.prg".<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_Postquitmessage( nExitCode )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetDesktopWidth()</strong>
+   <br>Returns a width of a desktop in pixels.
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetDesktopHeight()</strong>
+   <br>Returns a height of a desktop in pixels.
+   <p></p>
+
+   <p><br>
+   Additional information for functions hwg_GetDesktopWidth() and hwg_GetDesktopWidth():<br>
+   As reported with bug ticket #112, on newer GCC and Windows versions the<br>
+   main window is not opened in full size.<br>
+   <br>
+   A quick fix is reported like this code snippet:<br>
+   INIT WINDOW oFormMain MAIN AT -7,0 SIZE hwg_Getdesktopwidth()+14,hwg_Getdesktopheight()+14<br>
+   <br>
+   Please check by compiling the test program<br>
+   test\ticket112.prg.<br>
+   If the main window appears nearly in full size, than this is the<br>
+   intermediate solution.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_GetWorkArea()</strong> (Windows only)
+   <br>Returns an array with coordinates of a desktop without taskbar
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetNextDlgTabItem ( parentHandle, ::handle, lNext )</strong> (Windows only)
+   <br>Returns a handle of a next or previous control in a window.
+   <ul>
+     <li> parentHandle - handle of a parent window;
+     <li> handle - handle of a current control;
+     <li> lNext - .T., if a next control is demanded, .F. - if the previous;
+     <li> Return value - handle of a next or previous control.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Sleep( n )</strong>
+   <br>
+   Delays a process.<br>
+   n: Sleep time in seconds<br>
+   On WInAPI, the function Sleep() is used.<br>
+   On other operating systems<br>
+   the function usleep()<br>
+   from standard C library is used<br>
+   (see also hwg_Sleep_C() ).<br>
+   An internal multiplication with 1000<br>
+   passes the value to usleep() in seconds.<br>
+   <br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Sleep_C(n)</strong>
+   <br>
+   Delays a process.<br>
+   n: Sleep time in milli seconds<br>
+   (see also function hwg_Sleep().<br>
+   Uses the function usleep()<br>
+   from standard C library.<br>
+   (it seems to be for more precise processing)<br>
+   Additional information:<br>
+   The n argument must be less than 1 000 000.<br>
+   If the value of useconds is 0,<br>
+   then the call has no effect.<br>
+   The function usleep() is depricated and should be<br>
+   substituded by the modern timer functions.<br>
+
+   <br>
+
+
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetScrollInfo( handle, nType, nRedraw, nHScrollPos , nPage, nHscrollMax )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetScrollRange( handle, nType, @minPos, @maxPos )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetScrollRange( handle, nType, minPos, maxPos )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetScrollPos( handle, nType )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetScrollPos( handle, nType, nPos )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShowScrollBar( handle, nType, lShow )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ScrollWindow( handle, n1, n2 )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isCapslockActive()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isNumlockActive()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isScrolllockActive()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_CreateDirectory( cDirName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RemoveDirectory( cDirName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetCurrentDirectory( cDirName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DeleteFile( cFileName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetFileAttributes( cFileName )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_SetFileAttributes( cFileName, nAttr )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetComputerName()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetUserName( [@nLength] )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_PtrToUlong( ptr )</strong>
+   <br>Converts a variable of Pointer type to a long integer. This is necessary in some cases for handling parameters of system messages.
+   <ul>
+     <li> ptr - a variable of Pointer type;
+     <li> Return value - long integer.
+   </ul>
+
+   <br><strong class="subhead"> hwg_Isptreq( handle1, handle2 )</strong>
+   <br>Compares two pointers, returns .T., if they are equal.
+   <p></p>
+
+   <br><strong class="subhead"> hwg_OutputDebugString( cText )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Getsystemmetrics( nCode )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetBackBrush( handle )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_LastKey()</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isWindows()</strong><br>
+   Returns .T., if Windows is the recent operation system.<br>
+   This function works also on GTK cross development environment.<br>
+   Windows is detected by the Harbour internal compiler flag "__PLATFORM__WINDOWS".<br>
+   This function helps to avoid the use of compiler flags in your application.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isWin7()</strong>
+   <br>Returns .T., if Windows version is 7.<br>
+   This function works also on GTK cross development environment.<br>
+   Is available on other operating systems for compatibility,<br>
+   then returns forever .F. .
+   <p></p>
+
+   <br><strong class="subhead"> hwg_isWin10()</strong><br>
+   Returns .T., if Windows version is 10.<br>
+   This function works also on GTK cross development environment.<br>
+   Is available on other operating systems for compatibility,<br>
+   then returns forever .F. .
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetWinMajorVers()</strong><br>
+   Returns the major version of Windows.<br>
+   This function works also on GTK cross development environment.<br>
+   Is available on other operating systems for compatibility,<br>
+   then returns forever -1.
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetWinMinorVers()</strong><br>
+   Returns the minor version of Windows.<br>
+   This function works also on GTK cross development environment.<br>
+   Is available on other operating systems for compatibility,<br>
+   then returns forever -1.
+   <p></p>
+
+   <br><strong class="subhead"> hwg_DefUserLang()</strong><br>
+   Returns the Windows LCID (Windows Language Code Identifier) for language<br>
+   setting of the current user in a string.<br>
+   Sample: de-DE  "1031" ==&gt; 0x407<br>
+   This function works also on GTK cross development environment.<br>
+   Is available on other operating systems for compatibility,<br>
+   then returns forever "-1".
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetLocaleInfoN()</strong><br>
+   Returns the Windows LCID (Windows Language Code Identifier), type = int.<br>
+   The value is not so suitable (using another function of the WinAPI).<br>
+   For better result use the function hwg_GetLocaleInfo() to get the recent language
+   setting (for national language support, setting the language of your application).<br>
+   Sample: Return 2 for german.<br>
+   This function works also on GTK cross development environment.<br>
+   Is available on other operating systems for compatibility,<br>
+   then returns forever -1.
+   <p></p>
+
+
+     <br><strong class="subhead"> hwg_ChDir(cdirectory)</strong>
+     <p>Change directory:<br>
+     Harbour function ft_chdir() only available Harbour 3.4 and up,<br>
+     so this function is instead OK for all platforms<br>
+     and Harbour 3.2 and up.<br>
+     <br>
+     To supply a Harbour Terminal/Console application with this function,<br>
+     add following code into one of your *.prg file (inline C implementation):<br>
+     <br>
+     #pragma BEGINDUMP<br>
+     <br>
+     <br>
+     #if defined(__linux__) || defined(__unix__)<br>
+     #include &lt:unistd.h&gt;<br>
+     #else<br>
+     #ifdef __APPLE__<br>
+     #include &lt;unistd.h&gt;<br>
+     #else<br>
+     #include &lt;io.h&gt;<br>
+     #endif<br>
+     #endif<br>
+     <br>
+     #include "hbapi.h"<br>
+     #include "hbapifs.h"<br>
+     <br>
+     HB_FUNC( HWG_CHDIR )<br>
+     {<br>
+       hb_retl( HB_ISCHAR( 1 ) && chdir( hb_parc( 1 ) ) );<br>
+     }<br>
+     <br>
+     #pragma ENDDUMP<br>
+     <br>
+     This is checked on LINUX and MacOS with GCC,<br>
+     Windows with MinGW and BCC.<br>
+     Ignore warning with BCC:<br>
+     Call to function 'chdir' with no prototype in function HB_FUN_HWG_CHDIR<br>
+     Not checked on other Compilers (Pelles C, ...)<br>
+     We will add the test results as soon as possible) <br>
+     ==&gt; find this sequence in sample program "demofunc.prg"<br>
+     and test program "test/test_origin_cons".<br>
+     </p>
+
+   <br><strong class="subhead"> hwg_ProcessRun( cCommand )</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_RunConsoleApp( cCommand [, cOutFile]  [,lshow] )</strong>
+   <br>Executes a console program in sync mode, waiting for result.
+   <ul>
+     <li> cCommand - a command line to execute;
+     <li> cOutFile - optional parameter, a file name for program output;
+     <li> Return value - (integer) program exit code.
+   </ul>
+   <p>
+   <br>
+   lshow :<br>
+   (Windows only, this parameter ignored on other operating systems)<br>
+   Set to .T., to set STARTUPINFO.wShowWindow to SW_SHOW.<br>
+   Default is .F., set to SW_HIDE.<br>
+   SW_SHOW is needed for programs, starting in console mode,<br>
+   but opens child window(s). Otherwise they are running<br>
+   in background. For example:<br>
+   Running ZBar (QR decoder reading QR codes from camera)<br>
+   the sub window does not appear if SW_HIDE,<br>
+   so cannot use the camera for scanning QR code.<br>
+   See sample program and information.<br>
+   <br>
+   Exit codes WinAPI:<br>
+   1: Cannot create output pipe<br>
+   2: Failure of: Ensure the read handle to the pipe for STDOUT is not inherited<br>
+   3: Cannot create process<br>
+   otherwise:<br>
+   Return code of GetExitCodeProcess() function call.<br>
+   Attention !<br>
+   Do not call internal commands of the command shell "cmd"<br>
+   (for example cmd -c "dir")
+   direct, otherwise the program freezes, so it must be terminated by.<br>
+   the Task Manager.<br>
+   <br>
+   Exit Codes UNIX/LINUX/MacOS:<br>
+   0: Success<br>
+   -1: no file to run<br>
+   <br>
+   </p>
+
+    <br><strong class="subhead"> hwg_RunConsApp( cCommand )</strong> (GTK LINUX and MacOS only)
+   <br>Executes a console or GUI program in async mode.
+   <ul>
+     <li> cCommand - a command line to execute;
+     <li> Return value - (integer) program exit code.
+   </ul>
+   <p>
+   For details read instructions in sample program tststconsapp.prg,<br>
+   it demonstrates the usage of<br>
+   - hwg_RunApp() (async mode)<br>
+   - hwg_RunConsoleApp() (sync mode)<br>
+   - hwg_RunConsApp() (async mode, GTK)<br>
+   - hwg_ShellExecute() (under construction, will be added later)<br>
+   Be pleasant, to try, what is the best for your HWGUI application.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_RunApp( cCommand [, nFlag] [, lAsync] )</strong><br>
+   Runs an external program (async mode).<br>
+   On LINUX/GTK and MacOS/GTK the are some restrictions,<br>
+   for details read instructions in sample program tststconsapp.prg.<br>
+   <br>
+   <br> Parameter 1: command line (mandatory):
+    <br>
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We suggest to set up a command line including the full path.
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If the called application is in the current directory,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use the functions hwg_GetDirSep() and Curdir()
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for combinding the recent directory + program file call.
+    <br>
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Calling a program by using a full path, we strictly recommend to use the
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ft_origin() functionality, described in this chapter at the beginnung.
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Change to directory, were the EXE file is located, and than open files and databases in this directory.
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For details read the comment line instructions of sample programs "demofunc.prg" and "tststconsapp.prg".
+    <br>
+    <br>
+    <br> Curdir() (a Harbour function):
+    <br>
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns the current directory.
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you combine full path items, don't
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; forget to get the OS dependant
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; directory seprator character with
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; function hwg_GetDirSep()
+    <br>
+    <br>
+    <br> Windows:
+    <br> Parameter 2, nFlag:
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Is uCmdShow : For possible values see description of WinAPI function ShowWindow()
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Default is SW_SHOW (Activates the window and displays it in its current size and position).
+    <br>
+    <br> Parameter 3, lAsync:
+    <br> &nbsp;.F. or NIL: Function WinExec(LPCSTR lpCmdLine, UINT uCmdShow) of WinAPI used,
+    <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             Starts program asynchronious.
+    <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             Return value is of type N, if function succeeds, the value is greater than 31.
+    <br> &nbsp;.T. : Function CreateProcess(..) of WinAPI used,
+    <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns NIL.
+    <br>
+    <br>LINUX (GTK2 and GTK3): asynchronious start:
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uses function g_spawn_command_line_async(),
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parameters 2 and 3 are ignored.
+    <br>
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Return value is of type N, if function succeeds, the value is greater than 0
+    <p></p>
+
+  <br><strong class="subhead"> hwg_RdLn(nhandle,lrembltab)</strong>
+  <br>
+   &nbsp; Reads a single text line from a textfile,<br>
+   &nbsp;  very comfortable usage, the line endings<br>
+   &nbsp;  are autodetected, so independant of used<br>
+   &nbsp;  operation system.<br>
+   &nbsp;  ( It is not important, if line ending<br>
+   &nbsp;    is CRLF or LF or CR.)<br>
+   &nbsp; &nbsp;   CRLF = 0x0D + 0x0A =  CHR(13) + CHR(10) (Windows/DOS)<br>
+   &nbsp; &nbsp;   CR&nbsp;&nbsp;   = 0x0D = CHR(13) (MacOS)<br>
+   &nbsp; &nbsp;   LF&nbsp;&nbsp;   = 0x0A = CHR(10) (UNIX/LINUX)<br>
+   &nbsp; (function is an equivalent to Pascal's Rdln() function )<br>
+   <br>
+   &nbsp;  nhandle : The file handle<br>
+   <br>
+   &nbsp; rembltab: If set .T. , the blanks and tab characters are removed<br>
+   &nbsp;&nbsp; at end of line<br>
+   &nbsp;&nbsp; (default is .F.)<br>
+   <br>
+   &nbsp; returns:<br>
+   &nbsp; an array with 4 elements:<br>
+   <br>
+   &nbsp; 1. The line read<br>
+   &nbsp; &nbsp; EOF or error    : "" (empty string)<br>
+   &nbsp; 2: EOF flag, EOF = .T.<br>
+   &nbsp; &nbsp; For usage in a DO WHILE read loop<br>
+   &nbsp; 3: The number of bytes read at least<br>
+   &nbsp; &nbsp; EOF or error    : < 1<br>
+   &nbsp; 4: The type of line ending detected<br>
+   &nbsp; &nbsp; ( of type C with one character)<br>
+   &nbsp; &nbsp; (only for debugging prurposes)<br>
+   <br>
+   &nbsp; &nbsp; &nbsp; W =  Windows/DOS<br>
+   &nbsp; &nbsp; &nbsp; L =  UNIX/LINUX<br>
+   &nbsp; &nbsp; &nbsp; M =  MacOS<br>
+   &nbsp; &nbsp; &nbsp; U =  unknown (possible try read from binary file,<br>
+   &nbsp; &nbsp;&nbsp; &nbsp; error or EOF reached without line ending)<br>
+   <br>
+   &nbsp; All line endings and the EOF marker CHR(26) are removed,<br>
+   &nbsp; so the output string contains only the pure text from input line<br>
+   &nbsp; Blank lines at end after the last filled line are ignored<br>
+   &nbsp; (handled as EOF reached)<br>
+   <br>
+   <p></p>
+
+
+   &nbsp; Advice:<br>
+   &nbsp; For usage in Harbour console application<br>
+   &nbsp; copy the code of 4 functions<br>
+   &nbsp; hwg_RdLn(), hwg_RmCr(), hwg_RmBlTabs() and hwg_max()<br>
+   &nbsp; into your application.<br>
+   &nbsp; Find them in HWGUI source code file:<br>
+   &nbsp; source\cross\hmisccross.prg<br>
+   <br>
+   <p>
+   &nbsp; Here a code sample snippet to read a text file:<br>
+   &nbsp; * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   &nbsp;  LOCAL lEOF, arrrea<br>
+   &nbsp;  lEOF := .F.<br>
+   &nbsp;  * Open the input text file<br>
+   &nbsp;  handle := FOPEN("textfile_Win.txt",0)<br>
+   &nbsp;    * read the input file<br>
+   &nbsp;    DO WHILE .NOT. lEOF<br>
+   &nbsp;  &nbsp;   arrrea := hwg_RdLn(handle)<br>
+   &nbsp;  &nbsp;   * Detect EOF<br>
+   &nbsp;  &nbsp;   IF arrrea[2]<br>
+   &nbsp;  &nbsp;&nbsp;    lEOF := .T.<br>
+   &nbsp;  &nbsp;   ELSE<br>
+   &nbsp;  &nbsp;&nbsp;   * Process data read delivered in arrrea[1]<br>
+   &nbsp;  &nbsp;&nbsp;   * ...<br>
+   &nbsp;  &nbsp;   ENDIF<br>
+   &nbsp;  ENDDO<br>
+   &nbsp;  FCLOSE(handle)<br>
+   &nbsp; * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   </p>
+   <p></p>
+
+  <br><strong class="subhead"> hwg_RmCr(xLine)</strong>
+   <br>
+   Remove MacOS line ending (CR)<br>
+   Only for internal use of hwg_RdLn()<br>
+   <br>
+   <p></p>
+
+  <br><strong class="subhead"> hwg_RmBlTabs(xLine)</strong>
+   <br>
+   Remove not needed blanks or tabs at end of line<br>
+   Only for internal use of hwg_RdLn()<br>
+   <br>
+   <p></p>
+
+
+  <br><strong class="subhead"> hwg_Max(a,b)</strong>
+   <br>
+   Returns the maximum value of a or b.<br>
+   a and b must be numeric values or dates<br>
+   <br>
+   <p></p>
+
+  <br><strong class="subhead"> hwg_Min(a,b)</strong>
+   <br>
+   Returns the minimum value of a or b.<br>
+   a and b must be numeric values or dates<br>
+   <br>
+   <p></p>
+
+     <br><strong class="subhead"> hwg_FBINREAD(cfilename,nbufsize)( n )</strong>
+   <br>
+   Reads a binary file "cfilename"<br>
+   and returns its contents to a type C variable.<br>
+   It is the equivalent to Harbour function<br>
+   MEMOREAD(), but it can get some trouble with<br>
+   not allowed characters, so this function is<br>
+   a safe alternative.<br>
+   The operation of this function is silent<br>
+   to avoid crash.<br>
+   In case of an error, an empty string "" is<br>
+   returned.<br>
+   Check bytes read with LEN().<br>
+
+   <p></p>
+
+
+
+   <br><strong class="subhead"> hwg_onAnchor( oWnd, wold, hold, wnew, hnew )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ChangeCharInString(cinp,nposi,cval)</strong>
+   <br>Exanges one byte in a passed string.<br>
+      This function is a little bit like the BASIC function INSTR$.<br>
+      Returns the string with the modified byte.<br>
+      cinp : The input string<br>
+      nposi : The position where the byte/character must be changed<br>
+      cval : The character to be set. It must have the length of 1 byte.<br>
+      Use the CHR(n) function to set the value.<br>
+      <br>
+      In case of invalid parameters the function returns the
+      unmodified input string or an empty string "".<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_cHex2Bin( chexstr )</strong>
+   <br> Converts a hex string to binary.<br>
+      Returns empty string, if error<br>
+      or number of hex characters is odd.<br>
+      Valid characters for chexstr:<br>
+      0 ... 9 , A ... F , a ... f<br>
+      Other characters are ignored.<br>
+
+   <p></p>
+   <br><strong class="subhead"> hwg_HEX_DUMP (cinfield, npmode, cpVarName)</strong>
+   <br> Hex dump from a C field (binary)<br>
+     into C field (Character type).<br>
+     In general, every byte value (2 hex digits)<br>
+     is separated by a blank.<br>
+     <br>
+     npmode:<br>
+     Selects the output format.<br>
+     0 : &nbsp; All hex values in one line,<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    without quotes and trailing EOL.<br>
+     1 : &nbsp; 16 bytes per line,<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    with display of printable<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    characters,<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   not inserted in quotes,<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     but columns with printable<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    characters are separated with<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    ">> " in every line.<br>
+     2 : &nbsp; As variable definition<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    for copy and paste into prg source<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    code file, 16 bytes per line,<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     concatenated by "+ ;"<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     (Default)<br>
+     3 : &nbsp; 16 bytes per line, only hex output,<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     no quotes or other characters.<br>
+     4 : &nbsp; Like 0, but without blank<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; between the hex values.<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Used by Binary Large Objects (BLOBs)<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stored in memo fields of a DBF.<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; See program utils\bincnt\bindbf.prg<br>
+     5 : &nbsp; As C notation array<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16 bytes per line, 0x..<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; written in {}<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Add before generated block (for example):<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; const unsigned char sample[] =<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and a ";" at end of block.<br>
+     <br>
+     cpVarName:<br>
+     Only used, if npmode = 2.<br>
+     Preset for variable name,<br>
+     Default is "cVar".<br>
+     For other modes, this parameter is ignored.<br>
+     <br>
+     Sample writing hex dump to text file:<br>
+     MEMOWRIT("hexdump.txt",hwg_HEX_DUMP(varbuf),1)<br>
+
+   <p></p>
+   <br><strong class="subhead"> hwg_NUMB2HEX ( nascchar )</strong>
+   <br> Converts  0 ... 255 TO HEX 00 ... FF<br>
+   (2 Bytes String)<br>
+
+   <p></p>
+   <br><strong class="subhead"> int hwg_hexbin(int cha)</strong>
+    <br>converts single hex char to int,<br>
+    returns -1 , if not in range<br>
+    returns 0 - 15 (dec) , only a half byte<br>
+    This function is the equivalent to<br>
+    hwg_NUMB2HEX(), but you can use it<br>
+    in the C implementation of your<br>
+    application<br>
+    Don't forget to cast int to unsigned char.<br>
+    For usage sample look into source code file<br>
+    utils\devtools\memdump.prg<br>
+
+   <p></p>
+
+   <br><strong class="subhead"> FUNCTION hwg_COUNT_CHAR(stri,such)</strong>
+   <br>Counts the appearance of string "such"<br>
+   in "stri".<br>
+   This function has a subset<br>
+   of parameters of the <br>
+   Clipper tools function AFTERATNUM()<br>
+   for better handling.<br>
+
+   <p></p>
+
+   <br><strong class="subhead"> hwg_KEYESCCLDLG (odlg)</strong>
+   <br>Simple helper function, closes dialog at ESC key<br>
+   For the cases with usage of INIT DIALOG ... NOEXIT, which blocks the close of dialog by
+   pressing the ESC key.<br>
+   <br>
+   Sample:<br>
+   FUNCTION xyz<br>
+   LOCAL oDlg,lCancel<br>
+   lCancel := .T.<br>
+   INIT DIALOG oDlg ...<br>
+   SET KEY 0,VK_ESCAPE TO hwg_KEYESCCLDLG(oDlg)<br>
+   ....<br>
+   @ 122,402 BUTTON "Action"  SIZE 100,32 ;<br>
+   ON CLICK {|| lCancel := .F. , oDlg:Close() }<br>
+   ....<br>
+   @ 322,402 BUTTON "Close"  SIZE 100,32 ;<br>
+   ON CLICK {|| oDlg:Close() }<br>
+   ....<br>
+   ACTIVATE DIALOG oDlg<br>
+   SET KEY 0,VK_ESCAPE TO<br>
+   IF .NOT. lCancel<br>
+   &nbsp;&nbsp; * Not ESC pressed or not cancelled<br>
+   &nbsp;&nbsp; * ==&gt; ... and action<br>
+   &nbsp;&nbsp; ....<br>
+   ENDIF<br>
+   RETURN NIL<br>
+
+   <p></p>
+
+   <br><strong class="subhead"> hwg_hex2binchar(cchar)</strong>
+   <br>Converts a hex string to bin string with "0" or "1".<br>
+   Allowed characters 0 .. 9, A .. F , a .. f<br>
+   Every half byte is separated by a space,<br>
+   every byte by an extra space.<br>
+   Helpful for debugging.<br>
+   cchar : The hex string, for example<br>
+   returned by hwg_HEX_DUMP() only with modes 3,4<br>
+
+   <p></p>
+
+   <br><strong class="subhead"> hwg_ShowHelp(cHelptxt,cTitle,cClose,opFont,blmodus)</strong>
+   <br>Shows help window<br>
+   (Useful for static help texts)<br>
+   <br>
+   cHelptxt: Character variable with multiline help text,<br>
+   complete every line with CHR(13) + CHR(10).<br>
+   cTitle  : The title of the help window<br>
+   cClose  : Set text for "Close" button in your language, default is "Close".<br>
+   opFont : Additional font setting<br>
+   blmodus : .T.: not modal (default is .F.)<br>
+   Special instruction for non modal mode:<br>
+   Trouble with NOMODAL on LINUX:<br>
+   The window with help text freezes, it closes<br>
+   only, if the calling dialog is closed.<br>
+   For example:<br>
+   Pressing the "Close" button or the cross in the header bar has no effect.<br>
+   So set blmodus to .F. on LINUX,<br>
+   use compiler switch "#ifdef __PLATFORM__WINDOWS"<br>
+   to set the paramater.<br>
+   <br>
+   Sample code:<br>
+   LOCAL lnmodal<br>
+   ...<br>
+   #ifdef __PLATFORM__WINDOWS<br>
+   lnmodal := .T.<br>
+   #else<br>
+   lnmodal := .F.<br>
+   #endif<br>
+   ...<br>
+   hwg_ShowHelp("Helptext","Title","Close",,lnmodal)<br>
+   <br>
+   <br>
+   Common sample: (display not modal)<br>
+   LOCAL lf := CHR(13) + CHR(10)<br>
+   cHelptxt := "Line 1 of help" + lf + ;<br>
+   "Line 2 of help" + lf + ;<br>
+   "Line 3 of help"<br>
+   hwg_ShowHelp(cHelptxt,"Title of help",,,.T.)<br>
+   <br>
+   Additional instructions see sample program "helpstatic.prg".<br>
+
+   <p></p>
+   <br><strong class="subhead"> hwg_GET_Helper(cp_get,nlen)</strong>
+   <br>
+   Fixes a special problem<br>
+   of GET command.<br>
+   (only for C type fields)<br>
+   nlen : Set the lenght of the C type field,<br>
+   otherwise the extension of the edited field<br>
+   is not possible.<br>
+   <br>
+   GTK:<br>
+   The Cursor is located at end of<br>
+   data, if field is empty (means filled with blanks).<br>
+   It can be entered characters exceeding<br>
+   the length of a database field, but they<br>
+   are lost, if stored to database.<br>
+   The problem is, that in case of blanks,<br>
+   the end of field in not visible.<br>
+   but only, if field is filled with<br>
+   characters.<br>
+   Here the strategy with the use of<br>
+   this function:<br>
+   <br>
+   1.) Shorten filled fields with RTRIM() or PADR().<br>
+   2.) Field filled with blanks:<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;Test with EMPTY(), then return empty string ""<br>
+   3.) Use this function before INIT DIALOG on all<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;C fields handled with GET in this dialog.<br>
+   4.) If necessary, remove leading and trailing blanks<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;with the function ALLTRIM() after end of dialog.<br>
+   <br>
+   On WinAPI, the function returns the<br>
+   original value of the input parameter,<br>
+   so this function can be used with<br>
+   multi platform applications.<br>
+   <br>
+   For type of D or N: forever use the PICTURE clause.<br>
+   <br>
+   For usage see sample program "samples/demomenuxml.prg".<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_StrDebNIL(xParchk)</strong>
+   <p>
+   For debugging purposes:<br>
+   Returns string "NIL" or "not NIL",<br>
+   if parameter xParchk is NIL or not.<br>
+   For usage in combination with hwg_WriteLog() to<br>
+   write value(s) into a log file.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_StrDebLog(ltoCheck)</strong>
+   <p>
+   For debugging purposes:<br>
+   Returns string ".T." or ".F.",<br>
+   if logical parameter ltoCheck is true or false.<br>
+   For usage in combination with hwg_WriteLog() to<br>
+   write value(s) into a log file.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_deb_is_object(oObj)</strong>
+   <p>
+   For debugging purposes:<br>
+   Displays with a messagebox if oObj is an object or not.<br>
+   ("Is object" or "Is not an object")<br>
+   The condition for "IF" command to check for a valid object is:<br>
+   IF Valtype(oObj) == "O"<br>
+    ...<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_Bin2D(cbin,nlen,ndec)</strong>
+   <p>
+   Converts double (8 bytes) to<br>
+   Numeric Value.<br>
+   Parameters:<br>
+   cbin : Hex value of binary<br>
+   (double 8 bytes => 16 hex characters)<br>
+   Size 16 Bytes with or without blanks in one line.<br>
+   nlen : number of digits<br>
+   ndec : number of digits after decimal point<br>
+   <br>
+   Sample call:<br>
+   hwg_Bin2D(hwg_HEX_DUMP(Buffer,0),10,2)<br>
+   Buffer is the 8 bytes of double var memory.<br>
+   <br>
+   For usage sample look into source code file<br>
+   utils\devtools\memdump.prg<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_Bin2DC(cbin,nlen,ndec)</strong>
+   <p>
+   Converts double (8 bytes) to<br>
+   Numeric Value.<br>
+   Only for internal usage.<br>
+   This function is called by<br>
+   hwg_Bin2D().<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_addextens(cfilename,cext,lcs)</strong>
+   <p>
+    Add file extension "cext",<br>
+    if not passed with "cfilename".<br>
+    If cext is NIL, original name is returned.<br>
+    Pass "cext" without previous ".".<br>
+    It is recommended, to pass cext in lower case.<br>
+    lcs : Set to .T., if case sensitive.<br>
+    This is recommended for LINUX/UNIX.<br>
+    On Windows set to .F. (Default).<br>
+    For example:<br>
+    &nbsp;#ifdef __PLATFORM__WINDOWS<br>
+    &nbsp;&nbsp;lblname := hwlabel_addextens(lblname,"lbl")<br>
+    &nbsp;#else<br>
+    &nbsp;&nbsp;lblname := hwlabel_addextens(lblname,"lbl",.T.)<br>
+    &nbsp;#endif<br>
+    <br>
+    This function is very useful, if you want to query a new file name for storing.<br>
+    For example for *.prg:<br>
+    #ifdef __GTK__<br>
+     fname := hwg_SelectFileEx(,,{{ "XBase source code( *.prg )","*.prg" },{ "All files" ,"*"}} )<br>
+    #else<br>
+     fname := hwg_SaveFile( "Enter name of new file","XBase source code( *.prg )","*.prg",<cstartvz>,"Save File" )<br>
+    #endif<br>
+    After query, add the extension "prg" corresponding the sample above.<br>
+   </p>
+
+   <br><strong class="subhead">  hwg_leading0(ce)</strong>
+   <p>
+   Replace all leading blanks with<br>
+   "0".
+   ce : string<br>
+   Returns : String<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_EuroUTF8()</strong>
+   <p>
+   Returns the Euro currency sign (&euro;) in UTF-8 code.<br>
+   0xE2 + 0x82 + 0xAC = CHR(226) + CHR(130) + CHR(172)<br>
+   On Windows 10 the Euro sign is CHR(128) = 0x80<br>
+   </p>
+
+  <br><strong class="subhead"> hwg_Has_Win_Euro_Support()</strong>
+  <p>
+   This functions returns .T., if the used Harbour Version<br>
+   supports the Euro currency sign (&euro;) on Windows.<br>
+   In this case, the following code page must be requested:<br>
+   &nbsp;REQUEST HB_CODEPAGE_DE858<br>
+   If for example your datebase uses a Euro currency sign, you<br>
+   can set this codepage at opening time of a database with<br>
+   the USE command.<br>
+   The UTF-8 codepage supports forever the Euro currency sign.<br>
+   <br>
+   Use the compiler switch to REQUEST the<br>
+   codepage, if available in used Harbour version<br>
+   like this sample code snippet:<br>
+   #if ( HB_VER_REVID - 0 ) >= 2002101634<br>
+   * 858 : same as 850 with Euro Currency sign<br>
+   &nbsp;REQUEST HB_CODEPAGE_DE858<br>
+   #endif<br>
+   <br>
+   But it is sometimes possible,<br>
+   to handle the Euro currency sign<br>
+   without support of Harbour.<br>
+   For details read instructions in<br>
+   comment lines of sample program<br>
+   "samples\demostrrev.prg".<br>
+   </p>
+
+  <br><strong class="subhead"> hwg_GUIType()</strong>
+  <p>
+   Returns the linked in GUI type as string,<br>
+   return values are:<br>
+   "WinAPI"<br>
+   "GTK2"<br>
+   "GTK3"<br>
+  <br>
+  </p>
+
+   <br><strong class="subhead"> hwg_ValType(xxxx)</strong>
+   <p>
+   Returns the type of a variable or expression:<br>
+   "A", "L", "N", "C", "D", "O", "P", "U"<br>
+   ("P" = pointer, "U" = NIL)<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_xVal2C(xxx)</strong>
+   <p>
+   Converts the value of xxx to string, dependant of type.<br>
+   This function may be helpful for debugging.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_xvalMsg(xxx,cttype,cttval,cttitle)</strong>
+   <p>
+   Starts a messagebox to display a value of xxx.<br>
+   The displayed values are simular to function "hwg_xvalLog()"<br>
+   This function may be helpful for debugging.
+   <br>
+   The header texts written to message:<br>
+   cttype : default is "Type : "<br>
+   cttval : default is "Value : "<br>
+   cttitle: default is "Debug" <br>
+   <br>
+   Additional info for debugging:<br>
+   On GTK/Linux you can use the function QOUT()<br>
+   to display values of variables in the terminal,<br>
+   where the program is started.<br>
+   On Windows, these outputs are not visible.<br>
+   So these functions for debugging are helpful on Windows.<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_xvalLog(xxx,cttype,cttval,cttitle,cfilename)</strong>
+   <p>
+   Writes a value of xxx into a log file.<br>
+   This function may be helpful for debugging.<br>
+   The default file name is "a.log".<br>
+   If you don't know the type of a variable passed to a function<br>
+   (for example to STR() ) and you want to investigate the reason for a crash like this sample:<br>
+   <br>
+   &nbsp;&nbsp;Error BASE/1099  Argument error: STR<br>
+   &nbsp;&nbsp;Called from ->STR(0)<br>
+   &nbsp;&nbsp;Called from source\winapi/hprinter.prg->HPRINTER:SAY(416)<br>
+   &nbsp;&nbsp;...<br>
+   then the argument passed to STR() is not of type N.<br>
+   <br>
+   Expected values in logfile:<br>
+   &nbsp;&nbsp;Type : U Value : NIL<br>
+   &nbsp;&nbsp;Type : A Value : &lt;ARRAY&gt;<br>
+   &nbsp;&nbsp;Type : L Value : .T.<br>
+   &nbsp;&nbsp;Type : N Value : 12345<br>
+   &nbsp;&nbsp;Type : C Value : Test<br>
+   &nbsp;&nbsp;Type : D Value : 20220627<br>
+   &nbsp;&nbsp;Type : O Value : &lt;OBJECT&gt;<br>
+   (This is the output written to logfile by test program "test/xval.prg")<br>
+   <br>
+   Parameters cttype,cttval and cttitle same as hwg_xvalMsg(),<br>
+   but written into logfile.<br>
+   </p>
+   
+   <br><strong class="subhead"> hwg_xvalLog2(xxx,cttype,cttval,cttitle,cfilename)</strong><br>
+   <br>
+    Same as hwg_xvalLog(), but<br>
+   advanced debug logging also for arrays.<br>
+   Recursive call, if element is a sub array<br>   
+   <br> 
+   Example:<br>
+   atesten := { 1, .T. , {"SubA", "SubB", 1 , .F., {"2"} , {} } , "Top array" }<br>
+   <br>
+   hwg_xvalLog2(atesten)<br>
+   Sample output for this function call:<br>
+   <br>
+   Sub array, depth :=  1<br>
+   Type : N Value : 1<br>
+   Type : L Value : .T.<br>
+   Sub array, depth :=  2<br>
+   Type : C Value : SubA<br>
+   Type : C Value : SubB<br>
+   Type : N Value : 1<br>
+   Type : L Value : .F.<br>
+   Sub array, depth :=  3<br>
+   Type : C Value : 2<br>
+   Sub array, depth :=  2<br>
+   Sub array, depth :=  3<br>
+   Sub array, depth :=  3 Array is empty !<br>
+   Sub array, depth :=  2<br>
+   Sub array, depth :=  1<br>
+   Type : C Value : Top array<br>
+   Sub array, depth :=  0<br>
+   <br>
+   <br>Sample call for a single value:<br>
+   hwg_xvalLog2(.T.)<br>
+   <br>
+   Type : L Value : .T.<br>
+   <br>
+   <p></p>   
+
+   <br><strong class="subhead"> hwg_Toggle_HalfByte( cchar )</strong><br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Toggle_HalfByte_C(n)</strong><br>
+   HB_FUNC C function.<br>
+   <p></p>
+
+
+   <br><strong class="subhead"> hwg_nothing(xpara)</strong><br>
+   <p>
+    The compilation of this expression (for example)<br>
+    IIF(nbChecked==0, oStatus:SetText(""),.t.)<br>
+    throws the following warning:<br>
+    Warning W0027  Meaningless use of expression 'Logical'<br>
+    and the program freezes.<br>
+    So modify to:<br>
+    IIF(nbChecked==0,oStatus:SetText(""),hwg_nothing(.t.) )<br>
+   </p>
+
+   <br><strong class="subhead"> hwg_Alert</strong> (Windows only)
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Alert_DisableCloseButton()</strong> (Windows only)
+   <p>Internal: Needed by HAlert class</p>
+
+   <br><strong class="subhead"> hwg_Alert_GetWindow()</strong> (Windows only)
+   <p>Internal: Needed by HAlert class</p>
+
+   <br><strong class="subhead"> hwg_redirOn</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_redirOff</strong>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_Trace</strong>
+   <p></p>
+
+   <br><strong class="subhead"> edi_utf8_Upper( cText )</strong>
+   <p></p>
+
+   <br><strong class="subhead"> edi_utf8_Lower( cText )</strong>
+   <p></p>
+
+  <br><strong class="subhead"> hwg_delEOFMarker(CBinrec)</strong><br>
+    <br>
+    Removes the EOF marker from a type C string.<br>
+    EOF marker 0x1a = CHR(26).<br>
+    Purpose:<br>
+    After writing a binary or text image into a file with MEMOWRIT(),<br>
+    an EOF marker is added automatically.<br>
+    Reading this file with MEMOREAD() or hwg_FBINREAD(),<br>
+    the EOF marker is also read, this can cause some trouble
+    with processing  after it.<br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_is_object(oObj)</strong>
+    <br>
+    Returns .T., if oObj is a valid object<br>
+
+    <p></p>
+    
+    <br><strong class="subhead"> hwg_IsRaspberry()</strong><br>
+    <br>
+    This functions returns .T.,<br>
+    if program is running on Raspberry Pi.<br>
+    The Raspberry Pi bases on LINUX, but the<br>
+    Processer type is ARM.<br>
+    
+    <p></p>
+
+    <br><strong class="subhead"> hwg_MEMLLEMPTY(memo)</strong><br>
+    <br>
+    Adds an empty line at end of memo field.<br>
+    Do this for full display of the last<br>
+    line in an HCEDIT window<br>
+    (if scrolled down).<br> 
+    Call before starting the dialog<br>
+    running HCEDIT !<br>
+    (See function hwg_MemoEdit )<br>
+    Only for internal usage.<br>
+    Advice:<br>
+    The STYLE term in INIT DIALOG for HCEDIT<br>
+    has no effect for show a vertical scoll bar.<br>
+    Scroll with up/down keys through the memo text)<br>
+    
+    <p></p>
+    
+    <br><strong class="subhead"> hwg_UNIX2DOS(cText)</strong><br>
+    <br>
+    Convert LINUX/UNIX line endings to DOS/Windows.<br>
+    This is mandatory for memo fields !<br>
+    (for example by using FUNCTION hwg_ShowHelp() )<br> 
+    If text has LINUX/UNIX line endings,<br>
+    convert it forever to Windows (also on LINUX).<br>
+    This function is the equvalent to UNIX command<br>
+    unix2dos.<br>
+    Sample call see<br> 
+    samples/demo.ch,<br>
+    FUNCTION demo_ShowCode()<br>
+    
+    <p></p>
+    
+  
+    <br><strong class="subhead">hwg_CCOMB2STRI(ncombov,acomboitems)</strong>
+    <br>
+    Helper function for handling<br>
+    inifiles parameter with combobox.<br>
+    Convert combobox values (N) to String<br>
+    (For the value of combobox edited)<br>
+    Parameters:<br>
+    acomboitems:<br>
+    Pass here the same array as<br>
+    passed to the ITEMS option<br> 
+    of the command:<br>
+    @ &lt;x&gt;,&lt;y&gt; GET COMBOBOX ...<br>
+    If parameter values are invalid,<br>
+    an empty string "" is returned.<br>
+    For details see comment lines in<br>
+    test program "test/tstcombovals.prg".<br>
+    <p></p>
+
+    <br><strong class="subhead">hwg_STRI2COMB(ccvalue,acomboitems)</strong>
+    <br>
+    Helper function for handling<br>
+    inifiles parameter with combobox.<br>
+    Converts a string for a combobox to numeric<br>
+    Is opposite function to hwg_CCOMB2STRI()<br>
+    Parameters:<br>
+    ccvalue:<br>
+    The value string from inifile<br> 
+    acomboitems:<br>
+    Pass here the same array as<br>
+    passed to the ITEMS option<br> 
+    of the command:<br>
+    @ &lt;x&gt;,&lt;y&gt; GET COMBOBOX ...<br>
+    If parameter values are invalid,<br>
+    0 is returned.<br>
+    For details see comment lines in<br>
+    test program "test/tstcombovals.prg".<br>
+    <p></p>
+
+
+   <br><strong class="subhead"><a name="Functions81" href="hwgdoc.html#_Functions81">
+   5.8.1 Unit conversions.</a></strong><br>
+   <p></p>
+   <br><strong class="subhead">Temperature  conversions</strong>
+   <p>Table: Temperatures equation list</p>
+   <table>
+     <tr align=left><th>Celsius</th> <th>Kelvin</th> <th>Fahrenheit</th><th>Rankine</th><th>R&eacute;aumur</th><th>NOTE</th></tr>
+     <tr align=left><th>C</th>       <th>K</th>      <th>F</th>          <th>RA</th>      <th>R</th>          <th>&lt; Abbreviation in function name</th></tr>
+     <tr align=left></tr>
+     <tr align=left><td>-273.15</td> <td>0</td>      <td>-459.67</td>    <td>0 </td>      <td>-218.52</td>    <td>Absolute zero point (0&deg; Kelvin)</td></tr>
+     <tr align=left><td>-17.78</td>  <td>255.37</td> <td>0</td>          <td>459.67</td>  <td>-14.22</td>     <td>0&deg; Fahrenheit</td></tr>
+     <tr align=left><td>-10</td>     <td>263.15</td> <td>14</td>         <td>473.67</td>  <td>-0</td>         <td>0&deg; R&eacute;aumur</td></tr>
+     <tr align=left><td>0</td>       <td>273.15</td> <td>32</td>         <td>491.67</td>  <td>0</td>          <td>Water freeze point</td></tr>
+     <tr align=left><td>20</td>      <td>293.15</td> <td>59</td>         <td>527.67</td>  <td>16</td>         <td>Comfortable room temperature (20&deg; Celsius)</td></tr>
+     <tr align=left><td>37</td>      <td>310.15</td> <td>98.6</td>       <td>558.67</td>  <td>29.6</td>       <td>Human body temperature</td></tr>
+     <tr align=left><td>37.78</td>   <td>310.93</td> <td>100</td>        <td>559.67</td>  <td>30.22</td>      <td>100&deg; Fahrenheit</td></tr>
+     <tr align=left><td>100</td>     <td>373.15</td> <td>212</td>        <td>671.76</td>  <td>80</td>         <td>Water boiling</td></tr>
+     <tr align=left><td>125</td>     <td>398.15</td> <td>257</td>        <td>716.67</td>  <td>100</td>        <td>100&deg; R&eacute;aumur</td></tr>
+    </table>
+
+    <p>
+    Building rule for function names<br>
+    for temperature conversion functions:<br>
+    hwg_TEMP_&lt;k1&gt;2&lt;k2&gt;<br>
+    k1,k2: Abbreviation see table above<br>
+    <br>
+    Constants in formulas:<br>
+    9/5 = 1.8<br>
+    9/4 = 2.25<br>
+    10/8 = 1.25<br>
+   </p>
+
+   <p>
+    C=Celsius K=Kelvin F=Fahrenheit RA=Rankine R=R&eacute;aumur<br>
+    <br>
+    hwg_TEMP_C2F( T )<br>
+    hwg_TEMP_C2K( T )<br>
+    hwg_TEMP_C2RA( T )<br>
+    hwg_TEMP_C2R( T )<br>
+    hwg_TEMP_K2C( T )<br>
+    hwg_TEMP_K2F( T )<br>
+    hwg_TEMP_K2RA( T )<br>
+    hwg_TEMP_K2R( T )<br>
+    hwg_TEMP_F2C( T )<br>
+    hwg_TEMP_F2K( T )<br>
+    hwg_TEMP_F2RA( T )<br>
+    hwg_TEMP_F2R( T )<br>
+    hwg_TEMP_RA2C( T )<br>
+    hwg_TEMP_RA2F( T )<br>
+    hwg_TEMP_RA2K( T )<br>
+    hwg_TEMP_RA2R( T )<br>
+    hwg_TEMP_R2C( T )<br>
+    hwg_TEMP_R2F( T )<br>
+    hwg_TEMP_R2K( T )<br>
+    hwg_TEMP_R2RA( T )<br>
+   </p>
+
+   <br><strong class="subhead">Other unit conversions</strong>
+   <p>
+   A collection of important unit conversion functions for real life.<br>
+   (both directions)<br>
+   </p>
+
+   <p>
+    === in / cm ===<br>
+    hwg_INCH2CM( I )<br>
+    hwg_CM2INCH( cm )<br>
+    <br>
+    === feet / m ===<br>
+    hwg_FT2METER( ft )<br>
+    hwg_METER2FT( m )<br>
+    <br>
+    === mile / km ===<br>
+    hwg_MILES2KM( mi )<br>
+    hwg_KM2MILES( km )<br>
+    <br>
+    === sqin / sq cm ===<br>
+    hwg_SQIN2SQCM( sqin )<br>
+    hwg_SQCM2SQIN( sqcm )<br>
+    <br>
+    === sqft / sq m ===<br>
+    hwg_SQFT2SQM( sqft )<br>
+    hwg_SQM2SQFT( sqm )<br>
+    <br>
+    === usoz / c.c. (Cubic cm) ===<br>
+    hwg_USOZ2CC( usoz )<br>
+    hwg_CC2USOZ( cc )<br>
+    <br>
+    === usgal / litre ===<br>
+    hwg_USGAL2L( usgal )<br>
+    hwg_L2USGAL( l )<br>
+    <br>
+    === lb / kg ===<br>
+    hwg_LB2KG( lb )<br>
+    hwg_KG2LB( kg )<br>
+    <br>
+    === oz / g ===<br>
+    hwg_OZ2GR( oz )<br>
+    hwg_GR2OZ( gr )<br>
+    <br>
+    === Nautical mile / km ===<br>
+    hwg_NML2KM(nml)<br>
+    hwg_KM2NML(km)<br>
+    </p>
+
+<br><br>
+
+   <br><strong class="subhead"><a name="Functions82" href="hwgdoc_functions.html#_Functions82">
+   5.8.2 Date and time functions.</a></strong><br>
+   <p></p>
+
+
+   <br><strong class="subhead">hwg_getCentury()</strong>
+   <br>Returns the value of the recent century setting.
+   <ul>
+     <li> (set it with command "SET CENTURY ON|OFF")
+     <li>.F. : OFF
+     <li>.T. : ON
+   </ul>
+
+   <p></p>
+   
+   <br><strong class="subhead">hwg_GetDecimals()</strong>
+   <br>
+   Returns the value of recent setting<br>
+   of SET DECIMALS TO ...<br>
+   So get the recent setting,<br>
+   modify the setting for your<br>
+   processing and restore is previous<br>
+   value at end.<br>
+   The default value of 2 is not enough in most cases.<br>
+   Example:<br>
+     LOCAL nldezimale<br>
+     nldezimale := hwg_GetDecimals()<br>
+     SET DECIMALS TO 12  && ... to your own needs<br>
+     && your processing ...<br>
+     && Restore previous Setting<br>
+     SET DECIMALS TO (nldezimale)<br>
+  (The & macro operator fires an syntax error,<br>
+  so set the value to set in brackets as shown)<br>
+  <br>
+  <p></p>
+  
+   
+   
+   <br><strong class="subhead"> hwg_GetUTCTimeDate()</strong><br>
+   Returns a string with date and time in UTC.<br>
+   This function is platform independant.<br>
+   Output format is: W,YYYYMMDD-HH:MM:SS<br>
+   W: Weekday: 0 = Sunday, 1 = Monday ... 6 = Saturday<br>
+   Use the SUBSTR() function of Harbour to extract the desired<br>
+   information.<br>
+   The output format is independent by settings of:<br>
+   - SET DATE ...<br>
+   - SET CENTURY ...<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetDateANSI()</strong><br>
+   Returns a string with date in ANSI format.<br>
+   This function is platform independant.<br>
+   Output format is: YYYYMMDD, based on local time.<br>
+   The output format is independent by settings of:<br>
+   - SET DATE ...<br>
+   - SET CENTURY ...<br>
+   If ANSI date is part of a file name, the files are listed<br>
+   in correct order sorted by date.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetUTCDateANSI()</strong><br>
+   Returns a string with date in ANSI format.<br>
+   This function is platform independant.<br>
+   Output format is: YYYYMMDD, based on UTC.<br>
+   The output format is independent by settings of:<br>
+   - SET DATE ...<br>
+   - SET CENTURY ...<br>
+   If ANSI date is part of a file name, the files are listed<br>
+   in correct order sorted by date.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_GetUTCTime()</strong><br>
+   Returns a string with UTC time.<br>
+   This function is platform independant.<br>
+   Output format is: HH:MM:SS (same as TIME() ).<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_IsLeapYear ( nyear )</strong><br>
+   nyear : a year to check for leap year.<br>
+   returns: .T. , if nyear is a leap year,<br>
+   so that the month February has 29 instead of 28 days.<br>
+   <br>
+   The function concerns to the leap year rules of the Gregorian calendar,<br>
+   valid for all years above 1582. Before this year, the "Julian calendar"<br>
+   was used, it had an error about 10 days for the difference against the<br>
+   solar year. With the invention of the Gregorian calendar, created by Pope Gregory XIII,<br>
+   this error was fixed. So leap years are 1600 and 2000,<br>
+   non leap years are 1700, 1800, 1900 and 2100.<br>
+   For the Julian calendar the leap year rule is very simple:<br>
+   &nbsp;IF (nyear % 4)  == 0 ) ...<br>
+   If you have a date variable, use the Harbour function YEAR(d)<br>
+   to extract the year as a numerical value from a date.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_STOD(cANSIDate)</strong><br>
+   Extra implementation of STOD(),<br>
+   it is a Clipper tools function.<br>
+   For compatibilty purposes.<br>
+   Parameter 1: Date String<br>
+   in ANSI-Format YYYYMMDD.<br>
+   Result value is independant from<br>
+   SET DATE and SET CENTURY settings.<br>
+   This is the opposite function to DTOS().<br>
+   Sample Call:<br>
+   ddate := hwg_STOD("20201108")<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_checkANSIDate(cANSIDate)</strong><br>
+   Check, if an ANSI Date is valid.<br>
+   cANSIDate: ANSI date as string<br>
+   of Format YYYYMMDD.<br>
+   Returns .T., if the date is valid.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_JulianDay2Date(z)</strong><br>
+   Converts julian date of mem files into <br>
+   String , Format YYYYMMDD (ANSI)<br>
+   z: double (of type N)<br>
+   Returns string<br>
+   Valid for dates from 1901 to 2099<br>
+   The julian is stored in Clipper<br>
+   and Harbour MEM files as<br>
+   double value.<br>
+   Convert a real double value of 8 bytes with<br>
+   hwg_Bin2D() into type N.<br>
+   <br>
+   For usage sample look into source code file<br>
+   utils\devtools\memdump.prg<br>
+   Additional information:<br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   In Clipper and Harbour there is no function available,<br>
+   to convert the double value of type N (or D) to<br>
+   memvar type N.<br>
+   <br>
+   This the solution of this topic:<br>
+   <br>
+   The double value is converted to a hex string in one line without blanks:<br>
+   1---+----1----+-<br>
+   50455254FB210940  = Pi (for example),<br>
+   so size = 16 Bytes<br>
+   <br>
+   The function hwg_BIN2D() converts the hexstring<br>
+   into double and then into a memvar of type N<br>
+   For type N : it could be displayed with ? ... or processed afterwards.<br>
+   For type D : double value represents the julian day<br>
+   and is converted to a date string by<br>
+   function hwg_JulianDay2Date(), returned format is YYYYMMDD.<br>
+   Finally, the function STOD() converts<br>
+   the date string into D value.<br>
+   If the function STOD() is not available,<br>
+   then hwg_STOD() is a substitue.<br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   <br>
+   <p></p>
+
+
+   <br><strong class="subhead"> hwg_Date2JulianDay(dDate,nhour,nminutes,nseconds)</strong><br>
+   Converts date (type D) to julian date<br>
+   (returned as type N).<br>
+   This is the opposite function to<br>
+   hwg_JulianDay2Date().<br>
+   The paramaters nhour,nminutes,nseconds<br>
+   are optional (default values are 0).<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_FileModTimeU()</strong><br>
+   Returns the file modification time in UTC as string.<br>
+   Format: YYYYMMDD-HH:MM:SS<br>
+   This function works also on open file.<br>
+   It is a good substutite of Harbour function LUPDATE(),<br>
+   which has bugs.<br>
+   For example:<br>
+   USE logbuch<br>
+   * Modify a record:<br>
+   REPLACE FIELD WITH "Value"<br>
+   hwg_FILEMODTIMEU("logbuch.dbf")<br>
+   * ==> now the date and time of modification is returned.<br>
+   In case of errors (for example name of a not existing file)<br>
+   the value 19700101-00:00:00 is returned.<br>
+   <p></p>
+
+   <br><strong class="subhead"> hwg_FileModTime()</strong><br>
+   Returns the file modification time (local) as string.<br>
+   Format: YYYYMMDD-HH:MM:SS<br>
+   This function works also on open file.<br>
+   It is the equivalent to HWG_FILEMODTIMEU()<br>
+   <p></p>
+
+  <br><strong class="subhead"> hwg_Get_Time_Shift()</strong><br>
+   Returns the time shift from UTC as a numeric<br>
+   value in hours.<br>
+   So add this shift value to UTC for<br>
+   getting local time.<br>
+   This function regards daylight saving<br>
+   time.<br>
+   <p></p>
+
+  
+   <br><strong class="subhead"><a name="Functions83" href="hwgdoc_functions.html#_Functions83">
+   5.8.3 Raw bitmap support and QR code.</a></strong><br>
+   
+      
+   <p></p>
+
+
+
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   Functions for raw bitmap support<br>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+   <br>
+   Helpful for Windows, because PNG support<br>
+   by the operating system only for LINUX.<br>
+   <br>
+   For multi platform applications,<br>
+   it is recommended to handle all images<br>
+   as bitmaps.<br>
+   These functions are a subset of full bitmap<br>
+   specifications to integrate the QR encoding<br>
+   function for all platforms into HWGUI.<br>
+   <br>
+   These functions are implemented in source code files<br>
+   drawwidg.prg, hmisccross.prg and draw.c .<br>
+   Some more functions for bitmap support<br>
+   (for example painting and stretching of bitmap images)<br>
+   are implemented in source code file "cxshade.c".<br>
+   <br>
+   All functions start with prefix "hwg_BMP".<br>
+   <br>
+   Some bitmap parameters are set fixed by default:<br>
+   &nbsp;&nbsp;compression 0 (No compression)<br>
+   &nbsp;&nbsp;planes 1 (Number of color planes)<br>
+   <br>
+   The handled version of bitmap is W3.x, but is OK for recent Windows versions.<br>
+   <br>
+   Functions names ending with "C" are for usage in C modules,<br>
+   otherwise they are HWGUI functions.<br>
+   <br>
+   The maximum size of a bitmap is 128 KByte.<br>
+   If you need to increase this value, open<br>
+   source code file "draw.c"  (for WinAPI and GTK)<br>
+   with a text editor and set the<br>
+   value in the following define:<br>
+   #define BMPFILEIMG_MAXSZ 131072 /* Max file size of a bitmap (128 K) */<br>
+   and recompile HWGUI and your HWGUI application.<br>
+   <br>
+   With Open Watcom C the maximum size is 65536 (64 k), otherwise
+   the program crashes.<br>
+   This value is selected with compiler switch<br>
+   #ifdef __WATCOMC__<br>
+   <br>
+   For Details see inline comments of sample program "samples\testbmpcr.prg".<br>
+   <p></p>
+
+   Binary string image of a bitmap may contain NULL bytes (0x00),<br>
+   for Harbour string variables no problem.<br>
+
+   <p></p>
+
+   <br><strong class="subhead">hwg_BPMinches_per_meter()</strong>
+   <br>Returns constant value "Inches per meter"
+
+   <p></p>
+
+   <br><strong class="subhead">hwg_BPMconv_inch(mtr)</strong>
+   <br>Converts bitmap resolution into DPI
+
+   <p></p>
+
+
+    <br><strong class="subhead"> void * BMPImage3x hwg_BMPNewImageC(<br>
+    int bmp_width,<br>
+    int bmp_height,<br>
+    int bmp_bit_depth,<br>
+    unsigned int colors,<br>
+    uint32_t xpixelpermeter,<br>
+    uint32_t ypixelpermeter<br>
+    )</strong>
+
+    <br>Creates a bitmap data file image with empty pixel data (for C code implementation)<br>
+    You need to fill the pixel buffer with HWGUI functions below.<br>
+    <br>
+    <br>Returns a complete bitmap data file with empty pixel data.<br>
+    The static pointer "bmp_fileimg" points to the the adress of the<br>
+    allocated memory.<br>
+    Other C functions are not mentioned here.<br>
+    <p></p>
+
+
+    <br><strong class="subhead"> hwg_BMPNewImage(<br>
+    bmp_width,<br>
+    bmp_height,<br>
+    bmp_bit_depth,<br>
+    colors,<br>
+    xpixelpermeter,<br>
+    ypixelpermeter<br>
+    )</strong>
+
+    <br>Same as "hwg_BMPNewImageC", returns the bitmap data field in a C type value<br>
+    for processing with the following HWGUI functions.<br>
+
+    <p></p>
+    Parameters of both functions above:<br>
+    All parameters are mandatory.<br>
+    <br>
+    To avoid misfunction in display and program crash<br>
+    pass all parameters concerning the<br>
+    bitmap specification described in the Microsoft documents.<br>
+    <br>
+    <ul>
+      <li>filename                 : Full filename and path for bitmap file to create, with extension ".bmp"
+      <li>fileoffset_to_pixelarray : Start position of image data in bytes (must be >=54)
+      <li>bmp_height               : Image height in pixels
+      <li>bmp_width                : Image width in pixels
+      <li>bmp_bit_depth            : Number of bits per pixel
+      <li>colors                   : Number of colors in the image
+      <li>xpixelpermeter           : Vertical resolution in pixels per meter
+      <li>ypixelpermeter           : Horizontal resolution in pixels per meter
+    </ul>
+    <br>
+    Some possible values for xpixelpermeter and ypixelpermeter (in pixels per meter):<br>
+    <ul>
+      <li>2835 in DPI:  72 (Default value)
+      <li>3780 in DPI:  96 (recommended value)
+    </ul>
+    <br>
+    Allowed values for bmp_bit_depth (Number of bits per pixel):<br>
+    1,4,8,24<br>
+    <br>
+    <br>
+    Sample call:<br>
+    LOCAL CBMP<br>
+    CBMP := HWG_BMPNEWIMAGE(48, 48, 1, 2, 2835, 2835 )<br>
+    HWG_BMPDESTROY()<br>
+    * ... process image data in C variable "CBMP" with HWGUI functions<br>
+    * ...<br>
+    * Write the bitmap to file:<br>
+    MEMOWRIT("sample.bmp",CBMP)<br>
+    * (otherwise the bitmap image can be converted to hex values for<br>
+    * processing in more program steps)<br>
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPDestroy()</strong>
+    <br>Free's the image data created by hwg_BMPNewImage().<br>
+    To avoid memory leaks, call this function after every<br>
+    call of hwg_BMPNewImage().<br>
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPMaxFileSz()</strong><br>
+    Returns the maximum size of the bitmap file size.<br>
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPCalcOffsPixArr(colors)</strong><br>
+    Calculates the offset to pixel array (image data).<br>
+    colors : The number of colors.<br>
+    Pass it like the same parameter "colors" (4th parameter)<br>
+    of function hwg_BMPNewImage.<br>
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPCalcOffsPal</strong><br>
+    Calculates the offset to palette data,<br>
+    located after the pixel matrix (jagged array)<br>
+    Add 1 to the returned value to modify the palette <br>
+    with function "hwg_ChangeCharInString()".<br>
+    <p></p>
+
+    <br><strong class="subhead"> hwg_ShowBitmap(cbmp,cbmpname,ncolbg,ncolfg)</strong><br>
+    A standard dialog displays a bitmap up to 1277 x 640 pixel (x,y).<br>
+    It is useful for debugging.<br>
+    Parameters:<br>
+    cbmp      : The bitmap file image string<br>
+    cbmpname  : A unique name of the bitmap<br>
+    ncolbg    : Background color (system, if NIL)<br>
+    ncolfg    : Foreground colors (ignored, if no background color is set)<br>
+    For pass parameters for for both color values<br>
+    you can use the function hwg_ColorC2N( cColor ):<br>
+    Converts color representation from string to numeric format.<br>
+    cColor - a string in #RRGGBB<br>
+    Modify colors for better visibilty to your own needs.<br>
+    <br>
+    For parameter cbmp you can pass the string created by HWG_BMPNEWIMAGE()<br>
+    + processing the pixel data.<br>
+    Sample for display the bitmap image file:<br>
+    &nbsp;&nbsp;LOCAL CBMP2, cdirsep<br>
+    &nbsp;&nbsp;cdirsep := hwg_GetDirSep()<br>
+    &nbsp;&nbsp;CBMP2 := MEMOREAD(".." + cdirsep + "image" + cdirsep + "astro.bmp")<br>
+    &nbsp;&nbsp;hwg_ShowBitmap(CBMP2,"astro")<br>
+    <br>
+    <br>
+    Important !<br>
+    The bitmap name (parameter "cbmpname") must be unique<br>
+    for every single bitmap (for example above "astro").<br>
+    It seems, that on Windows systems a cache exists,<br>
+    containing the first bitmap loaded.<br>
+    Overwriting it with a new bitmap, the old bitmap<br>
+    is hold in the bitmap object created in the<br>
+    function and displayed.<br>
+    For example:<br>
+    <br>
+    hwg_ShowBitmap(cbitmap1,"test")<br>
+    hwg_ShowBitmap(cbitmap2,"test")<br>
+    <br>
+    So at second function call the old bitmap cbitmap1<br>
+    is displayed instead of cbitmap2.<br>
+    <br>
+    So say:<br>
+    hwg_ShowBitmap(cbitmap1,"bitmap1")<br>
+    hwg_ShowBitmap(cbitmap2,"bitmap2")<br>
+    <br>
+    The value for the bitmap name is valid<br>
+    during a single program run.<br>
+    We recommend, to write the bitmap names in lower case.<br>
+    A little helper for generating unique names is function<br>
+    hwg_BMPuniquename().<br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPSetMonochromePalette(pcBMP)</strong><br>
+    Sets the monochrome palette (Bytes per pixel =1, colors=2).<br>
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPDrawCircle(nradius,ndeg)</strong><br>
+    Returns an 2 element array with pixel settings (x,y) for drawing a circle<br>
+    with a radius of nradius pixels.<br>
+    Usage see sample program "samples\testbmpcr.prg".<br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPStr2Obj(pcBMP,cbmpname)</strong><br>
+    Converts the bitmap string after (optional)<br>
+    modifications into a bitmap object.<br>
+    cbmpname : String with an unique bitmap name<br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_oBitmap2file(oBitmap,cbmpname,[outfilename]) </strong>
+    <p>
+    <br>
+    Save a bitmap in an bitmap object into a file.<br>
+    - oBitmap : The bitmap object<br>
+    - coutfilename : The file into the bitmap saved,<br>
+    cbmpname is the unique name of the bitmap written to file,<br>
+    Is mandatory, otherwise the bitmap is not processed.<br>
+    Also the cbmpname is case sensitive.<br>
+    We stricly recommend to use only pure ASCII charset and<br>
+    lower case (UNIX/LINUX) for the cbmpname.<br>
+    &nbsp;  &nbsp; pass complete with extension .bmp<br>
+    &nbsp;  &nbsp; (Default is bitmap.bmp)<br>
+    Returns forever NIL.<br>
+    </p>
+
+    <p></p>
+
+     <br><strong class="subhead"> hwg_BMPxyfromBinary(cbpm)</strong><br>
+     <br>
+     Returns the x and y size of a bitmap<br>
+     (out of the usage of class HBITMAP)<br>
+     This is the equivalent to hwg_Getbitmapsize(handle)<br>
+     cbpm : The binary format of bitmap of Type C<br>
+     Returns an array with 2 elements of numerical values (N) <br>
+     [1]:   Width<br>
+     [2]:   Height<br>
+
+     <p></p>
+
+     <br><strong class="subhead"> hwg_BMPuniquename(cprefix)</strong><br>
+     <br>
+      Returns a unique name following by a number<br>
+      cprefix : A prefix before the number<br>
+                &nbsp;(format is <prefix>nnn)<br>
+                &nbsp;Default is "name"<br>
+      nnn starts with 1 from program start.<br>
+      This function may have a little more<br>
+      performance than a random generating <br>
+      function.<br>
+      Use it for creating masses of bitmaps,<br>
+      like lot's of QR codes.<br>
+      Some more alternative usages:<br>
+      - If cprefix is passed with an empty string "",<br>
+        &nbsp;&nbsp;&nbsp;  you can realize a simple counter, starting<br>
+        &nbsp;&nbsp;&nbsp;  with 1 at program start.<br>
+      - For debug purposes, count how often a function is called.<br>
+      For usage see test program<br>
+       &nbsp;&nbsp;&nbsp; test\testunique.prg<br>
+      <br>
+
+    <p></p>
+    <br><strong class="subhead"> hwg_Stretch_BMP_i(cbmp, clocname, nWidth, nHeight )</strong>
+    <br>
+    Stretch a bitmap from binary string image<br>
+    (independant, without needing a device context)<br>
+    <br>
+    cbmp   : The binary image of a bitmap as string<br>
+    clocname : The name of the bitmap ( of cbmp )<br>
+    nWidth, nHeight : The size parameters.<br>
+    To Respect the size ratio use focus values (nfocus).<br>
+    for example :<br>
+    nWidth := nfocus * nWidth<br>
+    nHeight := nfocus * nHeight<br>
+    <br>
+    Returns the resized bitmap as string,<br>
+    If error, empty string "" is returned.<br>
+    nWidth and nHeight both must be > 0,<br>
+    otherwise the original bitmap is returned.<br>
+    This function is important for WinAPI,<br>
+    but works also with GTK.<br>
+    For GTK use for better performance the resizing feature<br>
+    of GTK, for example<br>
+    METHOD AddString()<br>
+    (but has no resizing feature on WinAPI,<br>
+    see HWGUI class documentation of HBITMAP.<br>
+    <br>
+    long cxdib_Stretch( PCXDIB pdib, HDC pDC, long xoffset, long yoffset, long xsize, long ysize )<br>
+    of cxshade.c (WinAPI) needs a device context,<br>
+    so it is not useful for pure resizing of a bitmap.<br>
+    <br>
+    For lot's of details about resizing (stretching) of bitmaps,<br>
+    read the comment lines in sample program "stretch.prg".
+    <br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_bpmObj2String(obmp,cname)</strong>
+    <br>
+    extract the a bitmap string from an<br>
+    bitmap object.<br>
+    (for example to display it)<br>
+    obmp :  The bitmap object<br>
+    cname : The bitmap name<br>
+    Returns the string image,<br>
+    in case of error an empty<br>
+    string (check for success by for example)<br>
+    EMPTY(cBitmap)<br>
+    <br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_BMPRename(oBitmap,cnamold,cnamnew)</strong>
+    <br>
+    Renames a bitmap in an bitmap object<br>
+    oBitmap : The bitmap object<br>
+    cnamold : The old bitmap name<br>
+    cnamnew : The new bitmap name<br>
+    Returns the new bitmap object with<br>
+    the renamed bitmap.<br>
+    <br>
+    This function is useful, if<br>
+    a bitmap is stored in a tempory file<br>
+    and must be read after resizing,<br>
+    so it becomes the previous name.<br>
+    For details see sample program<br>
+    "stretch.prg"<br>
+    with lots of comments.<br>
+    <br>
+
+    <p></p>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+    Some debug helpers for bitmap programming<br>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+
+     <p></p>
+
+
+     <br><strong class="subhead">  hwg_bitmapTOC(oBitmap)</strong>
+    <br>
+    Returns a table of contents (TOC) of a bitmap object (name's) in an array<br>
+    <br>
+    <p></p>
+
+    <br><strong class="subhead"> BMPSize2Logfile(oBitmap,name</strong>)
+    <br>
+    Write the bmp size (height and width)in the log file a.log .<br>
+    oBitmap : The bitmap object<br>
+    name    : The bitmap name<br>
+    <br>
+
+    <p></p>
+
+     <br><strong class="subhead"> hwg_Debug_logarrayC(acarray)</strong>
+    <br>
+    Only for debug purposes:<br>
+    Write a single dimension array with c values into logfile.<br>
+
+    <p></p>
+
+    2.) Add this sample function code into your HWGUI application code:<br>
+    <br>
+    Write TOC of bitmap to logfile:<br>
+    <br>
+    FUNCTION BMPTOC2Logfile(oBitmap)<br>
+    LOCAL atoc<br>
+     atoc :=  hwg_bitmapTOC(oBitmap)<br>
+     hwg_Debug_logarrayC(atoc)<br>
+    RETURN NIL<br>
+    IF .NOT. hwg_is_object(oBmp)<br>
+      hwg_MsgStop("oBmp is not an object!","Error")<br>
+     ENDIF<br>
+    <br>
+
+    <p></p>
+
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+    End of Functions for raw bitmap support<br>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+
+    <strong><br>QR code functions<br></strong>
+    <br>
+    Advice:<br>
+    QR codes are mainly standisized by  JIS X 0510 (Japanese Industrial Standard)<br>
+    and ISO/IEC 18004:2006.<br>
+
+    QR codes are operating with UTF-8 charset.<br>
+    On Windows, which not origin supports UTF-8,<br>
+    use compiler switch to insert the translation <br>
+    sequence following this example:<br>
+    <br>
+    #ifdef __PLATFORM__WINDOWS<br>
+       &nbsp;&nbsp; * Convert to UTF-8<br>
+       &nbsp;&nbsp; * Set "DEWIN" to your language setting on Windows<br>
+       &nbsp;&nbsp; ctext := HB_TRANSLATE(ctext, "DEWIN" , "UTF8")<br>
+    #endif<br>
+    <br>
+    Also you need to request the needed codepages<br>
+    in the MAIN section, corresponding the code sample above:<br>
+    <br>
+    * Windows codepage<br>
+    REQUEST HB_CODEPAGE_DEWIN<br>
+    * Forever needed<br>
+    REQUEST HB_CODEPAGE_UTF8<br>
+    <br>
+    REQUEST HB_CODEPAGE_UTF8EX<br>
+    <br>
+    The reverse translation is needed for the<br>
+    QR code decoding sequence.<br>
+    <br>
+
+    <br>
+    More non standard QR codes are existing. They are not supported.<br>
+    Also inverted (negative) QR codes are not recognized.<br>
+    <br>
+    <br>
+    Here an example for a standard QR code with the URL to the HWGUI project site:<br>
+    <img src="./image/hwgui_sf.bmp" align=center wborder=0 alt="Sample QR code"><br>
+    <br>
+    <br>
+    All functions start with prefix "hwg_QR".<br>
+    <br>
+    <strong>QR code encoding</strong><br>
+    <br>
+    The encode functions need an external library, instructions to<br>
+    integrate into HWGUI see file contrib\qrencode\Readme.txt.<br>
+    Please respect the copyright notes of external libraries.<br>
+    <br>
+    <strong>QR code decoding</strong><br>
+    <br>
+    The encode functions need an external library, instructions to<br>
+    integrate into HWGUI see file contrib\qredcode\Readme.txt.<br>
+    Please respect the copyright notes of external libraries.<br>
+    <br>
+    For decoding QR codes from camera, you need on all platforms the<br>
+    Open Source package "ZBar".<br>
+    The version 0.10 is available on the HWGUI project site in the "Files" section<br>
+    under: contrib/qrdecode/<br>
+    It works at it's best and can also decode many bar codes.<br>
+    For Windows, a ready to install setup archive is there available.<br>
+    On MacOS, an additional shell script and another program "imagesnap" is needed,<br>
+    so look into the ReadMe.txt file for detailed instructions.<br>
+    To compile the ZBar package from source, a code patch is needed.<br>
+    <br>
+    <strong>Format description</strong><br>
+    <br>
+    The encoding function hwg_QRCodeTxtGen() returns a pure text image,<br>
+    where a blank " " represents a white pixel and the "#" a black pixel.<br>
+    The lines ends with a UNIX/LINUX line ending.<br>
+    For example:<br>
+    <img src="./image/qr_darc_text.bmp" align=center wborder=0 alt="Sample QR code"><br>
+    In this state, the image can be processes with the hwg_QR... functions.<br>
+    Finally, the QR code text image must be converted to a binary bimap image by<br>
+    calling the function hwg_QRCodetxt2BPM().<br>
+
+    <br><strong class="subhead"> HWG_QRENCODE(ctext [, nzoomf] [,nboarder] )</strong>
+    <br>
+    Creates the QR code and convert it to bitmap binary image of type C.<br>
+    Function to call from main or other functions starting the encode action.<br>
+    It is the "user interface".<br>
+    Returns the bitmap binary image of type C.<br>
+    Not to be used with DLL (for example Borland C).<br>
+    <br>
+    ctext      &nbsp;&nbsp;&nbsp;&nbsp;  : &nbsp;&nbsp; The text to convert to QR code<br>
+    nzoomf     &nbsp;&nbsp;&nbsp;        : &nbsp;&nbsp; The zoom factor, default is 3<br>
+    nboarder   &nbsp;              : &nbsp;&nbsp; The boarder in pixels, default is 10.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     This value is strictly recommended for successfull scans.<br>
+     <br>
+     This function is not included in the main HWGUI source,<br>
+     find it in<br>
+     contrib\qrencode\libqrencode.prg<br>
+     <br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_CBmp2file(cbitmap,cbitmapfile)</strong>
+    <br>
+    Write the bitmap binary image of type C to file,<br>
+    for example returned by HWG_QRENCODE().<br>
+    <br>
+    cbitmapfile  : The bitmap file name containing the QR code, with extension ".bmp"<br>
+    <br>
+    For compatibilty with UNIX/LINUX and MacOS,<br>
+    use file name always in lower case.<br>
+
+    <p></p>
+
+    <br><strong class="subhead"> hwg_QRCodeTxtGen(ctext,&lt;border&gt;)</strong><br>
+    Converts a string ctext into a<br>
+    QR code text string,<br>
+    needed character set is UTF-8.<br>
+    If the operating system does not support<br>
+    UTF, convert it with function<br>
+    HB_TRANSLATE().<br>
+    border: Number of pixel of the<br>
+    desired (white) border in pixels.<br>
+    Default value is 4.<br>
+    For usage see sample program<br>
+    samples\qrencode.prg.<br>
+    This function is part of the interface module, all<br>
+    other functions for QR encoding are part of the HWGUI base libraries.<br>
+
+    <p></p>
+
+
+    <br><strong class="subhead"> hwg_QRCodetxt2BPM(cqrcode)</strong><br>
+    Encode QR code (text format) to bitmap<br>
+    cqrcode : The text string to encode to<br>
+    a bitmap.<br>
+
+
+  <p></p>
+
+   <br><strong class="subhead"> hwg_QRCodeZoom(cqrcode,nzoom)</strong><br>
+   Increases the size of a QR code image<br>
+   cqrcode : The QR code in text format<br>
+   nzoom   : The zoom factor 1 ... n<br>
+   Returns the new QR code text string.<br>
+   <br>
+   Important advice:<br>
+   This function needs some CPU time to finish calculation.<br>
+   We recommend, not to use a zoom factor<br>
+   greater than 3 or 4.<br>
+
+
+  <p></p>
+
+  <br><strong class="subhead"> hwg_QRCodeZoom_C(cqrcode,nlen,nzoom)</strong><br>
+  <br>Only experimental status !!<br>
+  <br>This is the eqivalent function to hwg_QRCodeZoom().
+  <br>Detected by some tests, the code effeciency is not signficant better than
+  <br>hwg_QRCodeZoom() (about 10 % faster). This fact shows, that the Harbour compiler creates very
+  <br>effective code !
+  <br>
+  cqrcode : The QR code in text format<br>
+  nlen    : Pass LEN(cqrcode)<br>
+  nzoom   : The zoom factor 1 ... n, the default is 1 (no zoom)<br>
+  There are some limitations caused by the buffer size of the internal
+  string buffer (16 kByte).<br>
+  A NULL byte at end of every line do not cause trouble creating the bitmap<br>
+  with hwg_QRCodetxt2BPM().
+
+  <p></p>
+
+    <br><strong class="subhead"> hwg_QR_SetPixel(cmbp,x,y,xw,yh)</strong><br>
+    Set a single pixel into QR code bitmap string.<br>
+    Background color is white, pixel color is black.<br>
+
+   <p></p>
+
+   <br><strong class="subhead"> hwg_QRCodeAddBorder(cqrcode,nborder)</strong><br>
+
+    <p>
+    Add border to QR code image.<br>
+    cqrcode : The QR code in text format<br>
+    nborder : The number of border pixels to add 1 ... n<br>
+    Returns the new QR code text string.<br>
+    For best performance call this function after hwg_QRCodeZoom()<br>
+    </p>
+
+   <br><strong class="subhead"> hwg_QRCodeGetSize(cqrcode)</strong><br>
+   <p>
+    Get the size of a QR code in text format "cqrcode"<br>
+    Returns an array with 2 elements: xSize,ySize.<br>
+   </p>
+
+   <!-- End of QR code functions -->
+
+    <br><br>
+
+    <br><strong class="subhead"><a name="References" href="#_References">
+    References</a></strong><br>
+
+<pre>
+   [1] Spence, Rick (Co-Developer of Clipper):
+       Clipper Programming Guide, Second Edition Version 5.
+       Microtrend Books, Slawson Communication Inc., San Marcos, CA, 1991
+       ISBN 0-915391-41-4
+
+   [2] Project CLLOG at Sourceforge:
+</pre>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://sourceforge.net/projects/cllog/">
+  https://sourceforge.net/projects/cllog/</a>
+<pre>
+</pre>
+
+<br><br>
+<hr align="left" width="100%">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="33%" align="left"><a href="hwgdoc_commands.html">prev</a></td>
+    <td width="34%" align="center"><a href="hwgdoc.html">table of contents</a></td>
+    <td width="33%" align="right"><a href="hwgdoc_classes.html">next</a></td>
+  </tr>
+  <tr>
+    <td width="33%" align="left">commands</td>
+    <td width="34%" align="center">&nbsp;</td>
+    <td width="33%" align="right">classes</td>
+  </tr>
+</table>
+
+</body>
+</html>

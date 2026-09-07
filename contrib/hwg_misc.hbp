@@ -1,0 +1,24 @@
+#
+# $Id: hwg_misc.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-inc
+
+-hblib
+-o../lib/hwg_misc
+-hbx=../hwg_misc.hbx
+
+-n -q0 -w3 -es2
+
+-i../include
+
+-cflag=-DHWG_USE_POINTER_ITEM
+
+misc/*.c
+misc/*.prg
+
+#-stop{allmingw}
+
+
+# ======================= EOF of hwg_misc.hbp ===========================
+

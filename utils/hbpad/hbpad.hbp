@@ -1,0 +1,15 @@
+#
+# $Id: hbpad.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-n -w3
+
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+-L../..
+..\..\hwgui.hbc
+
+hbpad.prg

@@ -1,0 +1,40 @@
+#
+# $Id: hwgui.hbc 3256 2023-07-26 09:53:25Z alkresin $
+#
+
+# Include this file in hbmk2 command line to build an app:
+#   'hbmk2 hwgui.hbc test.prg'
+
+incpaths=include
+libpaths=lib
+
+{win&!HB_NO_GTGUI=YES}gt=gtgui
+{!hblib&!HB_NO_HWGDEBUG=YES}libs=hwgdebug
+
+{!hblib}libs=hwgui procmisc hbxml
+
+# --- Outdated, out of support ---
+#{win&!allmingw&!watcom&!hblib}libs=hbactivex hwg_extctrl hwg_qhtm
+
+{unix}ldflags+="`pkg-config --libs gtk+-2.0`"
+
+# Change 3 lines to build HwGUI in Unicode mode
+
+#PRGFLAGS=-DUNICODE -q -m -n -es2
+#{win}CFLAGS=-DUNICODE -DHWG_USE_POINTER_ITEM
+#{unix}CFLAGS=-DUNICODE -DHWG_USE_POINTER_ITEM "`pkg-config --cflags gtk+-2.0`"
+
+PRGFLAGS=-q -m -n -es2
+{win}CFLAGS=-DHWG_USE_POINTER_ITEM
+{unix}CFLAGS=-DHWG_USE_POINTER_ITEM "`pkg-config --cflags gtk+-2.0`"
+
+{allmingw}libs=gdiplus
+
+# Activate for GCC > V8
+#-Wold-style-cast
+# Always done in "warnings.h" as PRAGMA declaration
+
+# "{unix}-cflag=`pkg-config --cflags gtk+-2.0`"
+
+# =============================== EOF of hwgui.hbc ====================================
+

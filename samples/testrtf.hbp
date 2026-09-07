@@ -1,0 +1,14 @@
+#
+# $Id: testrtf.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+#-stop={linux}
+
+-lhwg_misc
+
+-otestrtf
+
+testrtf.prg
+
+# ==================== EOF of testrtf.hbp ===============

@@ -1,0 +1,19 @@
+#
+# $Id: file2hex.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-n -w3
+
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+-L../..
+hwgui.hbc
+
+-o../../bin/file2hex
+
+file2hex.prg
+
+
+# ==================== EOF of file2hex.hbp ===============

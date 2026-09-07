@@ -1,0 +1,13 @@
+#
+# Ticket90.hbp
+#
+# $Id: Ticket90.hbp 3790 2025-08-19 15:24:08Z df7be $
+#
+
+# hbct.hbc
+
+-oTicket90
+
+Ticket90.prg
+
+# ==================== EOF of Ticket90.hbp =========================

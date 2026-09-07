@@ -1,0 +1,13 @@
+#
+# $Id: editor.hwprj 3400 2023-12-04 08:03:37Z alkresin $
+# HwBuilder project file for editor
+# Launch it with:
+#      hwb editor.hwprj   ( gui version )
+#   or hwbc editor.hwprj  ( console version )
+
+{unix}cflags=-O3
+
+outname=editor
+
+*.prg
+*.c

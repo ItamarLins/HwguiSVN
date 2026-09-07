@@ -1,0 +1,21 @@
+#
+# $Id: ticket112.hbp 3225 2023-05-15 11:36:00Z df7be $
+#
+
+# Special parameters for LINUX/GTK
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+# -mt
+-n -w
+
+-oticket112
+
+ticket112.prg
+
+..\hwgui.hbc
+
+# ===================== EOF of ticket112.hbp ====================
+

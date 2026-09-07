@@ -1,0 +1,13 @@
+#
+# $Id: hwbuildc.hbp 3605 2025-04-15 11:46:52Z alkresin $
+#
+
+-L../../lib
+-lprocmisc
+
+-n
+-w3
+-D__CONSOLE
+-ohwbc
+
+hwbc.prg

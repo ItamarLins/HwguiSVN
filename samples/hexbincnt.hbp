@@ -1,0 +1,10 @@
+#
+# $Id: hexbincnt.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+-ohexbincnt
+
+hexbincnt.prg
+
+# ==================== EOF of hexbincnt.hbp ===============

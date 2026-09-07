@@ -1,0 +1,11 @@
+#
+# $Id: checkbox.hbp 3096 2022-07-05 19:27:51Z df7be $
+#
+
+# auto included hbmk.hbm
+
+-ocheckbox
+
+checkbox.prg
+
+# ==================== EOF of checkbox.hbp ===============
