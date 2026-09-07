@@ -1,0 +1,4006 @@
+/*
+ * $Id: Changelog 3923 2026-09-07 06:51:54Z itamarlins $
+ */
+
+/* Use this format for the entry headers:
+   YYYY-MM-DD HH:MM UTC[-|+]hhmm Your Full Name <your_email@address>
+   For example:
+   2002-12-01 16:55 UTC+0100 Foo Bar <foo.bar@foobar.org>
+*/
+
+/*
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Old changelogs are archived in directory
+ "oldlogs".
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+2026-09-06 03:51 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **cfuncs.c**: fixed Unicode/ANSI string handling in `HWG_RUNCONSOLEAPP`,
+    `HWG_CHDIR`, and `HWG_REDIRON` – replaced `hb_parc()` with `HB_PARSTR()`
+    for proper TCHAR/Unicode support; added `_wfreopen`/`_wchdir` for
+    Unicode builds.
+  - **cfuncs.c**: fixed `HWG_STRREV()` buffer overflow – replaced fixed
+    512-byte stack buffer with dynamic allocation based on input string length.
+  - **cfuncs.c**: simplified conditional includes for better portability.
+
+026-09-06 03:36 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **video.prg**: fixed coordinate handling – removed undefined constants
+    `VID_CHARPIX_H` and `VID_CHARPIX_W`, and corrected `nWidth`/`nHeight`
+    assignment to use pixel values directly instead of adding offsets.
+  - **video.prg**: fixed `Play()` method – removed unnecessary fourth
+    parameter (`::oParent:handle`) because `::oMci:Play()` expects only
+    `nFrom` and `nTo`.
+  - **video.prg**: fixed `Initiate()` method – corrected `SetWindow()` call
+    to pass the parent window (`::oParent`) instead of `Self`, and removed
+    invalid `::Super:Init()` call (HControl does not have an Init method).
+
+2026-09-06 03:28 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **window.c**: fixed 64-bit compatibility – replaced `GetWindowLong()` and
+    `SetWindowLong()` with `GetWindowLongPtr()` and `SetWindowLongPtr()` in
+    `HWG_WINDOWSETRESIZE()`.
+  - **window.c**: fixed GDI resource leak in `GetFontDialogUnits()` – removed
+    `DeleteObject()` call on stock font (ANSI_VAR_FONT) which should not be
+    deleted.
+  - **window.c**: removed obsolete compiler support – eliminated `__DMC__`
+    (Digital Mars C) conditional code and MSVC 6.0 workarounds for
+    `CreateMDIWindow()`.
+  - **window.c**: replaced Portuguese comments with English comments for
+    better maintainability.
+
+2026-09-06 03:11 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **shellapi.c**: fixed Unicode/ANSI string handling – replaced
+    `HB_PARSTRDEF()` with `HB_PARSTR()` in `HWG_SELECTFOLDER()` and
+    `HWG_SHELLEXECUTE()` for proper TCHAR/Unicode support.
+  - **shellapi.c**: fixed `HWG_SHELLEXECUTE()` return value – changed from
+    `HB_RETHANDLE()` to `hb_retnint()` because `ShellExecute` returns an
+    integer status, not a window handle.
+  - **shellapi.c**: added safety check in `HWG_SHELLNOTIFYICON()` to only
+    copy tooltip text if the parameter is a valid string.
+
+2026-09-06 03:01 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **richedit.c**: fixed `HWG_RE_SETCHARFORMAT()` superscript/subscript
+    parameter handling – corrected to use parameter 11 instead of parameter 9.
+  - **richedit.c**: fixed 64-bit safety in `RichSubclassProc()` – replaced
+    `hb_vmPushLong()` with `HB_PUSHITEM()` for `wParam` and `lParam`
+    parameters.
+  - **richedit.c**: added `NULL` checks for memory allocation in
+    `HWG_RE_GETTEXTRANGE()` and `HWG_RE_GETLINE()` to prevent crashes.
+  - **richedit.c**: changed return values of `HWG_SAVERICHEDIT()` and
+    `HWG_LOADRICHEDIT()` from file handle to boolean (`TRUE`/`FALSE`) for
+    better Harbour usage.
+  - **richedit.c**: removed obsolete compiler support for Digital Mars C
+    (`__DMC__`) and unnecessary inclusion of `<prsht.h>`.
+
+2026-09-06 02:56 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **resource.c**: fixed `HWG_FINDRESOURCE()` to support both numeric and
+    string resource IDs/types – previously only numeric IDs were handled
+    due to incorrect `IS_INTRESOURCE()` usage.
+  - **resource.c**: fixed `HWG_LOADRESOURCE()` to return the module handle
+    on success instead of returning nothing.
+  - **resource.c**: removed unnecessary `#include <prsht.h>` (property sheet
+    header not needed for resource operations).
+
+2026-09-06 02:41 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **pager.c**: fixed `HWG_PAGERGETBUTTONSTATE()` parameter handling –
+    corrected to read the button index from the second parameter (`hb_parni(2)`)
+    instead of incorrectly reading the window handle again.
+  - **pager.c**: simplified conditional compilation – removed obsolete
+    `#ifndef __GNUC__` fallbacks and use standard `Pager_*` macros directly
+    (available in modern MinGW-w64 and MSVC headers).
+  - **pager.c**: removed obsolete compiler support for Digital Mars C
+    (`__DMC__`) and Watcom C (`__WATCOMC__`).
+
+2026-09-06 02:41 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **nice.c**: fixed 64-bit compatibility – replaced `GetWindowLong()`
+    with `GetWindowLongPtr()` in `HWG_GETWINDOWLONG()`.
+  - **nice.c**: fixed potential crash when `GradientFill` is not available –
+    added `NULL` checks for `s_pGradientfill` in `Draw_Gradient()` and
+    `Gradient()` functions.
+  - **nice.c**: removed obsolete compiler support for Watcom C (`__WATCOMC__`)
+    and Digital Mars C (`__DMC__`) – `GRADIENT_RECT` and `TRIVERTEX`
+    definitions are already provided by modern Windows headers.
+
+2026-09-06 02:32 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **misc.c**: fixed Unicode/ANSI string handling in clipboard, ShellAbout,
+    and debug functions – replaced `HB_PARSTRDEF()` and `hb_parc()` with
+    `HB_PARSTR()` for proper TCHAR/Unicode support.
+  - **misc.c**: fixed `HWG_EDIT1UPDATECTRL()` and `HWG_BUTTON1GETSCREENCLIENT()`
+    crash – replaced uninitialized `RECT*` pointer with a stack-allocated
+    `RECT` variable.
+  - **misc.c**: fixed GDI resource leak in `HWG_HEDITEX_CTLCOLOR()` – added
+    check to avoid deleting stock brushes.
+  - **misc.c**: modernized version detection functions (`HWG_ISWIN7`,
+    `HWG_ISWIN10`, `HWG_GETWINMAJORVERS`, `HWG_GETWINMINORVERS`) – replaced
+    deprecated `GetVersionEx()` with `VersionHelpers` API.
+  - **misc.c**: replaced obsolete `WinExec()` with `CreateProcess()` in
+    `HWG_WINEXEC()` and `HWG_RUNAPP()` for better security and 64-bit
+    compatibility.
+
+2026-09-06 02:19 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **message.c**: fixed Unicode/ANSI string handling in message box functions –
+    replaced ANSI-only `HB_PARSTRDEF()` with `HB_PARSTR()` for proper
+    TCHAR/Unicode support in `s_msgbox()`.
+  - **message.c**: fixed debug function `HWG_MSGTEMP()` Unicode compilation
+    errors – replaced unsafe `sprintf()` with `wsprintf()` for wide-string
+    formatting; increased buffer size from 60 to 128 `TCHAR`s; removed
+    obsolete Harbour version check and unnecessary manual Unicode conversion.
+  - **message.c**: fixed `MessageBeep()` default parameter – changed from
+    `0xFFFFFFFF` to `(UINT)-1` for better 64-bit compatibility.
+
+2026-09-06 02:07 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **menu_c.c**: fixed `HWG_GETMENUCAPTION()` buffer handling – changed to
+    call `GetMenuItemInfo()` twice (first to get required size, second to
+    retrieve data) instead of guessing buffer size.
+  - **menu_c.c**: fixed GDI resource leak in `HWG_SETMENUBACKCOLOR()` – added
+    `DeleteObject()` to destroy the brush created with `CreateSolidBrush()`.
+  - **menu_c.c**: removed obsolete `ChangeMenu()` function (16-bit Windows
+    API, replaced by `ModifyMenu()`).
+  - **menu_c.c**: removed obsolete compiler support for Digital Mars C
+    (`__DMC__`).
+
+2026-09-06 01:59 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **media_c.c**: fixed `HWG_MCISENDCOMMAND()` parameter handling – replaced
+    `hb_parc()` with `hb_parptr()` to correctly pass a pointer to the MCI
+    parameter block structure.
+  - **media_c.c**: fixed `HWG_NMCIOPEN()` MCI flag logic – `MCI_OPEN_TYPE`
+    is now set when `lpstrDeviceType` is provided, and `MCI_OPEN_ELEMENT` is
+    set when `lpstrElementName` is provided.
+
+2026-09-06 01:46 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **listbox.c**: fixed `HWG_LISTBOXDELETESTRING()` to accept an item index
+    parameter – previously always deleted the first item (index 0) regardless
+    of the intended selection.
+  - **listbox.c**: added return value to `HWG_LISTBOXADDSTRING()` – now
+    returns the index of the inserted item or LB_ERR on error.
+  - **listbox.c**: added `NULL` check after `CreateWindow()` in
+    `HWG_CREATELISTBOX()` to prevent returning an invalid handle.
+  - **listbox.c**: removed unnecessary `#include <prsht.h>` (property sheet
+    header not needed for listbox operations).
+
+2026-09-06 01:36 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **grid.c**: fixed Unicode/ANSI string handling – replaced
+    `HB_PARSTRDEF()` with `HB_PARSTR()` for proper TCHAR/Unicode support
+    in `HWG_LISTVIEW_ADDCOLUMN()`, `HWG_LISTVIEW_ADDCOLUMNEX()`, and
+    `HWG_LISTVIEW_INSERTITEMEX()`.
+  - **grid.c**: fixed sorting comparison for Unicode builds – added
+    `#ifdef UNICODE` to use `wcscmp()` instead of ANSI `lstrcmp()`.
+  - **grid.c**: fixed `ProcessCustomDraw()` crash – added validation
+    before accessing color array elements.
+  - **grid.c**: removed obsolete compiler support for Pelles C (`__POCC__`),
+    xHarbour Compiler (`__XCC__`), and Digital Mars C (`__DMC__`).
+
+2026-09-06 00:58 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **drawtext.c**: fixed `HWG_GETFONTSLIST()` device context leak – added
+    `ReleaseDC()` call to release the DC obtained by `GetDC(GetDesktopWindow())`.
+  - **drawtext.c**: removed unused variable `hwnd` in `HWG_GETFONTSLIST()` and
+    dead code comment in `HWG_DRAWTEXT()`.
+
+2026-09-06 00:11 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **draw.c**: fixed `HWG_OPENIMAGE()` file name handling – reverted
+    unnecessary `HB_PARSTR()` conversion and kept `hb_parc()` with direct
+    `fopen()` call; `hb_parc()` returns ANSI string and `fopen()` accepts
+    `const char*`, so no conversion was needed.
+  - **draw.c**: fixed `HWG_GDIPLUSOPENIMAGE()` Unicode/ANSI string handling –
+    added `#ifdef UNICODE` conditional to use `HB_PARSTR()` as `wchar_t*`
+    when compiled with Unicode, otherwise convert from ANSI using
+    `MultiByteToWideChar(CP_ACP)`.
+  - **draw.c**: removed obsolete compiler support for Digital Mars C
+    (`__DMC__`) and Borland C++ 5.5 (`__BORLANDC__`); removed unnecessary
+    `HB_LONG_PCOUNT` conditional for 64-bit pointer returns; removed
+    `#include "missing.h"` header.
+
+2026-09-06 23:51 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **dialog.c**: fixed `HWG_CREATEDLGTEMPLATE()` parameter type – changed
+    `hb_parnd()` to `hb_parnl()` for proper integer handling in style
+    parameter.
+  - **dialog.c**: added `NULL` and `HB_IS_ARRAY` checks for `ACONTROLS` in
+    `s_CreateDlgTemplate()` and `s_FixupLargeCaptions()` to prevent crashes
+    when accessing invalid or empty control arrays.
+  - **dialog.c**: removed obsolete compiler support for Digital Mars C
+    (`__DMC__`) and Open Watcom (`__WATCOMC__`).
+
+2026-09-06 23:25 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **cxshade.c**: fixed `HWG_SHADE_SET()` parameter mapping – rectangle
+    coordinates are parameters 8-11, not 7-10 (parameter 7 is `color`).
+  - **cxshade.c**: added `srand()` initialization with `time()` in
+    `cxshade_New()` to properly seed the random number generator for shade
+    effects; added missing headers `<stdlib.h>` and `<time.h>`.
+
+2026-09-06 23:11 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **control.c**: fixed Unicode/ANSI string handling in time/date functions
+    (`HWG_GETUTCTIMEDATE`, `HWG_GETDATEANSI`, `HWG_DEFUSERLANG`) –
+    replaced Harbour-specific `HB_WIN_UNICODE` with standard `UNICODE` macro
+    for better compiler compatibility; replaced unsafe `sprintf()` with
+    `hb_snprintf()`; removed obsolete manual declaration of `GetAncestor()`
+    and obsolete compiler support for Digital Mars C (`__DMC__`).
+  - **control.c**: fixed `HWG_GETLOCALEINFON()` implementation – changed from
+    returning `LOCALE_SLIST` buffer size to returning the correct Windows
+    Locale ID (LCID) using `GetUserDefaultLCID()` as documented; added
+    `HWG_GETLOCALEID()` as the recommended function name and marked the old
+    name as deprecated but kept for backward compatibility.
+
+2026-09-06 22:24 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **commond.c**: fixed Unicode/ANSI string handling – replaced obsolete
+    `HB_PARSTRDEF()` with portable `HB_PARSTR()` for proper TCHAR/Unicode
+    support; removed 16-bit `far` keyword and dead code; increased fixed
+    buffers from 1024 to 2048 characters to reduce overflow risk; added
+    `NULL` checks for `GlobalLock()` and `GetObjectVar()` calls to prevent
+    crashes; added English documentation comments.
+
+2026-09-06 21:56 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **c_ipaddr.c**: fixed `HWG_INITCOMMONCONTROLSEX()` implicit declaration
+    error with Clang 22 (C99/C11 strict mode) – replaced `HB_FUNC_EXTERN()`
+    macro (which declares `HB_FUN_*` Harbour function names) with standard
+    `extern` declaration to properly expose the C function name to the
+    compiler; removed obsolete headers for Pelles C (`__POCC__`), xHarbour
+    Compiler (`__XCC__`), and Digital Mars C (`__DMC__`) as they are no
+    longer needed with modern compilers.
+
+2026-09-06 21:00 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hownbtn.prg**: fixed potential crashes from missing `Nil` checks in
+    `DrawItems()` and `Paint()` methods – added safety checks before calling
+    `::oBitmap:ClassName()` and `::aStyle[n]:Draw()` to prevent runtime
+    errors when bitmap or style objects are `Nil`.
+  - **hownbtn.prg**: removed duplicate `lEnabled` validation in
+    `Redefine()` method.
+
+2026-09-06 20:33 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **registry.c**: fixed Unicode/ANSI string handling and compiler
+    compatibility – replaced `HB_WIN_UNICODE` with standard `UNICODE` macro,
+    fixed `hb_parstr_u16()` argument count (4 args) for Harbour 3.2.1 API,
+    added dual-path support for xHarbour (`hb_parstr_utf8()` +
+    `MultiByteToWideChar()`), added `NULL` checks after memory allocation,
+    and unified memory deallocation with `hb_xfree()`.
+  - **registry.c**: fixed buffer allocation – changed Unicode buffer
+    allocation from `length + 2` to `length + sizeof(WCHAR)` for proper
+    null-termination safety.
+
+2026-09-06 19:46 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **winreg.c**: fixed Unicode/ANSI string handling – replaced ANSI-only
+    `HB_PARSTRDEF()` with `HB_PARSTR()` for proper TCHAR/Unicode support,
+    replaced `hb_storc()` with `HB_STORSTR()` for correct string return,
+    and added dynamic buffer allocation in `HWG_REGENUMKEYEX()` to eliminate
+    fixed 255-character buffer overflow risk.
+  - **winreg.c**: fixed memory allocation safety – added `NULL` checks after
+    `hb_xgrab()` calls in `HWG_REGQUERYVALUEEX()` and `HWG_REGENUMKEYEX()`
+    to prevent crashes when memory allocation fails.
+  - **winreg.c**: fixed `SECURITY_ATTRIBUTES` pointer handling – replaced
+    incorrect `hb_parc()` cast with proper `hb_parptr()` for security
+    attributes parameter in `HWG_REGCREATEKEYEX()`.
+  - **winreg.c**: fixed 64-bit pointer truncation – removed obsolete
+    `PtrToLong()` macro for Digital Mars C and ensured handles are stored
+    correctly.
+  - **winreg.c**: removed duplicate commented `HWG_REGCLOSEKEY()` function
+    (already exists in `registry.c` with proper `HB_PARHANDLE()` usage).
+
+2026-09-06 19:17 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hdialog.prg**: fixed nested modal dialogs losing proper owner/z-order
+    after repeated open/close cycles – `Hwg__EndDialog()` called Win32
+    `EndDialog()` but never removed the dialog from `HDialog():aModalDialogs`,
+    causing stale entries to be reused as parent for new dialogs. Now calls
+    `oDlg:DelItem()` immediately after `Hwg__EndDialog()`, matching the
+    cleanup already done in the `!lModal` branch.
+
+2026-09-06 18:38 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **window.c**: Small fix HWG_ANSITOUNICODE()
+    Uses the existing `s_iVM_CP` codepage(set via `HWG_SETUTF8()`) instead
+    of a fixed `CP_ACP`, so UTF-8-mode apps keep converting correctly.
+
+2026-09-06 14:45 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Changed
+  - **wprint.c**: modernized printer functions for Windows 2000 and later –
+    removed deprecated `GetVersion()` and `GetVersionEx()` APIs, removed
+    Windows 98/ME legacy code, replaced with `GetDefaultPrinter()` API and
+    `PRINTER_INFO_4` enumeration for better compatibility with Windows 2000
+    through Windows 11; added proper `NULL` checks for memory allocations.
+
+2026-09-06 13:14 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **window.c**: fixed `HWG_ANSITOUNICODE()` buffer overflow, memory leak,
+    incorrect return length, and missing `NULL` checks – replaced non-portable
+    Harbour-specific API with Windows `MultiByteToWideChar()` for compatibility
+    with both Harbour and xHarbour, and changed to dynamic allocation based on
+    actual input length.
+    Note: This function is only used in `hcomboex.prg` and `hctrlex.prg`
+    (ext_controls contrib).
+
+2026-09-06 12:11 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hwindow.prg**: fixed lost `bColor` parameter in `HChildWindow:New()` –
+    an extra comma before `bColor` in the call to `::Super:New()` shifted it
+    past `HWindow:New()`'s 22nd (last) formal parameter, so the argument was
+    silently discarded and the child window's background brush was never
+    set.
+  - **hwindow.prg**: fixed missing `msg` argument in the calls to
+    `hwg_onTrackScroll()` from `HChildWindow:onEvent()` and
+    `HMDIChildWindow:onEvent()` – the function is declared as
+    `hwg_onTrackScroll( oWnd, msg, wParam, lParam )`, but only 3 arguments
+    were passed, shifting `wParam`/`lParam` one position to the left and
+    breaking horizontal/vertical scroll-bar tracking (`WM_HSCROLL`/
+    `WM_VSCROLL`) on child and MDI child windows.
+
+2026-08-26 17:00 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **gt_hwgui_w.c**: fixed double free in `GTHWG_GETSIZE` – removed
+    `hb_itemRelease()` after `hb_itemReturn()`, which corrupted memory and
+    could cause silent crashes on exit.
+  - **gt_hwgui_w.c**: added `HB_SYMBOL_UNUSED()` for unused variables in
+    `hb_gt_hwg_Refresh` to eliminate W0033/W0003 warnings under `-w3 -es2`.
+  - **gt_hwgui_w.c**: added braces around conditional blocks in
+    `gthwg_MouseEvent`, `gthwg_KeyEvent` and `hb_gt_hwg_Info` to fix
+    `-Wmisleading-indentation` warnings from Clang/GCC and improve code
+    clarity.
+  - Adjust add lib ucrt, gdiplus on file test1.hbp
+  - Adjust add DUNICODE flags gthwg.hbp
+
+2026-08-26 11:00 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed contrib\ext_controls\hrectex.prg
+  - **HContainerEx**: added `End()` method to release the internal `HPen` object, preventing GDI resource leak when the control is destroyed.
+  - **HContainerEx**: simplified `Activate()` to remove duplicated initialization logic already present in `Init()`, ensuring tooltip and window object setup occur only once.
+  - **HContainerEx**: declared `End()` in the class definition for proper method resolution.
+
+2026-08-26 10:30 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed files into dir contrib\ext_controls
+  - **theme.c**: replaced 32-bit `hb_parnl`/`hb_retnl` with `hb_parnint`/`hb_retnint` in
+    `HWG_ONNOTIFYCUSTOMDRAW` and `HWG_BUTTONEXONSETSTYLE` to avoid truncating
+    `LPARAM`, `WPARAM` and `LRESULT` values on 64-bit builds.
+  - **theme.c**: changed `HWG_GETTHEMESYSCOLOR` from `HB_RETHANDLE` to `hb_retnint`
+    to return `COLORREF` as integer instead of an invalid handle pointer.
+  - **theme.c**: removed double release of the returned array item in
+    `HWG_PREPAREIMAGERECT` (eliminated `hb_itemRelease` after `hb_itemReturn`),
+    preventing potential memory corruption.
+  - **theme.c**: initialized all local `RECT` structures with `{0}` in functions
+    that fill them from optional array parameters (`HWG_DRAWTHEMEBACKGROUND`,
+    `HWG_DRAWTHEICON`, `HWG_PREPAREIMAGERECT`, `HWG_DRAWTHEMETEXT`,
+    `HWG_DRAWTHEMEPARENTBACKGROUND`) to avoid using uninitialized stack memory.
+  - **theme.c**: added `FPROC` macro using `HB_PTRUINT` intermediate cast to safely
+    convert function pointers to `FARPROC`, eliminating `-Wcast-function-type-mismatch`
+    warnings in Clang/GCC while preserving 64-bit pointer integrity.
+  - **draw_icon**: fixed typo in comment ("singel" -> "single").
+
+2026-08-25 23:20 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed source\winapi\misc.c
+  - **HWG_SETBIT**, **HWG_SETBITBYTE**, **HWG_CHECKBIT**:
+    added validation of bit position before performing shift
+    operations to prevent undefined behavior and potential
+    crashes on invalid input.
+
+2026-08-25 22:50 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed source\winapi\misc.c
+  - **HWG_HIWORD**: replaced `PtrToUlong()` conversion with cast via
+    `HB_PTRUINT` to avoid pointer truncation on 64-bit builds; still extracts
+    the high 16 bits from the lower 32 bits as required by Windows message
+    packing.
+  - **HWG_BITOR**, **HWG_BITAND**, **HWG_BITANDINVERSE**, **HWG_SETBIT**,
+    **HWG_CHECKBIT**: switched from 32-bit (`hb_parnl`/`hb_retnl`) to
+    platform-independent integer types (`hb_parnint`/`hb_retnint` and
+    `HB_MAXINT` shifts) to preserve full 64-bit values and prevent truncation
+    when processing larger integers on 64-bit systems.
+
+2026-08-25 22:01 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed source\winapi\hriched.prg
+  - **hriched.prg / HRichEdit:ReadOnly**: fixed the method missing the
+    `CLASS HRichEdit` clause present on every other out-of-body method in
+    the file - without it the implementation wasn't bound to the
+    `METHOD ReadOnly(...) SETGET` slot declared in the class body, breaking
+    `::ReadOnly` / `::ReadOnly := ...` (and risking a build failure or a
+    silent fallback to an unrelated global function).
+  - **hriched.prg / HRichEdit:onEvent (WM_MOUSEWHEEL)**: fixed a duplicated
+    `hwg_Sendmessage(EM_SCROLL, ...)` call that scrolled the control twice
+    as far as intended on every mouse wheel notch.
+  - **hriched.prg / HRichEdit:onEvent (ESC / WM_KEYDOWN)**: fixed
+    `hwg_Getparent(...) != Nil`, which would not detect a "no parent"
+    result of `0`, potentially sending `WM_CLOSE` to an invalid window
+    handle. Changed to `!Empty(...)`, which safely covers both `NIL` and
+    `0` without changing the already-working case.
+  - **hriched.prg / HRichEdit:onEvent (WM_MOUSEWHEEL)**: fixed an off-by-one
+    in the unsigned-to-signed 16-bit delta conversion
+    (`> 32768 ? -65535` -> `>= 32768 ? -65536`, standard two's-complement
+    conversion). No observable behavior change today (only the sign is
+    used, and real wheel deltas are multiples of 120), but the formula was
+    incorrect at both the boundary and the converted value.
+  ### Changed
+  - **hriched.prg / HRichEdit:onEvent**: documented the `::bOther` contract
+    (must return a Number <= -1 to continue with default processing) with
+    an inline comment, since any other return value silently short-circuits
+    all default key/focus/selection handling below it.
+
+2026-08-25 21:07 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hwg_GetDrawItemInfo**: removed conditional compilation for `hDC` and
+    `hwndItem`; now always uses `hb_itemPutPtr` to store pointers correctly
+    on both 32-bit and 64-bit builds, avoiding potential truncation or
+    misuse of `HB_PUTHANDLE`.
+  - **hwg_GetDrawItemInfo**: changed `itemState` storage from
+    `hb_itemPutNL( (LONG) itemState )` to `hb_itemPutNInt( (HB_MAXINT)
+    itemState )`, preserving the full unsigned 32-bit range and preventing
+    negative values when the high bit is set.
+
+2026-08-25 21:07 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed source\winapi\misc.c
+  - **hwg_PtrToUlong**: fixed pointer truncation in 64-bit builds; replaced
+    `PtrToUlong()` + `(LONG)` cast with `HB_PTRUINT` cast, preserving full
+    pointer width and preventing invalid handles on 64-bit platforms.
+
+2026-08-25 21:07 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hdrawn.prg / HDrawn:SetState (STATE_UNPRESS)**: fixed a phantom-object
+    bug where `HDrawn():GetByState(...)` implicitly constructed a throwaway
+    `HDrawn` instance via `New()`, whose constructor has the side effect of
+    permanently registering a blank, position-less object into the shared
+    default board's `aDrawn` list on every button-release event. That
+    phantom (with `nLeft`/`nTop`/`nWidth`/`nHeight` all `NIL`) was then hit
+    by `GetByPos()` on the very next mouse move, causing an unhandled
+    `Number >= NIL` runtime error - fatal and silent in `/gui` builds.
+    Replaced with `::GetByState(...)`, reusing the existing, already
+    registered `Self` (the method never touches its own instance fields).
+  - **hdrawn.prg / HDrawnTT:Paint**: fixed multi-line tooltips drawing the
+    full, still-joined `::title` string on every line iteration instead of
+    the current line (`arr[i]`), causing overlapping/duplicated text.
+  - **hdrawn.prg / HDrawnRadio:SetGroupValue**: fixed `o := aDrawn[i]:xValue`
+    capturing the logical value instead of the object reference; later code
+    uses `o` as an object (`o:xValue`, `o:title`, `o:Refresh()`), causing an
+    unhandled runtime error when `SetGroupValue()` is called with an index
+    beyond the radio group's actual member count.
+  - **hdrawn.prg / HDrawn:Paint (children loop)**: fixed a skipped sibling
+    repaint when a child's `Paint()` removes itself from `::aDrawn` mid-loop
+    (e.g. `HDrawnTT` self-deleting on hide) - the fixed-bound `FOR` loop
+    didn't account for the array shrinking and shifting. Replaced with a
+    `DO WHILE` that re-checks the array length after each child paint and
+    only advances when nothing was removed; no extra allocation, same
+    front-to-back paint order (z-order unchanged).
+
+  ### Changed
+  - **hdrawn.prg / HDrawnArrow:ArrowTimerProc**: added a defensive `NIL`
+    guard for `o:oTimer`, covering a race where a queued `WM_TIMER` message
+    can still fire after `onButtonUp()`/`onMouseMove()` already called
+    `oTimer:End()` and set `oTimer := NIL`.
+
+2026-08-25 13:41 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+   ### Fixed
+   - **hwg_onDestroy**: source\winapi\hwindow.prg
+     added a safeguard to verify if the window handle is
+     still present in `HWindow():aWindows` before attempting
+     cleanup and removal. This prevents crashes or undefined behaviour
+     caused by duplicate `WM_DESTROY` processing on a window
+     that has already been removed from the active list.
+
+2026-08-24 20:44 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+   - HWG_BMPNEWIMAGE, HWG_QRCODEZOOM_C: Fixed critical stack overflow
+     vulnerabilities under Clang 64-bit by moving heavy buffer allocations
+     to heap memory (hb_xgrab). Added defensive buffer boundaries.
+   - HWG_BMPDESTROY: Nullified bmp_fileimg pointer post-destruction to
+     prevent Double Free process crash anomalies.
+
+2026-08-24 20:30 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hwg_BMPNewImageC**: fixed BMP file corruption from copying the full
+    `BMPImage3x` struct (including in-memory pointers) into the output
+    buffer instead of just the 54-byte header; size varied between 32-bit
+    and 64-bit builds, corrupting the palette/pixel area inconsistently.
+  - **hwg_BMPNewImageC**: fixed pointer corruption from `memset()` on the
+    address of the `palette` pointer instead of its contents.
+  - **hwg_BMPNewImageC**: fixed use-after-free in the pixel-row allocation
+    loop (missing `return` after cleanup on allocation failure).
+  - **hwg_BMPNewImageC**: fixed out-of-bounds read in the 4bpp encoding path
+    (`j + 1 < bmp_height` compared a column index against the row count;
+    now `bmp_width`).
+  - **hwg_BMPNewImageC**: added missing `NULL` checks for `malloc`/`calloc`
+    calls (file buffer, pixel rows, palette, pixel buffer).
+  - **hwg_BMPNewImageC**: fixed memory leaks of `pixel_data` and `palette`
+    on the success path (never freed before return).
+
+2026-08-24 20:20 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **HWG_DRAWGRADIENT**: fixed GDI handle leaks (bitmap and brush) caused by
+    missing restore `SelectObject()` calls before `DeleteObject()`/`DeleteDC()`.
+    The gradient bitmap (`bmp`) and the final brush applied to the caller's
+    `hDC` remained selected into their respective device contexts, causing
+    `DeleteObject()` to silently fail and the handle to never be released.
+    In applications that redraw gradients frequently (resize, repaint), this
+    exhausted the process's GDI handle quota over time.
+  - **HWG_DRAWGRADIENT**: fixed secondary leaks from temporary brushes created
+    while filling in the edges of linear, diagonal, and radial gradients
+    (they were never deselected from `hDC_mem` before `DeleteObject()`).
+  - **HWG_DRAWGRADIENT**: fixed a division-by-zero in `section_len` for diagonal
+    and radial gradients, which occurred when two consecutive `stops` rounded
+    to the same pixel, producing invalid (`inf`/`nan`) colors for the rest of
+    the gradient.
+  - **HWG_DRAWGRADIENT**: fixed the color conversion factor for `COLOR16`
+    (`TRIVERTEX`), which used `256` instead of `257`, leaving the maximum
+    value at 65280 instead of 65535 and introducing slight color inaccuracy
+    at the extremes.
+
+  ### Changed
+  - **HWG_DRAWGRADIENT**: changed `x`/`y` variables from `long` to `LONG` to
+    guarantee a consistent 32-bit width regardless of platform/compilation
+    target (avoids silent truncation if built under an LP64 data model).
+  - **HWG_DRAWGRADIENT**: added input validation rejecting invalid/inverted
+    rectangles (`x2 <= x1` or `y2 <= y1`) before any bitmap allocation,
+    preventing undefined behavior.
+
+2026-08-24 19:57 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+     - HWG_COPYRECT: Fixed a critical VM stack corruption bug by removing an
+       invalid hb_itemRelease() execution in a returned object lifecycle.
+     - HWG_GETMEASUREITEMINFO: Fixed an internal Harbour VM memory leak by
+       reusing a single, pre-allocated PHB_ITEM container.
+     - HWG_GETWINDOWDC: Swapped legacy HB_RETHANDLE macro with an explicit
+       64-bit pointer return (hb_retptr) to prevent HDC truncation.
+
+2026-08-24 19:52 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+     - HWG_INFLATERECT: Fixed an early return sequence bug that caused array value
+       updates (hb_storvni) to become unreachable dead code.
+     - HWG_FRAMERECT, HWG_DRAWFRAMECONTROL, HWG_OFFSETRECT, HWG_DRAWFOCUSRECT:
+       Added stack defensive design using memset initialization to block garbage
+       memory execution crashes on invalid parameters under Clang 64-bit.
+
+2026-08-24 19:46 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_SETWINDOWORGEX, HWG_SETWINDOWEXTEX, HWG_SETVIEWPORTORGEX, HWG_SETVIEWPORTEXTEX:
+      Added stack validation checks for parameter counts before invoking hb_stornl().
+    - HWG_CREATECOMPATIBLEBITMAP: Swapped legacy HB_RETHANDLE macro with an
+      explicit 64-bit pointer return (hb_retptr) to prevent handle truncation.
+
+2026-08-24 19:33 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_GDIPLUSOPENIMAGE: Hardened memory boundaries by ensuring valid NULL
+      pointer returns to the Harbour VM on buffer allocation failures.
+    - HWG_CREATECOMPATIBLEDC: Replaced legacy HB_RETHANDLE macro with an explicit
+      64-bit pointer return (hb_retptr) to prevent HDC handle truncation.
+
+2026-08-24 17:01 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+   - HWG_OPENIMAGE: Fixed a severe 64-bit pointer truncation and crash bug.
+     Separated OLE_HANDLE extraction into a native 32-bit container before
+     performing safe uintptr_t casting to HBITMAP/HICON/HCURSOR. Moved
+     GlobalFree memory operations down to preserve stream safety thresholds.
+
+2026-08-24 16:46 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_GETDRAWITEMINFO: Fixed a critical Harbour VM memory leak by refactoring
+      dynamic array insertions to use a single, pre-allocated PHB_ITEM container.
+    - HWG_DRAWGRAYBITMAP: Enhanced GDI safety bounds by adding object size
+      sanitization and ensured strict restoration of system context color properties.
+
+2026-08-24 16:32 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_CREATESOLIDBRUSH, HWG_CREATEHATCHBRUSH, HWG_SELECTOBJECT, HWG_GETDC:
+      Swapped legacy HB_RETHANDLE macros with safe 64-bit pointer returns (hb_retptr)
+      to guarantee handle integrity and prevent pointer truncation under Clang.
+    - HWG_DELETEOBJECT: Enhanced function to return a boolean value reflecting
+      the GDI operation status.
+
+2026-08-24 16:32 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_GETSYSCOLOR: Fixed integer sign casting to match 64-bit Harbour architectures.
+    - HWG_GETSYSCOLORBRUSH, HWG_CREATEPEN: Implemented explicit 64-bit pointer
+      return macros (hb_retptr) to prevent handles from being truncated by Clang.
+
+2026-08-24 16:25 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_SAVEBITMAP: Fixed a severe graphic context leak by ensuring ReleaseDC
+      is invoked unconditionally. Resolved a buffer overflow vulnerability in
+      WriteFile by enforcing exact memory boundary bounds instead of computing
+      offset file header sizes.
+
+2026-08-24 16:17 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_OPENBITMAP: Fixed critical 64-bit file handle verification by checking
+      against INVALID_HANDLE_VALUE. Added integer overflow sanitization to the bit-shifting
+      color palette calculations and introduced safe 64-bit pointer return macros.
+
+2026-08-24 16:07 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_GETICONSIZE: Fixed a severe GDI leak by explicitly destroying hbmColor
+      and hbmMask bitmaps allocated by GetIconInfo(). Resolved internal Harbour VM
+      memory leaks by optimizing dynamic item container lifecycles.
+
+2026-08-24 16:02 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_GETBITMAPSIZE: Fixed an internal Harbour VM memory leak by replacing
+      anonymous item allocations in hb_itemPutNL(NULL, ...) with a single,
+      safely managed PHB_ITEM container. Added structure initialization using
+      memset to prevent stack garbage collection on GetObject failures.
+
+2026-08-24 15:49 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_CENTERBITMAP: Fixed a critical GDI resource leak by implementing
+      proper cleanup with hOldObj restoration before calling DeleteDC(). Added
+      validation bounds for GetObject dimensions to prevent memory calculation
+      faults on invalid bitmap handles.
+
+2026-08-24 15:49 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_SPREADBITMAP: Fixed a critical GDI resource leak by properly
+      restoring the original bitmap handle (hOldObj) before destroying hDCmem.
+      Added structural protection rules against zero or negative dimensions
+      to avoid application freeze and infinite loop bugs.
+
+2026-08-24 15:41 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - Rect2Array: Fixed a memory allocation leak by properly destroying and
+      reinitializing the internal PHB_ITEM element for each array index injection.
+    - HWG_GETPPSERASE, HWG_GETUPDATERECT: Adjusted return macros from hb_retni()
+      to hb_retl() to ensure proper boolean data transmission to the Harbour VM.
+
+2026-08-24 15:13 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_INVALIDATERECT: Fixed a data type mismatch for 64-bit compatibility.
+      Adjusted the erase-background parameter to check for boolean types (HB_ISLOG)
+      before numerical conversion, preventing stack corruption and rendering issues.
+
+2026-08-24 15:07 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - HWG_DRAWTRANSPARENTBITMAP: Fixed potential GDI leak by adding explicit
+      null-pointer checks before releasing resources. Adjusted mask bitmap
+      creation sizing to dynamic destination constraints to guarantee layout
+      stability and avoid buffer overrun on stretched contexts.
+
+2026-08-24 14:57 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    - TransparentBmp: Fixed a critical resource leak and potential crash in
+      64-bit systems. Resolved recursive LoadLibrary() calls on MSIMG32.DLL by
+      implementing proper lazy-loading validation. Added strict NULL pointer
+      checks for the dynamic function call to prevent memory access violations.
+
+2026-08-24 14:38 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    * source/winapi/draw.c:
+      - HWG_WINDOW2BITMAP: Fixed a critical GDI resource leak. Replaced
+        incorrect DeleteDC() with ReleaseDC() for window device contexts.
+        Ensured old GDI object restoration before context deletion and
+        added proper 64-bit pointer return compatibility handling.
+      - HWG_DRAWBITMAP: Fixed a GDI resource leak. Restored the original
+        default bitmap handle (hOldObj) into the memory device context (hDCmem)
+        before calling DeleteDC().
+
+2026-08-24 13:43 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  * source/hdialog.prg
+    + fix: crash while close no modal dialogs
+
+2026-08-23 21:30 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  * source/dialog.c
+    + Security fix: eliminated stack buffer overflow in
+      HWG__PROPERTYSHEET().
+      Previously the function used a fixed array of 10 elements
+      (HPROPSHEETPAGE psp[10]). If the caller requested more than
+      10 pages, the code wrote past the end of the array.
+      The array is now allocated dynamically according to the
+      actual number of pages, with proper bounds checking.
+
+2026-08-23 17:01 UTC-0300  Itamar Lins  <itamarlins at gmail.com>
+   * source/winapi/dialog.c
+     - s_DlgProc(), s_PSPProc(): fixed WM_DESTROY handler unconditionally
+       decrementing iDialogs/shifting aDialogs[] even when the closing
+       hWnd was not found in the array, silently corrupting the modeless
+       dialog/property-sheet-page tracking array; the array is now only
+       touched when the handle is actually located.
+     - s_DlgProc(), s_PSPProc(): the PHB_ITEM duplicate created by
+       SetWindowObject() at WM_INITDIALOG was never released, leaking
+       one Harbour item per created/destroyed dialog; it is now released
+       via hb_itemRelease() right after the WM_DESTROY event has been
+       dispatched to the .prg ONEVENT handler.
+     - HWG_DLGBOXINDIRECT(): validate hWndParent with IsWindow() before
+       passing it to DialogBoxIndirectParam(); falls back to the main
+       window handle (aWindows[0]) when the received parent no longer
+       refers to an existing window, instead of silently failing to
+       create the dialog (DialogBoxIndirectParam returning 0/-1 with
+       ERROR_INVALID_WINDOW_HANDLE / no error code at all). Logs the
+       failure (GetLastError) via hwg_writelog() when creation still
+       fails after the fallback.
+     - s_CreateDlgTemplate(), new s_FixupLargeCaptions(): the Windows
+       DLGTEMPLATE is a native 16-bit (WORD-addressed) structure; a
+       control caption larger than HWG_MAX_INLINE_CAPTION (2000 wide
+       chars) could overflow/corrupt the template buffer and make
+       DialogBoxIndirectParam()/CreateDialogIndirectParam() silently
+       fail to create the window. Such captions are now left empty in
+       the template and applied afterwards via WM_SETTEXT, once the
+       dialog and its child controls already exist (called from
+       WM_INITDIALOG in both s_ModalDlgProc() and s_DlgProc()).
+       Fixes report/preview dialogs failing to open when the embedded
+       text (e.g. a large EDITBOX report) exceeds the template's
+       structural limit.
+   * source/winapi/hdialog.prg
+     - METHOD FindDialog(): was only searching ::aDialogs (modeless
+       dialogs), never ::aModalDialogs, making it unable to resolve a
+       dialog passed explicitly to hwg_EndDialog(handle) whenever it
+       wasn't also the current Atail(aModalDialogs); now searches both
+       arrays.
+     - METHOD Activate(): after Hwg_DlgBoxIndirect(), if ::handle is
+       still empty (dialog window failed to be created), the object is
+       now removed from its tracking array (::DelItem()) immediately
+       instead of being left as an orphaned entry at the top of
+       aModalDialogs/aDialogs - which previously caused a later,
+       unrelated Close()/hwg_EndDialog() call to receive an empty
+       handle and fail with a parameter error.
+
+2026-08-20 02:58 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+   Win64 Portability & Memory Alignment Fixes
+   * source/winapi/dialog.c:
+     - Fixed critical 32-bit pointer truncation in s_lpwAlign() by replacing
+       legacy ULONG/ULONGLONG compiler-conditional guards with ULONG_PTR,
+       preventing C0000005 ACCESS_VIOLATION crashes under Win64 Clang environments.
+     - Upgraded dialog callback procedure signatures (s_ModalDlgProc, s_DlgProc,
+       s_PSPProc, s_PSPProcRelease) from LRESULT to INT_PTR to maintain stack
+       frame integrity on 64-bit systems.
+     - Fixed variable truncation for Harbour engine event handling by migrating
+       from 'long int' / hb_parnl() to LONG_PTR / hb_parnll().
+     - Refactored dynamic template handling in HWG_DLGBOXINDIRECT to utilize
+       explicit 64-bit casting and direct instance binding via GetModuleHandle(NULL).
+   * source/winapi/animat.c, draw.c, freeimg.c, misc.c, nice.c, resource.c, richedit.c, shellapi.c, window.c, wprint.c:
+     - Fixed widespread -Wint-to-pointer-cast and -Wpointer-to-int-cast warnings.
+     - Migrated API pointer/handle extractions from hb_parnl() to hb_parptr() or
+       HB_PARHANDLE() macros.
+     - Updated Windows API data mappings (e.g., EDITSTREAM.dwCookie mapped to
+       DWORD_PTR instead of DWORD).
+     - Fixed return macros by substituting invalid HB_RETHANDLE() usages on
+       pure logical indicators (e.g., ReleaseDC, DeleteEnhMetaFile) with hb_retl().
+
+2026-08-17 21:58 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/window.c: Updated HB_FUNC( HWG_ACTIVATEDIALOG ) to
+      receive and process the parent window handle parameter. Fixed
+      native GTK2 window modal and transient stacking layout chain by
+      applying gtk_window_set_modal() and gtk_window_set_transient_for().
+      Deferred the application input lock (gtk_grab_add) to the high-priority
+      idle cycle callback (gtk_shared_force_center_on_idle) to secure full
+      GtkMenuBar / background menus lockout right AFTER the asynchronous
+      Browse geometry allocation (introduced in r3852) completes its
+      lifecycle layout mapping. Ensured proper input recovery by calling
+      gtk_grab_remove() immediately upon nested gtk_main() termination.
+
+2026-08-16 16:58 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+   * source/gtk/window.c:
+     (HWG_ACTIVATEDIALOG): Injected a high-priority idle callback via g_idle_add_full
+     to force exact screen centering when the modal loop initiates, overriding
+     asynchronous layout shifts caused by packed controls.
+   * source/gtk/control.c:
+     (HWG_CREATEBROWSE): Removed gtk_main_iteration loop to prevent premature
+     event flushes from breaking dialog window alignment.
+     (HWG_SETADJOPTIONS): Re-enabled native adjustment changed notification signals.
+   * source/gtk/hbrowse.prg:
+     Fixed duplicate DATA declarations and mapped properties to proper uppercase.
+     Adjusted signal return values (retValue = 0) in hbrowse event loop to allow
+     proper GtkScrollbar allocation and render tracks correctly.
+   * source/gtk/hdialog.prg:
+     (InitModalDlg): Changed return statement from 1 to 0 to prevent the underlying
+     C engine from overriding position layout bounds after Center() execution.
+     (onPAINT): Removed infinite invalidation loop inside background canvas.
+
+2026-08-15 22:58 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+   - GTK: Add native ON PAINT support for DIALOG
+   * source/gtk/window.c (HWG_CREATEDLG): Add GDK_EXPOSURE_MASK and connect expose_event.
+   * source/gtk/window.c (HWG_PAINTWINDOW): Implement GTK2 native window clear and repaint session.
+   * source/gtk/hdialog.prg (HDialog:onEvent, HDialog:onPAINT): Add WM_PAINT interception and handle expose signal.
+
+2026-08-13 01:14 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+   * source/gtk/hbrowse.prg
+     - METHOD Paint(): Fixed GTK2 bug where the row cursor got isolated at the
+       top row (viewport row 1) with an empty viewport above it when opening
+       the browse with the database pointer positioned at EOF (e.g., dbGoBottom()).
+     - METHOD Paint(): Relocated the initialization sync block to execute right
+       after ::rowCount and nRows dimensions are computed from client rectangle.
+     - METHOD Paint(): Fixed EOF handler logic to only force rowPos := 1 if the
+       dataset is completely empty (::nRecords == 0), preventing the engine
+       from breaking standard bottom-up rendering on startup.
+
+2026-08-12 01:36 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/control.c
+      ! HWG_CREATEEDIT(): Fixed missing scrollbars in multi-line edit controls
+        (ES_MULTILINE) by embedding GtkTextView inside a GtkScrolledWindow container.
+      ! HWG_CREATEEDIT(): Added check for WS_HSCROLL to dynamically toggle
+        GTK_WRAP_NONE / GTK_WRAP_WORD_CHAR wrap modes.
+      ! HWG_CREATEEDIT(): Implemented support for WS_HSCROLL and WS_VSCROLL style
+        flags to enforce permanent scrollbar visibility using GTK_POLICY_ALWAYS.
+      ! HWG_CREATEEDIT(): Replaced gtk_widget_show() with gtk_widget_show_all()
+        on the scrolled window container to prevent rendering issues with the
+        internal text buffer.
+
+2026-08-11 03:01 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+* source/gtk/hbrowse.prg
+      - METHOD Rebuild(): Refactored column width rendering for GTK2.
+        Replaced legacy metrics calculation with an alphabet-based average
+        width string measurement. Implemented dynamic width padding thresholds
+        to strictly respect short fields (<= 2), custom counter-padding for
+        Date types ("D") to handle century offsets, and enforced a minimum
+        14px right margin on text columns to prevent vertical line clipping.
+
+2026-08-11 03:01 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/hbrowse.prg
+      - METHOD Rebuild(): Fixed column width calculation in Linux (GTK2).
+        customized evaluation for Date types ("D")
+        to respect 'nColLen' (handling SET CENTURY ON/OFF) without truncation.
+
+2026-08-11 02:01 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/hbrowse.prg
+      - METHOD Rebuild(): Fixed column width calculation in Linux (GTK2).
+        Replaced the inaccurate 'arr[2]' metric with a real character width
+        average by measuring the full alphabet. This ensures 'Length' is
+        strictly respected across all column sizes (from Length 2 to 60)
+        without distortion, achieving exact parity with the Win32 layout.
+
+2026-08-09 21:02 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * cross/common.prg:
+      ! Fix Ctrl+C GTK2 PICTURE "@R !!.!!!.!!!/!!!!-99"
+      - METHOD UnTransform( cBuffer ) CLASS HPicture
+        GTK Linux fix: Force strict character type conversion when
+        cBuffer is passed as NIL, numeric, logical, or as a widget
+        object (e.g., during Ctrl+C/DOCOPY clipboard events). Prevents
+        Harbour runtime error BASE/1110 (SUBSTR parameter error).
+
+2026-08-09 12:04 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/control.c
+      - Added 'hwg_button_key_press' and 'hwg_button_focus_out' callbacks
+        for BS_AUTO3STATE and BS_AUTORADIOBUTTON.
+      - Fixed GTK2 focus trap issue on CheckBox/Radio components where the
+        TAB key would loop focus back to the top of the form. The focus
+        now respects the chronological HwGUI layout creation order by
+        programmatically scanning the container children list.
+      - Included <gdk/gdkkeysyms.h> for proper keyboard constant mappings.
+
+2026-08-08 23:20 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/control.c
+    * source/gtk/window.c
+      - Modernize background color rendering across all core layout components and HDialogs.
+        Forced solid modern Windows off-white palette (RGB: 240, 240, 240) inside HWG_CREATEDLG,
+        HWG_CREATETABCONTROL, HWG_ADDTAB, and HWG_CREATEOWNBTN functions to guarantee
+        a flawless cross-platform visual appearance matching modern Windows OS themes and
+        eliminating legacy bitmap icon background mask contrasts under Linux/GTK2.
+
+2026-08-08 21:35 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/window.c
+      - Add custom GLib/GTK log handler 'hwg_gtk_log_handler' inside HB_FUNC( HWG_GTK_INIT ).
+        Suppressed benign focus-change and window-quit legacy runtime assertions to keep
+        the terminal environment clean.
+        Silenced warnings list:
+          - g_object_ref: assertion 'G_IS_OBJECT (object)' failed
+          - g_object_freeze_notify: assertion 'G_IS_OBJECT (object)' failed
+          - IA__gtk_widget_has_default: assertion 'GTK_IS_WIDGET (widget)' failed
+          - IA__gtk_widget_get_receives_default: assertion 'GTK_IS_WIDGET (widget)' failed
+          - IA__gtk_widget_send_focus_change: assertion 'GTK_IS_WIDGET (widget)' failed
+          - g_object_notify: assertion 'G_IS_OBJECT (object)' failed
+          - g_object_thaw_notify: assertion 'G_IS_OBJECT (object)' failed
+          - g_object_unref: assertion 'G_IS_OBJECT (object)' failed
+          - IA__gtk_main_quit: assertion 'main_loops != NULL' failed
+
+2026-08-08 20:45 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/control.c
+    * source/gtk/htab.prg
+      - Add Tab Control Enable/Disable support and cross-platform compatibility layer. Linux/GTK OS.
+        Fixed edge-clicking navigation vulnerability on disabled tab labels by introducing
+        signal interception inside switch-page handler.
+        Thanks to Deivid José de Souza.
+        Tests with Ubuntu 26.10(Kubuntu) KDE(Wayland)
+
+2026-08-08 17:27 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * include/guilib.h:
+      - Conditionally included "incomp_pointer.h" for Linux/Unix environments
+        to apply global compiler warning suppressions.
+    * include/incomp_pointer.h:
+      - Added global GCC diagnostics to suppress GTK 2.0 deprecated warnings
+        and Harfbuzz macro redefinition conflicts (`HB_DEPRECATED`).
+    * source/gtk/herrsys.prg:
+      - Included "guilib.h" inside the BEGINDUMP block to enforce clean
+        compilation logs on the errorsys module.
+
+2026-08-08 16:03 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/hbrowse.prg:
+      - Fixed a critical BASE/1066 parameter error inside METHOD Edit() when
+        using SQLMIX RDD. Explicitly checked DbInfo(DBI_ISREADONLY) against .T.
+        to handle NIL values gracefully.
+
+2026-08-08 16:03 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/gtk/herrsys.prg:
+      - Fixed a crash on exit by replacing the Harbour-level DIALOG with a native
+        C GtkMessageDialog, separating it from the unstable object tree during panic mode.
+      - Implemented a native GTK signal callback to capture the close event.
+      - Replaced the traditional Harbour QUIT with a low-level kernel exit (_exit(0))
+        inside C, preventing background widgets from triggering recursive error loops.
+      - Added global recursion protection (`lInError`) and temporary ErrorBlock deactivation.
+
+2026-08-08 12:39 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source\winapi\control.c
+    * source\winapi\dialog.c
+    * source\winapi\htab.prg
+      - Add Tab Control Enable/Diasable option. Windows OS
+        Thanks to Deivid José de Souza. 
+        Compatible with old version of Hwgui 2.17 
+      - See https://pctoledo.org/viewtopic.php?p=170966#p170966
+      
+2026-08-07 14:40 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * include\windows.ch:
+      - Added ES_NUMINVERT (16384) and ES_CLEARTYPE (512) style flags.
+    * source\winapi\hedit.prg:
+      - Added support for right-to-left entry in numeric fields.
+     Sample of use:
+     nVA := 0; nVB := 0
+     INIT DIALOG oDlg CLIPPER NOEXIT AT 0,0 SIZE 800,600
+        @ 10, 10 SAY "Any Value" TRANSPARENT SIZE 140, 21
+        @ 10, 30 GET oGetA Var nVA  PICTURE "@E 999,999,999.99" SIZE 160, 24 STYLE ES_RIGHT + ES_NUMINVERT
+        @ 10, 60 GET oGetB Var nVB  PICTURE "@E 999,999,999.99" SIZE 160, 24 STYLE ES_RIGHT + ES_NUMINVERT + ES_CLEARTYPE
+     oDlg:Activate(,,,.t.)
+    Thanks to Deivid José de Souza. https://pctoledo.org/viewtopic.php?t=23334
+
+2026-08-06 18:30 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/winapi/control.c:
+      - Fixed HB_FUNC( HWG_INITSTATUS ) to perform proper cumulative 
+        calculation of status bar right-edge parts coordinates (SB_SETPARTS).
+      - Replaced hb_arrayGetNI with hb_arrayGetNL to guarantee flawless 
+        numeric extraction on modern 64-bit architectures (GCC UCRT64).
+      - Added support for 0 and -1 sizes to properly auto-expand panels.
+
+    * source/winapi/drawtext.c:
+      - Fixed HB_FUNC( HWG_WRITESTATUSWINDOW ) to use correct HB_SIZE data type.
+      - Updated HB_PARSTR macro usage with explicit length pointer reference.
+      - Fixed string truncation bug (single char output) under Unicode builds.
+
+    * source/winapi/guimain.prg:
+      - Fixed hwg_WriteStatus() function to call hwg_WriteStatusWindow() 
+        instead of generic hwg_SendMessage().
+      - Ensures proper ANSI/Unicode string marshalling for HSTATUS controls.
+
+2026-08-01 23:44 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+   ! Fix for compiling UNICODE(UTF8) Windows OS.
+    * \hwgui\source\winapi\hmonthc.prg
+    * \hwgui\source\common\editor\hcedit_w.c
+    * \hwgui\source\winapi\control.c
+    * \hwgui\source\winapi\draw.c
+    * \hwgui\source\winapi\registry.c
+
+2026-07-17 17:55 UTC+0200 Wilfried Brunken DF7BE
+  ! Support ticket #89:
+  ! Curious crash
+  ! This sample program does
+  ! not crash !!
+  ! See post to ticket
+  ! Sripts added for compile
+  ! without *.hbp file.
+* test/tickets/Sticket89.prg
++ test/tickets/hwmk.bat
++ test/tickets/hwmk.sh 
+
+2026-07-17 17:45 UTC+0200 Wilfried Brunken DF7BE
+  ! Bugfix hwg_hex_dump() 
+  ! for output format Nr.0
+* source/cross/hmisccross.prg
+
+2026-07-14 13:30 UTC-0200 Jose Quintas
+   ! demoupdown.prg
+     ! added ticket92
+  ! demoall.prg
+    ! moved demoupdown to say/get tabpage
+
+2026-07-11 18:45 UTC+0200 Wilfried Brunken DF7BE
+  ! Sample test and demo program:
+  ! instructions for using COMBOBOX values
+  ! Functions added:
+  ! hwg_CCOMB2STRI()
+  ! hwg_STRI2COMB()
+* source/cross/hmisccross.prg
+* doc/hwgdoc_commands.html
+* doc/hwgdoc_functions.html
++ test/tstcombovals.prg
+
+2026-07-03 09:40 UTC+0200 Wilfried Brunken DF7BE
+  ! Ticket #92 UpDown values:
+  ! Some trouble getting result value.
+  ! Test program added and command docu
+  ! updated.
+  ! The new scripts "hwmk.bat" and
+  ! "hwmk.sh" compile a single
+  ! program without using a .hbp file.
+  ! For details see comment lines
+  ! of test program.
+  ! Hello josequintas,
+  ! can you add this sample program
+  ! into the demo of "samples"
+  ! directory ?
+  * samples/iconify/ReadMe.htm
+  * doc/hwgdoc_commands.html
+  + doc/image/UpDownWin.png
+  + test/Ticket92.prg
+  + test/hwmk.bat
+  + test/hwmk.sh
+
+2026-04-21 15:05 UTC+0200 Wilfried Brunken DF7BE
+  ! Project iconification sample:
+  ! Finshed for Rasberry Pi 4.
+  ! To be continued with
+  ! MacOS.
+* samples/iconify/ReadMe.htm
++ samples/iconify/desktop/raspberry_pi/Pi4/helloworld.desktop
++ samples/iconify/desktop/raspberry_pi/Pi4/hwguiicon.desktop
++ samples/iconify/desktop/raspberry_pi/Pi4/start_helloworld.sh
++ samples/iconify/images/Helloword_Raspi_Std_Icon.png
+
+
+2026-04-15 11:35 UTC+0200 Wilfried Brunken DF7BE
+  ! Project iconification sample:
+  ! Finshed for LINUXMint.
+  ! To be continued with
+  ! Raspberry Pi 4 and MacOS.
+* samples/iconify/ReadMe.htm
++ samples/iconify/desktop/Mint/helloworld.desktop
++ samples/iconify/desktop/Mint/start_helloworld.sh
++ samples/iconify/images/LINUXMint_Running_Helloworld.png
+
+
+2026-04-13 16:45 UTC+0200 Wilfried Brunken DF7BE
+  ! Project iconification sample:
+  ! Terminal miss start of "Helloworld.prg"
+  ! Fixed.
+  ! To be continued.
+* samples/iconify/ReadMe.htm
++ samples/iconify/desktop/raspberry_pi/helloworld.desktop
++ samples/iconify/start_helloworld.sh
+
+
+2026-04-12 17:45 UTC+0200 Wilfried Brunken DF7BE
+  ! Added instructions and sample files for
+  ! iconfications, next steps:
+  ! Raspberry Pi 5,
+  ! to be continued for LINUXMint,
+  ! Raspberrry Pi 4 and MacOS)
+!!! Files in directory samples/iconify:
+*  ReadMe.htm
++  desktop/raspberry_pi/hwguiicon.desktop
++  desktop/raspberry_pi/term_apps
++  helloworld
++  images/Raspi5_Add_Item.png
++  images/Raspi5_ControlCentre_Cfm_sele_icon.png
++  images/Raspi5_ControlCentre_hwgicadd_launcher.png
++  images/Raspi5_ControlCentre_hwgicon.png
++  images/Raspi5_ControlCentre_icon_fisel.png
++  images/Raspi5_ControlCentre_icon_sel.png
++  images/Raspi5_Control_Centre_new.png
++  images/Raspi5_Group_HamRadio_32x32.ico
++  images/Raspi5_exec_perm.png
++  images/Raspi5_launch_file.png
++  images/Raspi5_taskbar-prefer.png
+
+
+2026-04-05 15:20 UTC+0200 Wilfried Brunken DF7BE
+  ! Added instructions and sample files for
+  ! iconfications, next steps.
+  ! Add terminal shortcuts.
+  ! (OK for Windows and Ubuntu,
+  ! to be continued for LINUXMint,
+  ! Raspberrry Pi and MacOS)
+* samples/iconify/ReadMe.htm
+* samples/iconify/hwguiicon.desktop
++ samples/iconify/desktop/ubuntu/helloworld.desktop
++ samples/iconify/desktop/Mint (directory)
++ samples/iconify/desktop/Mint/hwguiicon.desktop
++ samples/iconify/desktop/ubuntu/helloworld.desktop
++ samples/iconify/desktop/ubuntu/term_apps/helloworld.sh
++ samples/iconify/desktop/ubuntu/term_apps/helloworld_t.sh
++ samples/iconify/helloworld
++ samples/iconify/helloworld.prg
++ samples/iconify/images/LINUX_Dock_term_started.png
++ samples/iconify/images/LINUX_helloworld_Desktop_allow_start.png
++ samples/iconify/images/LINUX_helloworld_Desktop_cross.png
++ samples/iconify/images/LINUX_helloworld_Desktop_shortcut.png
++ samples/iconify/images/Mint_Icon_permissions.png
++ samples/iconify/images/Mint_Melange_Display_WMClass.png
++ samples/iconify/images/Win_Desktop_helloworld_OK.png
++ samples/iconify/images/Win_Desktop_helloworld_blank.png
++ samples/iconify/images/Win_Desktop_helloworld_exe.png
++ samples/iconify/images/Win_Desktop_helloworld_name.png
++ samples/iconify/images/Win_Desktop_helloworld_symbo.png
++ samples/iconify/images/Win_Desktop_helloworld_symok.png
++ samples/iconify/images/Win_Desktop_helloworld_symse.png
++ samples/iconify/images/Win_Desktop_helloworld_symwa.png
++ samples/iconify/images/helloworld.bmp
++ samples/iconify/images/helloworld.png
++ samples/iconify/images/helloworld_128x128.png
++ samples/iconify/images/helloworld_256x256.ico
++ samples/iconify/images/helloworld_screenshot.png
+
+2026-04-02 18:50 UTC+0200 Wilfried Brunken DF7BE
+  ! Added instructions and sample files for
+  ! iconfications.
+  ! (OK for Windows and Ubuntu,
+  ! to be continued for LINUXMint,
+  ! Raspberrry Pi and MacOS)
+* doc/hwgdoc_commands.html
+* samples/Readme.txt
++ samples/iconify/ReadMe.htm
++ samples/iconify/desktop
++ samples/iconify/desktop/macos
++ samples/iconify/desktop/raspberry_pi
++ samples/iconify/desktop/ubuntu
++ samples/iconify/desktop/ubuntu/hwgui.desktop
++ samples/iconify/desktop/ubuntu/term_apps
++ samples/iconify/desktop/ubuntu/term_apps/hwgui_sample.sh
++ samples/iconify/desktop/ubuntu/term_apps/hwgui_sample_g.sh
++ samples/iconify/hwg_icons_macos.sh
++ samples/iconify/hwgui.iconset
++ samples/iconify/hwgui.rc
++ samples/iconify/hwgui_1024x1024.bmp
++ samples/iconify/hwgui_1024x1024.png
++ samples/iconify/hwgui_128x128.ico
++ samples/iconify/hwgui_128x128.png
++ samples/iconify/hwgui_256x256.ico
++ samples/iconify/hwguiicon.desktop
++ samples/iconify/hwguiicon.hbp
++ samples/iconify/hwguiicon.prg
++ samples/iconify/images
++ samples/iconify/images/Icon_Win_Taskbar.png
++ samples/iconify/images/LINUX_Allow_Start_Desktop.png
++ samples/iconify/images/LINUX_Desktop_allow_start_right_click.png
++ samples/iconify/images/LINUX_Desktop_file_cross.png
++ samples/iconify/images/LINUX_Destop_file_show_exec_p.png
++ samples/iconify/images/LINUX_Gear_Icon.png
++ samples/iconify/images/LINUX_Gear_Icon_WMClass.png
++ samples/iconify/images/LINUX_HWGUI_Desktop_shortcut.png
++ samples/iconify/images/LINUX_Running_hwguiicon.png
++ samples/iconify/images/LINUX_pin_to_dock.png
++ samples/iconify/images/Prg_Win.png
++ samples/iconify/images/Win_Desktop_icon.png
++ samples/iconify/images/Win_Desktop_rightClick.png
++ samples/iconify/images/Win_Expl_exe_with_icon.png
++ samples/iconify/images/Win_pin_at_taskbar.png
++ samples/iconify/images/Windows.Manifest
++ samples/iconify/images/Windows64.Manifest
+
+2026-03-04 10:18 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * source/cross/hgraph.prg
+    * ::lDrawX, ::lDrawY variables added to disable, if needed, drawing of X and Y axes
+
+2026-02-24 11:20 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * source/cross/hgraph.prg
+    ! Small fix
+
+2025-12-21 10:40 UTC-0300 Itamar Lins itamarlins at gmail.com
+   * source/gtk/hbrowse.prg
+     ! Fix for ... BROWSE ... APPEND AUTOEDIT flags into a TAB control
+
+2025-12-16 14:51 UTC-0300 Jose Quintas jmcquintas at gmail.com
+   * samples/demoall.prg
+     ! dlg CLIPPER NOEXIT NOEXITESC
+   * source/cross/common.prg
+     ! var names nPos nGetCount, +=, no logic changed
+
+2025-12-12 22:24 UTC-0300 ItamarLins itamarlins at gmail.com
+  * source/gtk/window.c
+  ! Fix for disable automatic text selection when GtkEntry widgets (used in GETs) receive focus
+
+2025-12-12 17:41 UTC-0300 ItamarLins itamarlins at gmail.com
+  * source/cross/common.prg
+  ! Fix for rebuild GetList recursively to support nested containers (e.g., TAB inside TAB).
+  ! Fix send by deividdjs forum hwgui https://pctoledo.org/viewtopic.php?p=170608#p170608
+
+2025-12-08 01:14 UTC-0300 ItamarLins itamarlins at gmail.com
+  * source/gtk/hbrowse.prg
+  ! Fix for erase header of browse while append a record
+
+2025-12-07 03:36 UTC-0300 ItamarLins itamarlins at gmail.com
+  * source/gtk/hbrowse.prg
+  ! Fix memo edit crash after save. VldBrwEdit() a line comment out
+  ! add alias dbunlock() for memo field
+
+2025-12-06 15:20 UTC-0300 ItamarLins itamarlins at gmail.com
+  * source/gtk/hbrowse.prg
+  ! Fix the LineLeft and LineRight methods that were skipping more than one column.
+
+2025-12-05 13:55 UTC-0300 ItamarLins itamarlins at gmail.com
+  * source/gtk/hbrowse.prg
+    ! Fix for display the bitmap correctly in the browser.
+    ! Piece of code borrowed \winapi\hbrowse.prg
+
+2025-12-04 23:38 UTC-0300 ItamarLins itamarlins at gmail.com
+   * source/gtk/hbrowse.prg
+   ! Fix for Refresh() Method MouseWeel GTK This Method not work.
+   ! GTK Not exist this event -> msg == WM_MOUSEWHEEL
+
+2025-12-03 16:30 UTC+0200 Wilfried Brunken DF7BE
+* Install_Knoppix.txt (New)
+  ! Installation instructions for
+  ! Knoppix V 9.1 by
+  ! Dipl.-Ing. Klaus Knopper.
+  ! (https://www.knopper.net/)
+  ! The short Readme contains a link
+  ! to CLLOG, where the full
+  ! instructions are hosted and the
+  ! GTK2 source code file to
+  ! add the missing GTK2 -dev package
+  ! from source c
+
+2025-12-01 11:20 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * source/gtk/hcontrol.c
+  * source/winapi/hcontrol.c
+    * Setfont( oFont ) method added to HCONTROL class
+  * source/common/editor/hcedit.prg
+    ! Small fix
+  * source/cross/hdrawn.prg
+    ! Fixes
+
+2025-11-13 16:45 UTC+0100 W* doc/hwgdoc_classes.html
+* Install_RaspberryPi.txt
+* doc/hwgdoc_functions.html
+* samples/demofunc.prg
+* source/common/procmisc/cfuncs.c
+  ! New function hwg_GetDecimals()
+  ! Returns the value of recent Setting of SET DECIMALS TO ...
+  ! Docu updated.
+  ! Installation instructions for
+  ! Rapberry Pi 4 updated,
+  ! package libpcre3 cannot be found,
+  ! so substitute from source package
+  ! as described.
+  ! The archive tested is uploaded into
+  ! "Files" section.
+  ! Hello, developpers
+  ! using Microsoft C:
+  ! Check this define:
+  ! #if (defined(_MSC_VER)&&(_MSC_VER>=1400))
+  !   #define sscanf sscanf_s
+  ! #endif
+  ! I copied this from Harbour source
+
+
+2025-08-28 08:30 UTC+0200 Wilfried Brunken DF7BE
+* doc/hwgdoc_classes.html
+  ! Document for HPRINTER class updated
+
+2025-08-27 18:20 UTC+0200 Wilfried Brunken DF7BE
+* source/gtk/hprinter.prg
+* source/winapi/hprinter.prg
+  ! For easier bugfixing Ticket 207:
+  ! Reduce differences (with WinMerge)
+
+2025-08-27 10:40 UTC+0200 Wilfried Brunken DF7BE
+* test/tickets/Ticket207.prg
+  ! For experiment i added (Ubuntu)
+  ! oPrinter:Preview()
+  ! Result see post to ticket.
+
+2025-08-25 17:30 UTC+0200 Wilfried Brunken DF7BE
+* source/cross/hmisccross.prg
+* test/tickets/Ticket207.prg
+* doc/hwgdoc_functions.html
+  ! New function hwg_xvalLog2()
+  ! Enhancement of hwg_xvalLog()
+  ! Allows debugging on
+  ! arrays with sub arrays.
+  ! (Need to help for
+  ! debugging of ticket207).
+
+2025-08-25 10:00 UTC+0200 Wilfried Brunken DF7BE
+* test/tickets/Ticket90.prg
+  ! Added french test text.
+  ! For result see post to Ticket.
+  ! (it is running OK on Ubuntu)
+
+2025-08-24 10:45 UTC+0200 Wilfried Brunken DF7BE
+* test/tickets/Ticket207.hbp
+* test/tickets/Ticket207.prg
+  ! The bug can be reproduced
+  ! with this test program.
+  ! Bugfixing to be continued
+
+2025-08-19 17:30 UTC+0200 Wilfried Brunken DF7BE
+* doc/hwgdoc_functions.html
+* source/gtk/gtkmain.prg
+* source/winapi/guimain.prg
+* test/tickets/Ticket90.hbp
+* test/tickets/Ticket90.prg
+  ! Ticket #90:
+  ! Bugfix in hwg_WChoice() on GTK.
+  ! For details see post to ticket
+  ! an comment in test program.
+
+2025-07-07 18:10 UTC+0200 Wilfried Brunken DF7BE
+* Install_RaspberryPi.txt
+  ! Instructions for Raspberry Pi 5 added
+
+2025-07-04 16:20 UTC+0200 Wilfried Brunken DF7BE
+* source/cross/hmisccross.prg
+* doc/hwgdoc_functions.html
+* samples/demo.ch
+  ! New Function hwg_UNIX2DOS()
+  ! added, for common purposes.
+  ! The code in demo.ch is moved
+  ! to this function.
+
+2025-06-24 17:00 UTC+0200 Wilfried Brunken DF7BE
+* samples/allhbp.hbp
+* samples/demoall.hbp
+* samples/demoall.prg
+* samples/demoxmltree.prg
+   ! Bugfix  samples demo by Jose Quintas on MacOS:
+   ! Windows only functions (unresolved symbols):
+   !  HB_GT_GUI_DEFAULT(), HWG_SAVEFILE(), HWG_SELECTMULTIPLEFILES()
+   ! Not solved yet:
+   ! utfConvert() in demoxmltree.prg
+   ! ICONV_CLOSE(),
+   ! On MacOS, the libiconv not in GNU and not compatible
+   ! so skip this sample
+
+
+2025-06-23 16:35 UTC+0200 Wilfried Brunken DF7BE
+* doc/hwgdoc_functions.html
+* samples/demo.ch
+* source/cross/hmisccross.prg
+  ! Bugfix hwg_MemoEdit():
+  ! - Size of Button "Save" increased for GTK
+  ! - Last line not full visible
+  !   (so new function hwg_MEMLLEMPTY() added)
+  ! - Scrollbar on Windows added
+  !   (The STYLE term has no effect on GTK,
+  !   scroll with up/down keys through the memo text)
+  ! Demoall: (to Jose Quintas)
+  ! Correct handling of line endings
+  ! in Code view window,
+  ! must be forever CRLF !
+  ! (This is mandatory for memo fields)
+
+
+2025-06-22 13:10 UTC+0200 Wilfried Brunken DF7BE
+* source/cross/hmisccross.prg
+* doc/hwgdoc_functions.html
+* contrib/qrcode/qrdecode/qrdecode.prg
+ ! Autodetect Raspberry Pi for
+ ! calling "zbarcam".
+ ! New Function hwg_IsRaspberry()
+
+
+2025-06-20 19:00 UTC+0200 Wilfried Brunken DF7BE
+* Install_RaspberryPi.txt
+* contrib/qrcode/qrdecode/ReadMe.txt
+* contrib/qrcode/qrdecode/raspbian/config.h (New)
+* missingioh.sh
+   ! Now ZBar for Raspberry Pi running
+
+
+2025-06-15 02:25 UTC-0300 JoseQuintas jmcquintas-gmail.com
+   * samples/demo3years.prg
+     ! wrong name on button
+
+2025-06-13 14:40 UTC-0300 JoseQuintas jmcquintas-gmail.com
+   + samples/democalmonth.prg
+   + samples/democalyear.prg
+   + samples/democal3years.prg
+   * samples/demoall.prg
+   * samples/demoall.hbp
+     ! democalmonth - month calendar with checkbox
+     ! democalyear - call 12 x democalmonth, show all checked dates
+     ! democal3years - call 3 x democalyear
+     ! demoall - the 3 options on tabpages
+
+
+2025-06-03 15:30 UTC+0200 Wilfried Brunken DF7BE
+* utils/designer/Readme.txt
+* utils/designer/designer.hbp
+* utils/designer/hbmk.hbm (New)
+   ! Stop instruction for non Windows OS inserted
+   ! (need to port for LINUX and MacOS later)
+   ! Prepared for hbmk.hbm
+
+
+2025-06-03 15:15 UTC+0200 Wilfried Brunken DF7BE
+* Install_RaspberryPi.txt
+   ! Little correction Raspbery Pi
+
+
+2025-06-01 19:00 UTC+0200 Wilfried Brunken DF7BE
+* Install_RaspberryPi.txt
+* include/sys/empty.txt (New, with dir "sys")
+* install.txt
+* missingioh.sh (New)
+  ! Raspberry Pi installation successfully
+  ! Troubleshooting missing include file sys/io.h"
+
+2025-05-22 12:15 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demofunc.prg
+   * samples/demogrid1.prg
+   * samples/demoimage1.prg
+   * samples/demoimage2.prg
+   * samples/demoimageview.prg
+   * samples/demoini.prg
+   * samples/demolistbox.prg
+   * samples/demomenu.prg
+   * samples/demomenubitmap.prg
+   * samples/demomenuxml.prg
+   * samples/demomonthcal.prg
+   * samples/demonice.prg
+   * samples/demonight.prg
+   * samples/demoowner.prg
+   * samples/demoshadebtn.prg
+   * samples/demosplitter.prg
+   * samples/demotab.prg
+   * samples/demotree.prg
+   * samples/demoxmltree.prg
+   * samples/grid_3.prg
+   * samples/helloworld.prg
+   * samples/helpstatic.prg
+   * samples/stretch.prg
+   * samples/testbmpcr.prg
+   * samples/testmdi.prg
+   * samples/testtray.prg
+   * samples/tstsplash.prg
+   * samples/tststconsapp.prg
+     ! no change, only some format source code
+
+2025-05-20 22:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoaltprog.prg
+     ! filename on button and parameter oDlg
+
+2025-05-20 01:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/testsamples.prg
+     ! tests
+   * samples/demoaltprog.prg
+   * samples/demoall.prg
+   * samples/demoall.hbp
+     ! alternative progressbar using SAY
+
+2025-05-13 11:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/testsamples.prg
+     ! helloworld.prg is a console sample
+   * samples/demoall.prg
+     ! Added a "NOTES" tabpage with differences between
+     !    windows/GTK 2.0/GTK 3.0 found on samples
+     !    it is only a suggestion, may be removed or not
+     !    or may be added more things (harbour,xharbour,...)
+
+2025-05-13 01:50 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/TwoListbox.hbp
+   * samples/demolisttwosub.prg renamed from twolistbox.prg
+      ! variable names, some rewrite
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demobrwtwosub.prg
+   * samples/makeallsam.sh
+     ! update references
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! add demolisttwosub.prg to "choice", "Two Listbox"
+     ! windows only
+
+2025-05-12 22:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/TwoListbox.prg
+   * samples/demobrwtwosub.prg
+     ! changed aControls to aControlList
+     ! began same changes of browse on listbox sample
+
+2025-05-12 21:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/twolstsub.hbp
+     ! removed
+   * samples/demobrwlstsub.prg renamed from twolstsub.prg
+     ! variable names, rewrite some source code
+   * clean.sh
+   * doc/hwgdoc_classes.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/makeallsam.sh
+     ! update references
+
+2025-05-12 14:15 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/demo.ch
+    ! height of buttons
+  * samples/demohtrack.prg
+    ! tutorial sample, with horizontal/vertical htrack
+
+2025-05-11 22:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * clean.sh
+   * samples/makeallsam.sh
+     ! updated references to fileselect.prg
+     ! remembering: functions on fileselect.prg was moved
+     ! to demodlgbox.prg, with "ready to use" dialogs
+
+2025-05-11 22:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/allhbp.hbp
+     ! removed fileselect.hbp
+
+2025-05-11 20:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demobrowseclr.prg
+     ! Changed colorblock to use browse, row, col from parameters
+     ! After change, insert row on array do not cause run-time error
+     ! return APPEND to browse array command
+
+2025-05-11 18:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/testsamples.prg
+     ! more checks
+   * samples/demobrowseclr.prg
+     ! removed APPEND from browse array, causing crash
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! Adjust names tabpage "browse" from "browse xxxx" to "brw.xxxx"
+
+2025-05-11 12:41 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/colrbloc.hbp
+   + samples/demobrowseclr.prg renamed from colrbloc.prg
+     ! sample is about color on browse
+   * clean.sh
+   * sapmles/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demonight.prg
+   * samples/makeallsam.sh
+     ! added to demoall "browse", "colorized", update references
+
+2025-05-11 11:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demostrrev.prg
+     ! added MAXLENGTH, or GET will be limited to string size
+   - menumod.hbp
+   * demomenumod.prg renamed from menumod.prg
+     ! all local variables, static functions, no macro
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! added demomenumod.prg to "menu"
+   * clean.sh
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/makeallsam.sh
+     ! updated references
+   * samples/escrita.prg
+     ! single format source code
+
+2025-05-10 23:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+   * samples/demomemocomp.prg
+     ! added #pragma to code, button name was wrong
+
+2025-05-10 23:00 UTC-0300 Jose Quintas jmcquintas-gmail.om
+   - samples/memocmp.hbp
+   * samples/demomemocomp.prg renamed from memocmp.prg
+     ! changed to SAY and buttons
+     ! Added standard compare
+     ! Do not need SET EXACT ON
+     ! Remembering:
+     ! m1 = m2 is not same as m1 == m2
+     ! m1 != m2 is not same as ! ( m1 == m2 )
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! Added demomemocomp on "others"
+
+2025-05-10 20:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demostrrev.prg
+     ! Do not understand why to call hwg_get_Helper()
+     !   routine do the same on windows/gtk and it is not needed
+
+2025-05-10 20:15 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demostrrev.prg
+     ! Position for tabpage
+
+2025-05-10 20:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/teststrrev.prg
+   * samples/demostrrev.prg renamed from teststrrev.prg
+     ! renamed and simplified
+   * doc/hwgdoc_commands.html
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+     ! updated references
+   * samples/demodateselect.prg
+     ! extract from demoall.prg source code
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! created "choice" tabpage with checkbox, combobox, listbox,
+     !    radiobutton, updown
+     ! moved "say" to "get/say"
+     ! added demostrrev to "others"
+
+2025-05-10 15:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * test/Ticker27.prg
+     ! changed remarks and source
+     ! declare THREAD STATIC var, if want one STATIC var for each thread
+   ! NOTE: Cumulative changes divided into parts
+   !
+   ! DOUBT:
+   ! if samples/*.prg are samples for windows and gtk
+   ! What are samples/gtk_samples/*.prg ?
+
+2025-05-10 14:25 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demo.ch
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! reorder source code
+   * samples/demoini.prg
+   * samples/demolenta.prg
+   * samples/demolenta2.hbp
+   * samples/demolenta2.prg
+   * samples/testsamples.prg
+     ! adjusts
+   ! PENDING: first display of demolenta2 on tabpage of demoall
+
+2025-05-10 14:24 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/TwoListbox.prg
+   * samples/TwoLstSub.prg
+   * samples/escrita.prg
+   * samples/grid_3.prg
+   * samples/helloworld.prg
+   * samples/hexbincnt.prg
+   * samples/memocmp.prg
+   * samples/menumod.prg
+   * samples/propsh.prg
+   * samples/pseudocm.prg
+   * samples/testalert.prg
+   * samples/testrtf.prg
+   * samples/teststrrev.prg
+   * samples/tststconsapp.prg
+     ! single format source code
+
+2025-05-10 14:23 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/gtk_samples/winprn.prg
+   * samples/stetch.prg
+   * samples/testray.prg
+   * samples/tstsplash.prg
+   * samples/winprn.prg
+     ! use sampleinc.ch
+
+2025-05-10 14:22 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoshadebtn.prg
+   * samples/demosplitter.prg
+   * samples/demotree.prg
+   * samples/demoxmltree.prg
+   * samples/gtk_samples/a.prg
+   * samples/gtk_samples/bincnts.prg
+   * samples/gtk_samples/fileselect.prg
+   * samples/gtk_samples/hexbincnt.prg
+   * samples/gtk_samples/pseudocm.prg
+   * samples/gtk_samples/testray.prg
+     ! use sampleinc.ch
+
+2025-05-10 14:21 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/a.prg
+   * samples/bincnts.prg
+   * samples/bindbf.prg
+   * samples/colrbloc.prg
+   * samples/dbview.prg
+   * samples/demobitmap.prg
+   * samples/demoimage1.prg
+   * samples/demoimage2.prg
+   * samples/demoimageview.prg
+   * samples/demomenubitmap.prg
+     ! use sampleinc.ch
+
+2025-05-10 14:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * source/sampleinc.ch
+   * source/gtk_samples/sampleinc.ch
+     ! samplesinc.ch to define image folder windows/linux
+
+2025-05-09 17:33 UTC-0300 Itamar M. Lins Jr. itamarlins-gmail.com
+   * source/gtk/hprogres.prg
+     ! fix for segmentation fault while close() method, run twice hwg_EndDialog() and hwg_DestroyWindow()
+
+2025-05-08 16:08 UTC-0300 Itamar M. Lins Jr. itamarlins-gmail.com
+   * source/gtk/control.c
+     ! fix not show screen error: IA__gtk_widget_set_tooltip_text: assertion 'GTK_IS_WIDGET (widget)' failed
+
+2025-05-08 09:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/*.prg
+     ! all samples changed
+     ! Added oDlg as parameter on ButtonForSample("xx",oDlg)
+   * samples/demo.ch
+     ! changed parameter name oDlg to oParent
+   * samples/demoall.prg
+     ! Added demobrowsearr.prg on "browse", "Browse Arr Edit"
+   * samples/democheckbox.prg
+   * samples/demoimage2.prg
+   * samples/demotab.prg
+     ! added "OF oDlg" to controls creation
+   + samples/demolenta2.hbp
+     ! to include others PRGs on compile/link
+   * samples/demolenta2.prg
+     ! Try simplify to expand possibilities
+     ! panels using democheckbox.prg, demoimage2.prg, demotab.prg
+
+2025-05-07 18:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+     ! escuse me, forgot to remove a test
+   * samples/teststrrev.prg
+     ! some source code format
+
+2025-05-07 11:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/demobrowsearr.prg
+    ! Solved on sample navigation changing editable=.t.
+    ! Solved on sample edit any element array(10,10)
+
+2025-05-07 07:50 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demobrowsearr.prg
+     ! changed on tests
+   + test/browsecol.prg
+     ! Dialog with 4 browses, they do not works at same way
+     ! keyboard right/left and mouse click difference
+
+2025-05-06 20:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/testbrowsearr.hbp
+     ! removed
+   * samples/demonight.prg
+     ! button to source code
+   * clean.sh
+   * install-macos.txt
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/makeallsam.sh
+   * samples/tstconsapp.prg
+     ! Updated references, found wrong reference to demobrowsearray.prg
+     ! changed to demobrowsearr.prg. I think it was my previous mistake
+   * samples/demo.ch
+     ! demo_ReadFile() to any, not only prg
+     ! returns resource value if available or MemoRead() from file
+   * samples/demobitmap.prg
+     ! use demo_ReadFile()
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! added demobrowsearr.prg, some images to resource #pragma
+     ! added demoimage1.prg to "dialog" too, as dialog background sample
+   * samples/demobrowsearr.prg renamed from testbrowsearr.prg
+     ! changed to create array of any row/col size
+   + samples/demobrowsearray.prg
+     ! created from source moved from demoall.prg (from tutorial)
+   * samples/demobrowsebmp.prg
+     ! use of demo_ReadFile()
+   * samples/demosplitter.prg
+     ! filenames to variable, to define windows/linux paths
+     !
+     ! TODO: demobrowsearr.prg
+     ! - mouse do not change column position
+     ! - right/left do not move to next/previous column
+     ! test on win11 mingw 15.1
+
+2025-05-06 11:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demodialog.prg
+     ! numbers on buttons to identify dialog
+     ! title on dialogs to identify
+     ! added Dialog3() maximized dialog
+   * samples/demoimage2.prg
+     ! updated image names on :AddString()
+
+2025-05-06 10:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+     ! moved demonight.prg from "others" to "dialog"
+
+2025-05-06 10:00 UTC-0300 Jose Quintas jmquintas-gmail.com
+   - samples/modtitle.hbp
+   * clean.sh
+   * samples/demodialog.prg renamed from modtitle.prg
+     ! dialog1() with buttons for title change
+     ! dialog2() using backcolor and exit confirmation
+   * samples/Readme.txt
+   * samples/clean.sh
+   * samples/makeallsam.sh
+     ! update references
+   * samples/menumod.prg
+     ! no change, only small format
+   * samples/demoall.hbp
+   * samples/demoall.prg
+     ! Added demodialog on tabpage "dialog"
+
+2025-05-05 20:25 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demobitmap.prg
+   * samples/demobrowsedbf.prg
+   * samples/demodbfdata.prg
+   * samples/demogrid4.prg
+   * samples/demogrid5.prg
+   * samples/demoini.prg
+     ! renamed #define DEMOALL to __CALLED_FROM_DEMOALL
+     ! To be clear what it means without to need extra remarks
+
+2025-05-05 17:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.hbp
+     ! forgot to remove demosedit from hbp
+
+2025-05-05 16:40 UTC-0400 Jose Quintas jmcquintas-gmail.com
+   - samples/demosedit.prg
+   * samples/demodlgbox.prg
+     ! hwg_MemoEdit() added to demodlgbox.prg
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+     ! update reference
+   * samples/testsamples.prg
+     ! adjust
+
+2025-05-05 14:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/fileselect.hbp
+   - samples/fileselect.prg
+   * samples/demodlgbox.prg
+     ! moved functions from fileselect.prg to demodlgbox.prg
+     ! hwg_SelectFile(), hwg_SelectFileEx(), hwg_SaveFile(),
+     ! hwg_SelectFolder()
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+      ! update references
+
+2025-05-05 17:50 UTC+0200 Wilfried Brunken DF7BE
+* samples/escrita.prg
+  ! Bugfix compile error LINUX.
+  ! For details see comment lines in
+  ! sample program.
+
+
+2025-05-05 12:42 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/GetWinVers.hbp
+   * clean.sh
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/makeallsam.sh
+     ! forgot to update references to GetWinVers on previous commit
+
+2025-05-05 12:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/GetWinVers.prg
+     ! Removed, and added to demofunc.prg
+   * samples/demofunc.prg
+     ! Removed MsgYesNoCancel() and others already on demodlgbox.prg
+     ! added from GetWinVers.prg
+   * samples/testsamples.prg
+     ! More tests
+
+2025-05-05 01:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/testsamples.prg
+     ! test samples, to help do not forgot some things
+   * samples/demobitmap.prg
+   * samples/demobrowseado.prg
+   * samples/demobrowsebmp.prg
+   * samples/demobrowsedbf.prg
+   * samples/democheckbox.prg
+   * samples/demogrid5.prg
+   * samples/demoimage1.prg
+   * samples/demoimageview.prg
+   * samples/demolistbox.prg
+   * samples/demolistboxsub.prg
+   * samples/demomenu.prg
+   * samples/demomenuxml.prg
+   * samples/demomonthcal.prg
+   * samples/demosplitter.prg
+   * samples/demoxmltree.prg
+     ! some button for code added
+     ! some ButtonForSample oDlg parameter removed
+     ! some dialog title wrong
+     ! some filename not found on #pragma
+
+2025-05-04 15:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/testbrw.hbp
+   * samples/demobrowsebmp.prg renamed from testbrw.prg
+     ! added to demoall
+   * samples/demodlgbox.prg
+     ! added hwg_DlgShowHelp()
+   * samples/demodbfdata.prg
+   * samples/demogrid4.prg
+   * samples/demogrid5.prg
+     ! review delete temporary files
+   * samples/demoget1.prg
+   * samples/demoget2.prg
+     ! text of button
+   * clean.sh
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demotabtool.prg
+   * samples/doc/Readme.txt
+   * samples/makeallsam.sh
+     ! update references
+
+   * samples/demoowner.prg
+   * samples/demofunc.prg
+     ! These samples use init values on static vars for nRowPos/nColPos
+     ! Added init values at each run, or position will be wrong
+
+2025-05-04 12:15 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoowner.prg
+     ! Now user can copy any layout code using one copy/past
+
+2025-05-04 12:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoowner.prg
+     ! Simplify, to add more "layout" later, as example using image
+
+2025-05-04 09:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   + samples/demoowner.prg
+     ! source code of demoowner was inside demoall.prg
+     ! on this way, ownerbutton code have a best view
+     ! changed ++nButtonCount to avoid wrong counter
+
+2025-05-03 19:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/demoall.hbp
+  * samples/demoall.prg
+    ! Added demofunc to tabpage "button" (already on "others")
+    ! it shows enable/disable and change caption of button
+  - samples/tabs_toolt.hbp
+  * clean.sh
+  * doc/hwgdoc_commands.html
+  * samples/Readme.txt
+  * samples/demotabtool.prg renamed from tabs_toolt.prg
+  * samples/makeallsam.sh
+    ! renamed sample and adjust references, and add on demoall
+    ! ISSUE?: tooltip is allways for current tabpage
+    !
+    ! NOTE: if define ID nnnn on button, sample fail (win11)
+
+2025-05-03 15:50 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demo.ch
+     ! hwg_ShowHelp() is ok, removed commented old code
+     ! Thanks Wilfried, better result using it
+   * samples/democheckbox.prg
+   * samples/demodbfdata.prg
+   * samples/demoget1.prg
+   * samples/demoget2.prg
+   * samples/demoshadebtn.prg
+     ! on buttons that close dialog, only a text message
+     ! when running without dialog (lWithDialog=.F.)
+   ! NOTE: demoget1/2 are used to show more than one control
+   !    more than one TABPAGE have same sample
+   !    Changing them, solve several tabpages at same time
+
+2025-05-03 14:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   ! Only a comment:
+   ! When reuse sample on demoall it is running on TABPAGE.
+   ! On this situation oDLG is a TABPAGE not a DIALOG
+   ! On sample, if lWithDialog=.F., oDlg:Close() need to be hide.
+   ! I will review, forgot to do this on some samples
+
+2025-05-03 16:30 UTC+0200 Wilfried Brunken DF7BE
+* samples/demo.ch
+  ! Hello Jose,
+  ! Bugfix: Show code, cannot scroll in demo code,
+  ! but using hwg_ShowHelp() allows scrolling
+  ! with the arrow keys in the window.
+  ! (for further revision in may be possible to
+  !  use fonts for better display)
+  ! I hope, that is OK for you.
+  ! Also in some demos the
+  ! program crashes with INVALID CLASS MEMBER
+  ! when pressing the OK button
+  ! (for example, need to fix):
+  ! - Radio Button
+  ! - Tab "Say", DEMOGET2
+  ! and some more.
+  ! Please check.
+  ! With regards and TNX
+
+
+2025-05-03 04:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - demotab.hbp
+   - demotab.prg
+     ! removed previous sample
+   * demotab.prg renamed from tab.prg
+     ! substitute
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demobrowsedbf.prg
+   * samples/demodbfdata.prg
+   * samples/demogrid4.prg
+   * samples/demogrid5.prg
+   * samples/demoprogbar.prg
+     ! adjust on end routines when called as dialog from demoall
+   * samples/demofunc.prg
+     ! adjust on button width
+   !
+   ! ISSUE DETECTED guilib.ch on test of ownerbutton
+   ! controlname is used twice:
+   ! <ctrlname> := ctrl():New(); hwg_SetCtrlName( <ctrlname>, (<ctrlname>) )
+   ! Button name used was oButton[ ++nButtonCount ]
+   ! Result is invalid counter
+
+2025-05-02 20:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/hole.hbp
+   - samples/hole.prg
+     ! removed, demobrowseado.prg is a working sample of OLE
+   - samples/night.hbp
+   * samples/demonight.prg renamed from night.prg
+   * samples/demoupdown.prg renamed from demogetupdown.prg
+   * clean.sh
+   * doc/hwgdoc_commands.html
+   * samples/Readme.txt
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/makeallsam.sh
+     ! rename and update references
+   * samples/*.prg
+     ! change all ACTIVATE to CENTER
+   * samples/demofunc.prg
+     ! review 4 buttons
+     ! Now can reorder buttons using copy/paste
+
+2025-05-02 12:40 UTC+0200 Wilfried Brunken DF7BE
+* source/gtk/drawtext.c
+  ! Bugfix Pango < 1.56:
+  ! Must be declared !!!!!!!!!!!!!!!!!!
+  ! error: ‘PANGO_WRAP_NONE’ undeclared
+
+
+2025-05-01 21:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - nice2.hbp
+   - nice2.prg
+   * demonice.prg
+     ! added on demonice.prg the button of nice2.prg
+   * demoget1.prg
+     ! my mistake when update positions
+     ! size on GTK is for one line, size on windows is for the list
+     ! reported by Itamar Lins
+
+2025-05-01 19:15 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/nice2.prg
+     ! only reference to demonice.prg
+   - samples/nice.hbp
+   * samples/Readme.txt
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demonice.prg renamed from nice.prg
+     ! Nice button works on dialog if created on INIT
+     ! if added to tabpage, it assumes handle of tab, not tabpage
+     ! it is allways visible on all tabpages
+     ! Added as dialog on demoall
+     ! Comment: source code of nicebutton is a codeblock now,
+     !       added on dialog init
+
+2025-05-01 18:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * source/herrsys.prg
+     ! add value list
+     !
+     ! error message, after to change errorsys
+     !
+     ! Error BASE/1070  Argument error: ==
+     ! Called from (b)HWG_ERRSYS(20)
+     ! Called from (b)HWG_FINDPARENT(542)
+     ! Called from ASCAN(0)
+     ! Called from HWG_FINDPARENT(542)
+     ! Called from HWG_FINDSELF(561)
+     ! Called from HWG_NICEBUTTPROC(134)
+     ! Called from HWG_DLGBOXINDIRECT(0)
+     ! Called from HDIALOG:ACTIVATE(176)
+     ! Called from MAIN(64)
+     ! (1) = Type: N Value: 0
+     ! (2) = Type: P Value: <pointer>
+     !
+     ! Last lines show values that cause error
+     ! without to need debug routines
+
+2025-05-01 16:55 UTC-0300 Itamar M. Lins Jr. itamarlins-gmail.com
+   * source/gtk/drawtext.c
+     ! small fix word wrapping Pango > 1.56 Ubuntu version 25.04
+
+2025-05-01 16:45 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * demoimage2.prg
+     ! difference linux
+     !
+     ! Is possible to change hwgui about this
+     ! and do not need anymore #ifdef on source code?
+
+2025-05-01 16:15 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * demoimage2.prg
+     ! filename on linux, show image on linux too
+
+2025-05-01 14:30 UTC-0300 Itamar M. Lins Jr. itamarlins-gmail.com
+   * source/gtk/control.c
+   ! small fix for disable warning: GtkSpinButton: setting an adjustment with nom-zero page size is deprecated
+
+2025-05-01 14:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demofunc.prg
+     ! Adjust position, last button was out of dialog
+   * samples/demoimage2.prg
+     ! Another alternative to image resource using #pragma
+     ! It is same used on demoall.prg for ".prg"
+     ! Any type of file can be used, including dll, exe
+
+2025-05-01 12:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/testfunc.hbp
+   * clean.sh
+   * contrib/hwlabel/Readme.txt
+   * doc/GTK3.txt
+   * doc/hwdoc_functions.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demofunc.prg renamed from testfunc.prg
+   * samples/makeallsam.sh
+   * source/cross/hmisccross.prg
+   * test/test_origin_cons.prg
+     ! added demofunc.prg and update references
+     ! on demofunc.prg renamed variable testfunc??? to oDlgMain
+     !    update commented code too
+   * contrib/hwlabel/Readme_de.txt
+     ! Update references.
+     ! TODO: Please confirm about codepage ok
+     !       commit with this file only, to revert if needed
+
+2025-05-01 10:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/ademoimage2.prg
+     ! wrong information on samples
+     ! On windows ICO is not same as IMAGE
+     ! @ BITMAP for images, and @ ICON for icons
+     ! On winapi too. DrawImage(), DrawIconEx()
+     ! Now sample shows ICO and BMP on windows too
+
+2025-05-01 08:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/simpleedit.hbp
+   - samples/testimage.hbp
+   * clean.sh
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * sampls/demobitmap.prg renamed from testimage.prg
+   * samples/demoimage2.prg
+   * samples/demosedit.prg renamed from simpleedit.prg
+   * samples/makeallsam.sh
+     ! added to demoall, update references
+   * samples/helloworld.prg
+
+2025-04-30 17:50 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demo.ch
+     ! smaller buttons color white
+   + demotab.hbp
+     ! previous delete by mistake, it uses 3 PRGs
+   * samples/testmdi.hbp
+   * samples/testmdi.prg
+     ! An easy way to change filename to be tested
+     ! Added working panel
+     !
+     ! test using demotrackbar.prg
+     !
+     ! on DIALOG ok
+     ! on MDICHILD do not update SAY values
+     ! on TABPAGE do not update SAY values
+     ! on TABPAGE and PANEL can't move trackbar
+     ! Is there anything I forgot to include on source code?
+
+2025-04-30 13:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+     ! changed to function for tests
+   * nice.prg
+     ! visual and variables
+   * samples/testmdi.hbp
+   * samples/testmdi.prg
+     ! for tests purpose
+     ! to test a existing sample on different situations, without extra source code
+     ! check on menu if want window, MDI, tabpage, tabpage2, panel
+     ! when call sample from testmdi it will use what is checked
+
+2025-04-30 15:25 UTC+0200 Wilfried Brunken DF7BE
+* source/gtk/drawtext.c
+  ! Urgent bugfix on LINUX:
+  ! Not needed message output
+  ! "Error: Empty text in HWG_DRAWTEXT"
+  ! The sample runs at its best, see
+  ! comment line in source at line 126.
+  ! The output of this message removed.
+
+2025-04-29 20:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/demoaltdpicker.prg
+     ! removed, it was part of another
+   * samples/demoget1.prg renamed from testget1.prg
+     ! datepicker substitute visible on windows too
+     ! Platform windows text at right of datepicker and substitute
+     ! Removed monthcal dialog already on demomonthcal.prg
+   * clean.sh
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * utils/designer/Readme.txt
+   * utils/designer/files.txt
+   * whatsnew.txt
+     ! references to new names
+   * demoall.hbp
+   * demoall.prg
+     ! Added demoget1 on pages "datepicker" and "radiobutton"
+
+2025-04-29 16:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+     ! moved dateselect and altdpicker to page "get"
+     ! moved monthcal to page "others"
+     ! removed page "date"
+   * samples/demoimage1.prg
+   * samples/demoimage2.prg
+     ! variable oDlg for dialogs, from PUBLIC to LOCAL
+   * samples/imageview.prg
+   * source/winapi/drawwidg.prg
+     ! win LoadImage() accept resize, ok for sendmessage() not for DrawIcon()
+     ! DrawIconEx() can resize and can draw png
+     ! Changed from hwg_DrawIcon() to hwg_DrawIconEx()
+     ! Test imageview on W11, load ico and png and ok including resize
+     ! These options was available only to GTK on sample
+
+2025-04-29 14:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - icons2.hbp
+   * clean.sh
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demoimage1.prg renamed from demoico2.prg (icon.prg)
+   * samples/demoimage2.prg renamed from icons2/prg
+     ! samples uses ico and bmp
+     ! Both on demoall as button on page "image"
+     ! Review later about variables names and type
+     ! NOTE: Update references about previous commit too
+     ! NOTE2: "ToCompile" list will be smaller, but there are
+     !        samples that need to continue external like MDI.
+
+2025-04-29 13:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - icons.hbp
+   * clean.sh
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demoicon1.prg renamed from icons.prg
+     ! changed to dialog, added as button on page "image"
+
+2025-04-29 12:01 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * demoall.hbp
+  * demoall.prg
+    ! move menu to a page "ToCompile" and add buttons and description
+    ! demomenubitmap windows only
+  * demomdi.prg
+    ! added options to tile horizontal, tile vertical, cascade
+
+2025-04-29 13:45 UTC+0200 Wilfried Brunken DF7BE
+* samples/demodlgbox.prg
+ ! Bugfix LINUX:
+ ! ../samples/demo.ch(7) Warning W0003  Variable 'OSAY4' declared but not used in function
+ ! 'DEMODLGBOX(32)'
+ ! Attention !!!!!!!!
+ ! hbmk2: Error: Referenced, missing, but unknown function(s):
+ !      HWG_INSERTBITMAPMENU()
+ ! Function is Windows only !!
+ ! See comment in
+ ! demoMenuBitmap.prg:
+ !  Need to port functions HWG_INSERTBITMAPMENU() and
+ !  HWG__INSERTBITMAPMENU() to GTK
+ !   Source files : menu_c.c and menu.prg
+ !   (source\winapi\menu.prg)
+ ! so build of samples/demoall.hbp fails.
+
+
+2025-04-28 21:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/Readme.txt
+  + samples/demomdi.prg
+  + samples/demomdi.hbp
+    ! MDI sample with democheckbox.prg reuse as MDIChild
+    ! Once windows only, do not change .sh files
+
+2025-04-28 20:50 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  - samples/Dialogboxes.hbp
+  - samples/testmenubitmap.hbp
+  * samples/demodlgbox.prg renamed from Dialogboxes.prg
+  * samples/demomenubitmap.prg renamed from testmenubitmap.prg
+  * Readme.txt
+  * samples/allhbp.hbp
+  * samples/clean.sh
+  * samples/demoall.hbp
+  * samples/demoall.prg
+  * samples/makeallsam.sh
+    ! added demomenubitmap to page menu
+    ! added demodlgbox to page others
+    ! change references
+  * samples/demo.ch
+    ! On windows change text to cr/lf if needed
+
+2025-04-28 18:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demobrowsedbf.prg
+   * samples/demogrid4.prg
+   * samples/demogrid5.prg
+   * samples/demoini.prg
+   * samples/demoprogbar.prg
+   * samples/demotab.prg
+     ! renamed lExitList to lEndList
+     ! temporary filename
+     ! TODO: grid is empty on tabpage
+
+2025-04-28 16:10 UTC-0300 Itamar M. Lins Jr. itamarlins-gmail.com
+  * /source/gtk/drawtext.c
+    ! Fix for PANGO < 1.56
+
+2025.04.28 12:34 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+   * samples/demogrid5.prg
+     ! only to solve warning on previous commit.
+
+2025.04.28 12:34 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/grid_1.hbp
+   - samples/grid_4.hbp
+   - samples/grid_5.hbp
+   - samples/demosplit.hbp
+   * clean.sh
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demogrid1.prg renamed from grid_1.prg
+   - samples/demogrid4.prg renamed from grid_4.prg
+   * samples/demogrid5.prg renamed from grid_5.prg
+   * samples/demotrackbar.prg
+   - samples/demotree.hbp renamed from testtree.hbp
+   * samples/demotree.prg renamed from testtree.prg
+   * samples/makeallsam.sh
+   * samples/doc/Readme.txt
+   * whatsnew.txt
+
+2025-04-27 19:18 UTC-0300 Itamar M. Lins Jr. itamarlins-gmail.com
+   * /source/gtk/drawtext.c
+    ! fix for hbrowse.prg not put 3 dots(default is none) and disable word wrapping to prevent text from spilling to the next line.
+    ! All the work is due to Grok IA. ;-) Please revise-me Wilfried Brunken or Alexander Kresin.
+
+2025-04-27 18:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/demodbfdata.prg
+    ! divide between lines to best view control names on source code
+  * samples/Readme.txt
+  * samples/demoall.hbp
+  * samples/demoall.prg
+  * samples/demotrackbar.prg
+    ! demotrackbar changed to windows only
+    ! TODO: SAY is not updated inside tabpage
+    ! no oSay:Refresh(), no oTab:Refresh(), inside DIALOG ok
+
+2025-04-27 19:15 UTC+0200 Wilfried Brunken DF7BE
+* samples/bindbf.prg
+  ! Fixed crash on LINUX
+
+
+2025-04-27 16:00 UTC+0200 Wilfried Brunken DF7BE
+   * test/tickets/Sticket89.hbp (all files added)
+   * test/tickets/Sticket89.prg
+   * test/tickets/image/cancel.bmp
+   * test/tickets/image/white.bmp
+   * test/tickets/image/white.png
+  ! Support ticket #89 	Curious crash:
+  ! See post to ticket.
+
+
+2024-04-27 10:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/demotrackbar.hbp
+   * samples/demotrackbar.prg
+     ! from 3 dialogs to 1 with 3 trackbar
+   * samples/demomenuxml.prg
+     ! changed to create xml, changed to do not need macro
+     !   from var to for each nIndex IN { var }
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demobrowsedbf.prg
+   * samples/demodbfdata.prg
+   * samples/demoini.prg
+   - samples/demoprogbar.hbp
+   * samples/demoprogbar.prg
+   * samples/demosplit.prg
+   * samples/demotab.prg
+     ! optional var aInitList to DIALOG INIT and aExitList
+     !   to samples pass init and exit routines
+     !   as example to build treeview and delete temporary files
+     !   tmpmenuxml is not deleted, to user tests changing it
+     ! more samples reusable
+
+2024-04-26 22:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * clean.sh
+   * doc/hwgdoc_functions.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoprogbar.hbp  renamed from progbars.hbp
+   * samples/demoprogbar.prg  renamed from progbars.prg
+   * samples/demosplit.hbp    renamed from testsplit.hbp
+   * samples/demosplit.prg    renamed from testsplit.prg
+   * samples/demotrackbar.hbp renamed from trackbar.hbp
+   * samples/demotrackbar.prg renamed from trackbar.prg
+   * samples/makeallsam.sh
+   * test/tickets/ticket165.prg
+      ! rename only and update references
+      ! found wrong reference to testspli.* including .sh
+   ! NOTE: on doc updating references to new names only
+
+2024-04-26 21:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/Readme.txt
+  * samples/demosplitter.prg renamed from demotreeview.prg
+  * samples/demoall.prg
+    ! sample was created to show splitter
+    ! continues on tabpages "splitter" and "treeview"
+    ! reference on readme.txt only
+
+2024-04-26 05:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoini.prg
+     ! added editbox, can view/write by text, buttons to actions
+     ! add to demoall as sample for ini and get
+   * samples/demo.ch
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demomenuxml.prg
+     ! automatic tab/page creation, to easy change, 2 level only
+   * contrib/hwlabel/hwlbledit.prg
+   * contrib/hwgdoc_classes.html
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+     ! update references
+
+2024-04-25 19:15 UTC-0300 Jose Quintas jmquintas-gmail.com
+   * samples/demoini.prg renamed from testini.prg
+     ! complement to previous changelog
+
+2024-04-25 19:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * clean.sh
+   * samples/Readme.txt
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demobrowsedbf.prg
+   * samples/demodbfdata.prg
+   * samples/demo.ch
+   - samples/demogetupdown.hbp
+   - samples/htrack.hbp
+   * samples/demohtrack.prg renamed from track.prg
+   * samples/demotreeview.prg renamed from demotreebox.prg
+   * samples/demoini.prg
+   * samples/makeallsam.sh
+     ! more samples multiuse, tmp file names, delete tmp on exit
+   + samples/demolenta.prg
+     ! from tutorial, added as subtab on "tab" (can be compiled alone)
+
+2024-04-25 11:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * clean.sh
+   * samples/Readme.txt
+   * samples/clean.sh
+   * samples/makeallsam.sh
+   * samples/allhbp.hbp
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/democombobox.prg
+   * samples/demogetupdown.prg
+   * samples/demoget2.prg from samples/testget2.prg
+   * samples/demotab.prg
+   * samples/demotreebox.prg
+   * samples/demoxmltree.prg
+   * utils/designer/Readme.txt
+     ! more samples reusable, included on demoall
+     ! adjust references
+
+2024-04-24 20:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demotreebox.prg
+     ! change to dialog and move buildtree to dialog init
+     ! add parameter aInitList, to add same codeblock
+   * samples/demoxmltree.prg
+     ! change to load xml clicking on a button
+   * samples/demoall.prg
+     ! added to call samples passing bInitList when needed
+     ! dialog init eval codeblocks added on aInitList by samples
+     ! Now that samples works alone or inside demoall tabpage
+
+2025-04-24 19:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * clean.sh
+  * samples/Readme.txt
+  * samples/demoall.hbp
+  * samples/demoall.prg
+  - samples/demolistboxsub.hbp
+  * samples/demolistboxsub.prg
+  * samples/makeallsam.sh
+    ! change to reusable, add to demoall on listbox and browse
+    !
+    ! TODO:
+    ! @  300, 100 BUTTON "Show Values" ID IDOK
+    ! Commented ID IDOK, on windows crashes with it
+    ! Is it needed for Linux/GTK/MacOs ?
+
+2025-04-24 17:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoall.prg
+     ! this solves status panel on demoall dialog: WS_SYSMENU
+     ! But change to WS_MAXIMIZEBOX + WS_MINIMIZEBOX + WS_SYSMENU
+
+2025-04-24 15:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * clean.sh
+  * samples/demo.ch
+  * samples/demoall.prg
+    ! do not show message on standalone sample about resource
+  * samples/Readme.txt
+  * samples/allhbp.hbp
+  * samples/clean.sh
+  * samples/makeallsam.sh
+    ! forgot to update references to demodatepicker
+  * samples/hwgdoc_functions.html
+    ! update doc reference to new sample name
+    ! Not sure why on doc_functions
+    ! and already exists dateselect
+
+2025-04-24 15:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demoaltdpicker.prg from demodatepicker.prg
+   - samples/demodatepicker.hbp
+     ! rename it, because it is another alternative to datepicker
+     ! change to reusable
+   * demodbfdata.prg
+     ! dbf/ntx filename
+   * samples/demoall.prg
+   * samples/demoall.hbp
+     ! include use of demoaltdpicker on tabpage date
+
+2025-04-24 06:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+  * samples/demo*.prg
+  * samples/demo.ch
+    ! note on source code about ButtonForSample() and demo.ch
+  * samples/demodatadbf.prg
+    ! fix name including ".prg"
+
+2025-04-24 05:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/demodbfdata.hbp
+   - samples/demolistbox.hbp
+   - samples/demoshadebtn.hbp
+   - samples/demotreebox.hbp
+   - samples/demoxmltree.hbp
+     ! removed hbp
+   * samples/testbmpcr.prg
+   * samples/tstprdos.prg
+   * samples/winprn.prg
+     ! #pragma -w0 on source code
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/clean.sh
+   * samples/demoall.hbp
+   * samples/demoall.prg
+   * samples/demobrowsedbf.prg
+   * samples/demodbfdata.prg
+   * samples/demolistbox.prg
+   * samples/demoshadebtn.prg
+   * samples/demotreebox.prg
+   * samples/demoxmltree.prg
+   * samples/hbmk.hbm
+   * samples/makeallsam.ch
+     ! more samples reusable
+     ! on demodbfdata adjust to work on tab together with anothers
+     ! {win}hbwin.hbc on hbmk.hbm
+
+2025-04-24 09:20 UTC+0200 Wilfried Brunken DF7BE
+* doc/hwgdoc_classes.html
+* test/tickets/ticket203.prg
+* test/tickets/ticket204.prg
+  ! Bug tickets #203 and #204:
+  ! See comment in ticket204.prg
+  ! and posts to tickts.
+  ! Docu for HBROWSE class updated
+
+2025-04-23 12:15 UTC -0300 JoseQuintas jmcquintas-gmail.com
+  * clean.sh
+  * samples/allhbp.hbp
+  * samples/clean.sh
+  * samples/democheckbox.hbp
+  - samples/demomenuxml.hbp
+  * samples/demomenuxml.prg
+     ! demomenuxml to demoall
+  * samples/demoall.hbp
+  * samples/demoall.prg
+  * samples/demo.ch
+     ! experimental LoadResourceDemo(), and error routine about it
+     ! Test using mingw on Win11 ok
+     ! Compile on same way as before, but source code becames resource
+     ! Comment function if fail on another compiler
+
+2025-04-23 16:30 UTC+0200 Wilfried Brunken DF7BE
+* source/gtk/hbrowse.prg
+* test/checkbox.hbp
+* test/hbmk.hbm
+* test/tickets/hbmk.hbm (New)
+* test/tickets/ticket203.hbp (moved from test/tickets/ticket204.hbp)
+* test/tickets/ticket203.prg (moved from test/tickets/ticket204.prg)
+  ! Ticket #204 are #203, so renamed
+  ! Ticket #204 Browse GTK Linux, puts three dots in the column unnecessarily:
+  ! First fix the default length of dates in HBROWSE class.
+  ! To be continued with the other bugs reported by Itamar M. Lins Jr.
+
+
+2025-04-23 03:30 UTC -0300 Jose Quintas jmcquintas-gmail.com
+  * samples/democheckbox.prg
+    ! reduced from 6 to 3 checkbox, removed tab
+  * samples/demotreebox.prg
+    ! fix error when no tabs to delete
+  * samples/demotab.hbp
+  * samples/demotab.prg
+    ! add content to tabs
+
+2025-04-22 23:30 UTC -0300 Jose Quintas jmcquintas-gmail.com
+  * samples/demo.ch
+  * samples/demobrowseado.prg
+  * samples/democheckbox.prg
+  * samples/demomonthcal.prg
+    ! another bad name democodebutton seems another sample
+    !    changed demo.ch and related to ButtonForSample()
+  * samples/demotreebox.prg
+    ! changed to be reusable
+  * samples/demoall.hbp
+  * samples/demoall.prg
+  * samples/demotab.prg
+    ! moved code from demotab to demoall
+    ! previous code is bad for sample
+    ! added a temporary code about tab
+  + samples/demomenu.prg
+    ! added a temporary code about menu
+  ! Only as comment: splitter is working on tab page!
+  ! knowed issues:
+  ! status panel fail on demoall, it is half displayed
+  !    ok if do not use ACTIVATE DIALOG CENTER
+  ! tree is not displayed on tabpage, not sure if expected
+
+2025-04-22 19:00 UTC -0300 Jose Quintas jmcquintas-gmail.com
+   * clean.sh
+   * doc/hwgdoc_functions.html
+   * install-macos.txt
+   * samples/Readme.txt
+   * samples/allhbp.hbp
+   * samples/demoall.prg
+   * samples/testbrowsearr.hbp renamed from demobrowsearr.hbp
+   * samples/testbrowsearr.prg renamed from demobrowsearr.prg
+   * samples/tststconsapp.prg
+     ! rename testbrowsearr, update references
+     ! found references that I update before with wrong name
+
+2025-04-22 17:40 UTC -0300 Jose Quintas jmcquintas-gmail.com
+   + samples/demo.ch
+     ! To do not duplicate routines over samples
+     ! At momment I do not know another way to do this
+     ! Create 2 buttons, and a dialog to show source code
+     ! #include "demo.ch" on the end of samples source code
+   * samples/demobrowseado.prg
+   * samples/demobrowsedbf.prg
+   * samples/democheckbox.prg
+   * samples/demomonthcal.prg
+   * samples/demotab.prg
+     ! adjust to use demo.ch
+     ! NOTE: sample need reserve top space to tab
+     ! NOTE: sample do not need first button, could be in lWithDialog ELSE
+     !       but it remember about space, when testing alone
+   !
+   ! Do not compare with hwgui tutorial, demoall is for different use
+   ! Intention of demoall is to show working, and from there go to source
+   ! and do not multiply source code to do same thing on same way
+   ! Current limits: 800x600, DIALOG only, top space for tab and buttons
+
+2025-04-22 15:15 UTC -0300 Jose Quintas jmcquintas-gmail.com
+   * samples/demobrowseado.prg
+   * samples/demobrowsedbf.prg
+   * samples/democheckbox.prg
+   * samples/demomonthcal.prg
+   * samples/demotab.prg
+     ! changed @SAY to @OWNERBUTTON
+  * samples/demoall.prg
+     ! removed these samples from menu options
+     ! Call them using button on "sample image"
+
+2025-04-22 16:15 UTC+0200 Wilfried Brunken DF7BE
+* test/tickets/ticket204.hbp (New)
+* test/tickets/ticket204.prg (New)
+* test/tickets/image (New directory)
+* test/tickets/image/Ticket204.png (New)
+  ! Bug ticket #203 Linux GTK Browse auto text adjustment:
+  ! Some experiments with size values.
+  ! Now the sizes may be  correct,
+  ! see screenshot in directory "image"
+  ! May be aspect for #204.
+  ! Please try to make experiments with size parameters.
+  ! Will check for #204 for the next few days.
+
+2025-04-22 16:45 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * source/winapi/draw.c
+  * source/gtk/draw.c
+    * hwg_drawgradient(): aCorners parameter may be a numerical value now, if the radius is the same for all corners
+  * source/gtk/window.c
+    * Potential problem fixes with g_convert()
+  * utils/hwbuild/hwb.prg
+    * Support of .hwprg added
+
+2025-04-22 15:30 UTC+0200 Wilfried Brunken DF7BE
+* samples/testtray.prg
+  ! Bugfix on LINUX compile:
+  ! Warning W0003  Variable 'OTRAYMENU' and 'OICON2' ...
+  ! Compile all sample in one run
+  ! hbmk2 *.hbp
+  ! runs OK.
+
+2025-04-22 09:00 UTC-0300 Jose Quntas jmcquintas-gmail.com
+   * samples/demomonthcal.prg
+     ! from vertical to horizontal
+   * samples/demotab.hbp
+   * samples/demotab.prg
+      ! tab inside tab
+   * samples/democheckbox.prg
+     ! multiuse
+   * clean.sh
+   * samples/readme.txt
+   * samples/clean.sh
+   * samples/demoall.*
+   * demobrowsedbf.prg
+   * samples/demodatepicker.prg
+   * samples/demomenumt.prg
+   * samples/makeallsam.sh
+     ! small changes: position, color
+
+2025-04-21 17:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * source/winapi/hbrowse
+     ! only comment from testado.prg to demobrowseado.prg
+   * samples/Readme.txt
+   * samples/clean.sh
+   * samples/demoall.* (from all.*)
+   - samples/demoado.hbp
+   * samples/demobrowseado.prg (from testado.prg)
+   * samples/demobrowsedbf.prg
+   * samples/demomenumt.*
+   * samples/demomonthcal.prg
+   * samples/demotab.*
+   * samples/makeallsam.sh
+     ! change demobrowseado to multiuse, use friendly variable names
+     ! Update references
+     ! change all.prg to demoall.prg - to easy search, and do not
+     !    confuse with all sources.
+     ! demobrowseado added as windows only on demoall and demotab
+
+2025-04-21 13:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/Readme.txt
+   * samples/all.hbp
+   * samples/all.prg
+   * samples/demobrowsedbf.prg
+   - samples/demomonthcal.hbp
+   * samples/demomonthcal.prg
+   * samples/demotab.hbp
+   * samples/demotab.prg
+   * samples/makeallsam.ch
+     ! demomonthcal changed 1 dialog and for multiuse
+     ! added to demotab.hbp and all.hbp (ok windows only)
+     ! if needed hbmk2 demomonthcal.prg
+     ! Added SAY "name" on samples data.
+     !    to user knows origin of data on screen
+   * samples/testsplit.prg
+     ! wrong filename on comment
+
+2025-04-21 10:20 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/*.hbp
+   * samples/clean.sh
+   * samples/makeallsam.sh
+     ! fix warnings on ubuntu
+     ! removed not needed #include "gtk.ch", causing duplicated defines
+   * samples/demobrowsedbf.prg
+   * samples/demobrowsedbf.hbp
+     ! changed for multiple use, with or without dialog
+   * samples/demotab.prg (renamed from demobasic.prg)
+   * samples/demotab.hbp (renamed from demobasic.hbp)
+     ! changed for multiple use, with or without dialog
+     ! uses demobrowsedbf inside a TAB PAGE
+   * samples/demomenumt.prg
+   * samples/demomenumt.hbp
+     ! use demobrowseedbf.prg and demotab.prg as dialog
+   * samples/all.hbp
+   * samples/all.prg
+     ! use demotab.prg as tab and as dialog
+     ! use demobrowsedbf.prg as dialog (inside demotab too)
+   ! Trying reuse samples as simple as possible
+   ! Do not need compile demobrowsedbf and demotab,
+   !    but can compile alone too
+   ! TO DO: say on demobrowsedbf.prg do not show text
+   ! NOTE: sample needs reserve a top space for tab
+
+2025-04-21 01:01 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/gtk_samples/*.hbp
+     ! fix linux after auto hbmk.hbm, removed duplicated from hbp
+
+2025-04-20 13:07 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/tutorial/tutor.hbp
+     ! tutor.hbp now compiles windows/ubuntu
+   * samples/gtk_samples/a.prg
+   * samples/gtk_samples/graph.prg
+   * samples/gtk_samples/winprn.hbp
+   * samples/tutorial/hwgrun.hbp
+     ! fix warnings -w3 -es2
+     ! note: printdos() on gtk_samples/winprn.prg not used
+     ! return to not static to compile without this warning
+
+2025-04-19 19:30 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * utils/tutorial/tutor.prg
+     ! Error reported by Itamar Lins
+     ! Please after confirm compile/run from tutorial remove commented lines
+     ! Seems ok but confirmed on win only, about a new parameter ""
+     ! please confirm too on hbp -lpcre it does not exists on user machine
+
+2025-04-19 16:30 UTC+0200 Wilfried Brunken DF7BE
+* contrib/qrcode/qrdecode/ReadMe.txt
+* contrib/qrcode/qrdecode/qrdecode.hbp
+* contrib/qrcode/qrdecode/qrdecode.prg
+* contrib/qrcode/qrencode/Makefile (moved)
+* contrib/qrcode/qrencode/QR-Code-generator-master (moved with all subdirectories)
+* contrib/qrcode/qrencode/Readme.txt
+* contrib/qrcode/qrencode/build.sh
+* contrib/qrcode/qrencode/hb_qrencode.hbp
+* contrib/qrcode/qrencode/qrencode.hbp
+* contrib/qrcode/test/hbmk.hbm (New)
+* D contrib/qrdecode (moved)
+* D contrib/qrencode (empty in case of move, deleted)
+  - Check for moved QR code contrib code on LINUX,
+    corrections, Windows follows.
+  - now directory qrcode contains sub directories by
+    Jose M. Quintas qrdecode and qrencode
+  - so qrencode/QR-Code-generator-master also moved to
+    qrcode/qrencode
+  - Empty directories removed
+  - Path corection in hbp files and Readme's
+
+
+2025-04-19 15:10 UTC+0200 Wilfried Brunken DF7BE
+ * clean.sh
+   ! More cleanings:
+   ! For next update need to wait
+   ! for finishing the recent project of
+   ! Jose Quintas
+
+2025-04-18 13:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   - samples/demogetdesktopsize.prg
+   - samples/demogetdesktopsize.hbp
+      ! removed, there are more samples using it
+   - samples/*.prg
+     ! on new samples add source code name on dialog caption
+     ! no other change
+     ! end of single format
+     ! test hbmk2 *.hbp on win11 ok
+
+2025-04-18 11:10 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/a.prg
+     ! menu caption changed, one menu option caption changed
+   * samples/grid_3.prg
+   * samples/grid_4.prg
+   * samples/grid_5.prg
+   * samples/hello.prg
+   * samples/helpdemo.prg
+   * samples/helpstatic.prg
+   * samples/hexbincnt.prg
+   * samples/hole.prg
+   * samples/htrack.prg
+   * samples/icons.prg
+   * samples/icons2.prg
+   * samples/memocmp.prg
+   * samples/modtitle.prg
+   * samples/nice2.prg
+   * samples/night.prg
+   * samples/progbars.prg
+   * samples/propsh.prg
+   * samples/pseudocm.prg
+   * samples/testget2.prg
+   * samples/tstconsapp.prg
+   * samples/winprn.prg
+     ! no change, continue single format to best view used options
+
+2025-04-17 21:00 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/*.prg
+     ! continue format source code to visibility only
+     ! no extra change. Example:
+     ! INIT Dialog oDlg ;
+     !    AT    0,0 ;
+     !    TITLE cstr ;
+     !    SIZE  500,400 ;
+     !    CLIPPER ;
+     !    NOEXIT ;
+     !    NOEXITESC
+     ! On this format, options used are visible
+     ! 35 files updated, 46 remaining
+
+2025-04-17 14:40 UTC-0300 Jose Quintas jmcquintas-gmail.com
+   * samples/a.prg
+   * samples/demobasic.prg
+   * samples/demodbfdata.prg
+   * samples/demoini.prg
+   * samples/demomenuxml.prg
+   * samples/hello.prg
+   * samples/tab.prg
+     ! no change, format source code only to visibility of used options
+   * samples/all.prg
+     ! change menu order
+
+2025-04-17 12:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/all.prg
+   - samples/democombobox.prg
+   - samples/democombobox.hbp
+   - samples/makeallsam.sh
+   - clean.sh
+   - samples
+     ! removed democombobox.prg, added demobasic.prg
+   * samples/demobasic.hbp
+   * samples/demobasic.prg
+     ! added gtk.ch and notes, found on democombobox.prg
+   NOTE: dialog style is commented, can be removed if not needed on GTK
+   TODO: update readme.txt about demobasic.prg status
+
+2025-04-17 15:50 UTC+0200 Wilfried Brunken DF7BE
+ * samples/all.prg
+ * samples/demobasic.prg
+   ! Test on Ubuntu LINUX (1), fixes following:
+   ! all.prg(34) Error E0020  Incomplete statement or unbalanced delimiters
+   ! all.prg(105) Error E0030  Syntax error "syntax error at ','"
+   ! demobasic.prg(115) Warning W0001  Ambiguous reference 'DLG'
+   ! all.prg now OK for LINUX.
+   ! (to be continued)
+
+2025-04-16 23:50 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * all.prg
+     ! Small fix
+   * datepicker.hbp
+     ! Wrong name
+   + demobasic.prg
+   + demobasic.hbp
+     ! to replace others samples, using already existing code
+     ! and trying to use a friendly source code
+
+2025-04-16 12:32 UTC-0200 Jose Quintas jmcquintas-gmail.com
+  ! Anything wrong on my commits
+  ! I rewrite history but main local position was wrong
+  ! Making a new commit after position correction
+
+2025-04-16 16:55 UTC+0200 Wilfried Brunken DF7BE
+ * samples/all.hbp
+ * samples/all.prg
+  ! TODO: Adjust for Linux and MacOS, done
+  ! Hello Jose, please correct list in all.hbp,
+  ! i removed not existing (renamed ?) samples.
+
+
+2025-04-16 16:30 UTC+0200 Wilfried Brunken DF7BE
+  * samples/gtk_samples/pseudocm.prg
+    ! Compile error on LINUX fixed,
+    ! reported by Jose Quintas
+
+2025-04-15 14:45 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * utils/hwbuild/hwb.prg
+    * Renamed to hwbc.prg and synchronized with HwBuilder main repository on gitflic.
+  * utils/hwbuild/hwbuild.hbp
+  * utils/hwbuild/hwbuildc.hbp
+    * Updated due to hwb.prg renaming
+
+2025-04-15 10:00 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * source/gtk/draw.c
+    ! hwg_OpenImage() fixed and cleaned
+
+2025-04-14 08:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/*
+      ! Samples review, name demo*, title of dialogs with source code name
+      ! fix warnings -w3 -es2
+      ! update scripts and references with new name
+      ! all.prg can compile samples before to show
+   * samples/testhgt.*
+   * samples/iesample.*
+   * samples/testchild.*
+     ! moved to test/samples/, not usable examples for users
+   * qrcode samples moved to contrib/qrcode/test
+     ! specific dependencies to build and samples, user solve all at same time
+   ! About new names demo*: samples are demonstration not test
+   ! TODO: more samples to review, see all.prg
+
+2025-04-13 08:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * rename samples/demodbf.* to samples/testdemodbf.*
+   * rename samples/testxmltree.* to samples/testxmltree.*
+   * move contrib/qrencode/* to contrib/qrcode/qrencode/*
+   * move contrib/qrdecode/* to contrib/qrcode/qrdecode/*
+   * move samples/qr* to contrib/qrcode/test/*
+     ! specific sample with dependencies
+  * move test/iesample.* to test/samples/iesample.*
+  * samples/testado.prg
+  * samples/modtitle.prg
+  * samples/nice2.prg
+  * samples/night.prg
+  * samples/pseudocm.prg
+  * samples/stretch.prg
+  * samples/testalert.prg
+  * samples/testbmpcr.hbp
+  * samples/testchild.prg
+  * samples/testfunc.prg
+  * samples/testget1.prg
+  * samples/testini.prg
+    ! fix warnings -e3 -es2, window CENTER
+  * all.prg
+    ! qrcode* removed from menu
+  ! sorry about too renames
+
+2025-04-13 01:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * rename samples/arraybrowse.* to samples/testbrowsearr.*
+   * rename samples/dlgbrwdbf.prg to samples/testbrowsedbf.prg
+   * rename samples/dlgcombo.prg to samples/testcombobox.prg
+   * rename samples/checkbox.* to samples/testcheckbox.*
+   * rename samples/dlgdpick.prg to samples/testdatepick.prg
+   * rename samples/dlghmonth.prg to samples/testhmonth.prg
+   * rename samples/dlgmenu1.prg to samples/testmenu1.prg
+   * rename samples/dlgmenumt.* to samples/testmenumt.*
+   * rename samples/dlgxml.prg to samples/testmenuxml.prg
+   * rename samples/dlgbot.prg to samples/testother.prg
+   * rename samples/dlgshadebtn.prg to samples/testshadebtn.prg
+   * rename samples/dlgsplit.prg to samples/testsplit.prg
+   * move samples/iesample.* to test/iesample.*
+   * samples/imageview.prg
+   * samples/tab.prg
+     ! fix warnings -w3 -es2
+   * samples/all.hbp
+   * samples/all.prg
+   * samples/allhbp.hbp
+     ! update names
+   ! reviewing samples folder
+   ! renaming to avoid reserved name, samples will be testxxxx
+   ! internal samples functions to STATIC
+
+2025-04-12 21:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/grid_2.prg
+   * samples/grid_3.prg
+   * samples/tab.prg
+     ! fix warnings -w3 -es2
+   * samples/all.prg
+     ! Now a tool to easy view/review samples folder
+     ! Samples as EXE, can build them, with or without hbp
+     ! TO DO: Review samples folder
+
+2025-04-11 20:20 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   + test/windowonly.prg
+     ! window main call window and don't open
+   ! Note about previous commit:
+   ! on samples/ using hbmk2 *.hbp (this includes allhbp.hbp)
+   ! on test/    using hbmk2 *.hbp
+
+2025-04-11 20:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * *.hbp
+     ! define max -w level for all
+   * test/hbmk.hbm
+     ! to have a default
+   * utils/debugger/sample.prg
+   * utils/hwbuild/hwb.prg
+   * utils/statichelp/stathblpconv.prg
+   * utils/tutorial/tutor.prg
+     ! fix -w3 -es2 warnings
+   * utils/debugger/hwgdebug.hbp
+   * utils/debugger/sample.hbp
+     | -w2
+   * utils/bincnt/binnt.hbp
+   * utils/dbc/dbchw.hbp
+   * utils/designer/designer.hbp
+   * utils/designer/designer2.hbp
+   * utils/editor/editor.hbp
+     ! -w1
+
+2025-04-11 12:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/buildpelles.prg
+   * samples/colrbloc.prg
+   * samples/graph.prg
+   * samples/grid_1.prg
+   * samples/grid_4.prg
+   * samples/grid_5.prg
+   * samples/hole.prg
+      ! warnings -w3 -es2
+   * samples/hbmk.hbm
+      ! fixed -w3 -es2 as default
+   !
+   ! TODO: warnings -w3 -es2 on /*.hbp, contrib/*.hbp, utils/*.hbp
+   !       they are using -w and not -w3
+
+2025-04-11 02:42 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/bincnts.prg
+   * samples/bindbf.prg
+   * samples/buildpelles.prg
+   * samples/escrita.prg
+   * samples/fileselect.prg
+   * samples/getupdown.prg
+   * samples/hello.prg
+   * samples/hexbincnt.prg
+   * samples/hole.prg
+      ! warnings -w3 -es2 on windows
+
+2025-04-11 00:20 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/dlgmenumt.hbp
+     ! added -D__USING_MENU__
+
+2025-04-10 20:55 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/*.hbp
+      ! removed -n already on hbmk.hbm
+      ! not on same commit to a easy check
+   * samples/a.hbp
+      ! wrong on previous changes
+   * samples/all.prg
+      ! changed to WINDOW MAIN
+   * samples/testsdi.prg
+   * samples/tstscrbar.prg
+      ! can't add to all.hbp
+   - test/ubuntuerror.txt
+      ! no more needed
+
+2025-04-10 15:45 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/all.hbp
+   * samples/allhbp.hbp
+   * samples/dlghmonth.prg
+   * samples/dlgmdi.prg
+   * samples/dlgshadebtn.prg
+   * samples/dlgsplit.prg
+   * samples/dlgxml.prg
+     ! return dlgmdi.prg as a.prg
+     ! samples using window can't be opened 2 times, only dialog
+     ! mdi need to be main window or close all
+
+2025-04-10 14:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/all.hbp
+   * samplesall.prg
+   * samples/allhbp.hbp
+   * samples/dlgbrwdbf.prg
+   * samples/dlgcombo.prg
+   + samples/dlghmonth.prg
+   * samples/dlgmdi.prg
+   * samples/dlgmenumt.prg
+   + samples/dlgshadebtn.prg
+   * samples/dlgsplit.prg
+   * samples/dlgxml.prg
+   - samples/shadebtn.hbp
+   - samples/shadebtn.prg
+   - samples/testhmonth.hbp
+   - samples/testmonth.prg
+     ! renamed samples to dlgxxx, added to menu
+     ! title of dialogs with same name as PRG
+     ! extra functions to STATIC to be used by its PRG only
+     ! adjust -w3 -es2 when needed
+     ! menu with max 10 options
+     ! please: menu is as expected on linux blocking win ?
+
+2025-04-10 12:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/Dialogboxes.prg
+   * samples/bincnts.prg
+   * samples/bitmapbug.prg
+   * samples/dbview.prg
+   * samples/demohlistsub.prg
+   * samples/dlgmdi.prg
+     ! more warnings -w3 -es2 fixed
+
+2025-04-10 10:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/*.hbp
+   * samples/hbmk.hbm
+   * samples/gtk_samples/*.hbp
+   * samples/gtk_samples/hbmk.hbm
+     ! removed -w from all hbps
+     ! as a workaround added -w3 -es0 to hbmk.hbm
+     ! show warnings but do not stop
+     ! remember: hbmk.hbm change all samples at a time, -w0 -es2 if needed
+
+2025-04-09 21:00 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/gtk_samples/a.prg
+   * samples/gtk_samples/dbview.prg
+   * samples/gtk_samples/escrita.prg
+   * test/ubuntuerror.txt
+   * utils/dbc/commands.prg
+   * utils/dbc/dbchw.prg
+   * utils/dbc/modistru.rg
+   * utils/debugger/hwgdebug.prg
+   * utils/editor/editor.prg
+      ! solved some warnings -w3 -es2
+      ! format last lines on changelog
+
+2025-04-08 17:40 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * .github/workflow/checkubuntu.yml
+   + test/ubuntuerror.txt
+     ! Changed to -w3 -es0 to do not stop on each error
+     ! save error list on test/ubuntuerror.txt
+     ! To all: not bugs, errors about -w3 check
+     ! Do not show these errors on local machine
+     ! It is an extra check using github machines Linux and Windows
+
+2025-04-08 16:40 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * samples/dlgmdi.prg
+      ! CENTER
+   * contrib/hwreport/hwreport.prg
+   * contrib/hwreport/opensave.prg
+   * contrib/hwreport/propert.prg
+   * contrib/hwreport/rpexec.prg
+   * samples/gtk_samples/a.prg
+     ! error -w3 -es2 (why error on github ubuntu only?)
+     ! more to adjust
+
+2025-04-09 15:30 UTC+0200 Wilfried Brunken DF7BE
+   * contrib/hwreport/make_linux.sh (New)
+     ! Hello Jose,
+     ! referenced by your mail from
+     ! 2025-04-09 01:19
+     ! i can compile my hwreport without
+     ! W0032 on Ubuntu.
+     ! This warning does not appear.
+     ! Bugin Harbour ?
+
+
+2025-04-09 13:30 UTC+0200 Wilfried Brunken DF7BE
+   * samples/dlgsplit.prg
+     ! hbmk2 all.hbp aborts on LINUX:
+     ! Removed the include of gtk.ch, not needed any more
+
+2025-04-08 22:20 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   - a.prg
+   - a.hbp
+   + dlgmdi.prg
+   * all.prg
+   * all.hbp
+   * allhbp.hbp
+     ! included a.prg as dlgmdi.prg on all.hbp as Windows only
+     ! hbmk2 dlgmdi.prg works too
+
+2025-04-08 19:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   - testspli.prg
+   - testspli.hbp
+   + dlgsplit.prg
+   * all.prg
+   * all.hbp
+   * allhbp.hbp
+     ! include dlgsplit.prg on all.hbp
+     ! remembering: hbmk2 dlgsplit.prg works too
+     ! Do not change INIT WINDOW, later test on mt
+   .github/workflows/checkubuntu.yml
+   .github/workflows/checkwindows.yml
+     ! changed to compile allhbp.hbp too
+     ! need help to create a checkmacos.yml
+
+2025-04-08 18:10 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   * allhbp.hbp
+     ! include all.hbp and commented individual prgs already on all.hbp
+
+2025-04-08 16:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+   - dlgbrwdbf.hbp
+   * dlgbrwdbf.prg
+   - datepicker.hbp
+   - datepicker.prg
+   + dlgdpick.prg
+   - tstcombo.hbp
+   - tstcombo.prg
+   + dlgcombo.prg
+   - test_bot.prg
+   - test_bot.hbp
+   + dlgbot.prg
+   - testxml.hbp
+   - testxml.prg
+   + dlgxml.prg
+   + dlgmenu1.prg
+     ! These samples can be compiled using hbmk2 name.prg
+   + all.prg
+   + all.hbp
+     ! A menu for all listed samples
+     ! hbp uses menu + same standalone source code samples
+     ! it is needed to define on prg and hbp about Windows/Linux/MacOs
+     ! example:  { "DLGBOT",    .T., .F., .F., "ON OTHER MESSAGES" }, ;
+     !           {win}dlgbot.prg
+     ! Samples not in menu continues with own hbp
+     ! Not all samples can be moved to menu
+     ! Please comments if can change another samples
+
+2025-04-08 13:50 UTC-0200 Jose Quintas jmcquintas-gmail.com
+* samples/hello.hbp
+* samples/nice2.hbp
+* samples/shadebtn.hbp
+* samples/testini.hbp
+* samples/testmenubitmap.hbp
+* samples/tstsplash.hbp
+  ! My mistake, recovered stop on these files, thanks Wilfried
+
+2025-04-08 13:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
+* samples/mariadb/hbmk.hbm
+* test/samples/hbmk.hbm
+* samples/gtk_samples/hbmk.hbm
+* samples/hbmk.hbm
+  ! same hbmk.hbm for all folders, with relative path adjust
+  ! Reviewing my previous commit about any lost stop
+
+2025-04-08 16:05 UTC+0200 Wilfried Brunken DF7BE
+* samples/hbmk.hbm (New)
+* a.hbp
+  ! Corrections of last commit by Jose Quintas.
+  ! First test on LINUX,
+  ! need to add sequence for LINUX and MacOS.
+  ! Hello Jose,
+  ! Please recover the stop sequence for all
+  ! Windows only samples like now seen in a.hbp
+  ! (Checked on Windows 11)
+  ! Need to add the squence for UNIX and LINUX
+  ! in all hbmk.hbm in the subdirectories.
+
+
+2025-04-07 22:30 UTC-0200 Jose Quintas jmcquintas-gmail.com
++ samples/hbmk.hbm
+* samples/*.hbp
+  ! hbmk.hbm, hbmk2 uses automatically for all compilations on folder
+  ! Moved all parameters for Linux/MacOS/Win to hbmk.hbm
+  ! (Not sure if they could be moved to hwgui.hbc, not same syntax)
+  ! adjust on all hbps
+  !
+  ! harbour/tests/wvtext uses gtxwc, is it hwgui compatible?
+  ! it is used only to do not have a visible window,
+  ! and to wait until dialog is closed
+
+2025-03-30 19:00 UTC+0200 Wilfried Brunken DF7BE
+* samples/dlgbrwdbf.hbp
+* samples/dlgmenumt.hbp
+  ! Prepared for multi platform.
+  ! dlgbrwdbf.prg run on LINUX,
+  ! but dlgmenumt.prg needs
+  ! library lib libgtwvt.a,
+  ! which seems to be Windows only.
+  ! libgthwg.a in contrib seems to be
+  ! a multi platform eqivalent,
+  ! but need some modifications.
+  !
+  ! Hello Jose, please check.
+
+
+2025-03-29 21:10 UTC-0200 Jose Quintas jmcquintas-gmail.com
+
++ samples/dlgbrwdbf.prg
++ samples/dlgbrwdbf.hbp
++ samples/dlgmenumt.prg
++ samples/dlgmenumt.hbp
+  ! dlgbrwdbf can be compiled standalone
+  ! dlgmenumt menu using multithread and dlgbrwdbf
+  ! CAUTION: make your own tests, use at you own risk
+
+2025-03-29 15:30 UTC+0100 Wilfried Brunken DF7BE
+* samples/Readme.txt
+* samples/doc/Readme.txt
+* samples/propsh.prg
+* source/winapi/dialog.c
+  ! Internal bugfix
+  ! "Property sheet".
+  ! Readme's updated.
+  ! Tested with MinGW32 and
+  ! Borland C.
+
+2025-03-29 15:30 UTC+0100 Wilfried Brunken DF7BE
+* include/hb_missing.h (New)
+* source/common/procmisc/cfuncs.c
+* samples/testfunc.prg
+  ! New function hwg_GetEpoch()
+  ! Get recent setting of
+  ! SET EPOCH TO ..
+  ! returned as integer value.
+  ! More information see
+  ! function docu.
+
+
+2025-03-23 20:57 UTC-0200 Jose Quintas jmcquintas-gmail.com
+* source/winapi/hdialog.prg
+* source/winapi/hwindow.prg
+  ! change test variable to HB_GUI_MT_EXPERIMENTAL
+  ! update github workflows
+  ! to-do: MT sample(s) and test on linux/MacOS
+
+
+2025-03-17 14:50 UTC+0100 Wilfried Brunken DF7BE
+* test/tickets/ticket165.hbp (New)
+* test/tickets/ticket165.prg(New)
+  ! Bug ticket #165:
+  ! "Progress Bar 'G_IS_OBJECT (object)' failed (GTK)"
+  ! With reference to closed Bug ticket #52:
+  ! "Progbars doesn't work under Linux",
+  ! with new sample program in
+  ! samples/progressbar.
+  ! It is obsolete, so closed today
+
+
+2025-03-15 16:40 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_classes.html
+* install-macos.txt
+* samples/progressbar/Readme.txt
+* samples/progressbar/demo_progres.prg
+  ! Bug Ticket #52:
+  ! Progbars doesn't work under Linux.
+  ! Now code for both LINUX and MacOS added,
+  ! for details see post to ticket.
+  ! Now the ticket may be ready to close.
+  ! Docu updated.
+
+
+2025-03-14 18:30 UTC+0100 Wilfried Brunken DF7BE
+* samples/progressbar (New directory)
+* samples/progressbar/Readme.txt (New)
+* samples/progressbar/progress.prg (New)
+* samples/progressbar/loadhex.prg (New)
+* samples/progressbar/icon.png (New)
+* samples/progressbar/demo_progres.prg (New)
+* samples/progressbar/progress.hbp (New)
+* samples/progressbar/demo_progres.hbp (New)
+* samples/progressbar/memvar.prg (New)
+* samples/progressbar/inithex.prg (New)
+* samples/progressbar/test (New directory)
+* samples/progressbar/test/crwhat.prg (New)
+* samples/progressbar/objects.prg (New)
+* samples/progressbar/icon.ico (New)
+* test/tickets (New directory)
+* test/tickets/Ticket170.prg (New)
+* test/tickets/ticket170.hbp (New)
+* source/gtk/hprogres.prg
+* source/winapi/hprogres.prg
+  ! Bug Ticket #52:
+  ! Progbars doesn't work under Linux.
+  ! Code delivered by Alain Aupaix (TNX)
+  ! for LINUX. Added code for WinAPI.
+  ! Docu updated.
+  ! To be continued:
+  ! Trouble to kill the sub process
+  ! on MacOS.
+  ! For details read the installation instructions
+  ! and the posts to ticket.
+  ! Common:
+  ! New sub directory "tickets" will
+  ! contain demonstration programs
+  ! while added during ticket handling
+  ! Bug Ticket
+  ! Access violation in old
+  ! progressbar samples seemed to be fixed.
+  ! Bug Ticket #170:
+  ! ComboBox Linux Bound error: array access.
+  ! This was fixed by Alexander Kresin a long time ago.
+  ! Checked on Windows 11 and LINUX, so ticket now closed.
+
+
+2025-03-11 15:40 UTC+0100 Wilfried Brunken DF7BE
+* temp (New directory)
+* temp/empty.txt (New)
+* doc/hwgdoc_commands.html
+* samples/stretch.prg
+* source/cross/hmisccross.prg
+ ! Added a temporary directory,
+ ! may be useful, if temporary created
+ ! pathnames by the system are to long, or for debugging,
+ ! to find a temporary file with short name
+ ! easier (for bitmap programming debugging).
+ ! Don't forget:
+ ! Needed to delete the file after usage !
+ ! Sample stretch.prg added with
+ ! transparent bitmap display, needed to fix
+ ! bug on LINUX (WinAPI runs OK)
+ ! (if i have time).
+ ! Added some instructions in command doc.
+
+
+2025-03-07 17:30 UTC+0100 Wilfried Brunken DF7BE
+* samples/stretch.prg
+* source/cross/hmisccross.prg
+ ! Function hwg_Stretch_BMP_i()
+ !  now for all platforms.
+ ! "\" in bitmap names
+ ! cause trouble on WinAPI.
+
+
+2025-03-07 10:15 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_classes.html
+* doc/hwgdoc_functions.html
+* samples/stretch.prg
+* source/cross/hmisccross.prg
+* source/winapi/draw.c
+* source/winapi/drawwidg.prg
+* whatsnew.txt
+ ! Support ticket #86:
+ ! (Continued)
+ ! Here the solution for WinAPI.
+ ! List of new functions:
+ ! hwg_Stretch_BMP_i()
+ ! hwg_bpmObj2String()
+ ! hwg_BMPRename()
+ !
+ ! Debug helpers for bitmaps:
+ ! BMPSize2Logfile()
+ ! hwg_bitmapTOC()
+ ! hwg_Debug_logarrayC()
+ ! BMPSize2Logfile()
+ ! hwg_bitmapTOC()
+ ! hwg_is_object()
+ !
+ ! Docu updated.
+ ! Next step to do:
+ ! hwg_Stretch_BMP_i()
+ ! enhanced for LINUX.
+
+
+2025-03-02 17:55 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_classes.html
+* samples/stretch.prg
+* source/gtk/draw.c
+* source/gtk/drawwidg.prg
+ ! Support ticket #86:
+ ! Now Method Addfile() of class HBitmap for GTK
+ ! has now size parameters.
+ ! Checked with sample program
+ ! stretch.prg and CLLOG on
+ ! Ubuntu.
+ ! To be continued for
+ ! AddString() on WinAPI.
+ ! For details, read
+ ! comment line of sample program
+ ! and posts to ticket.
+
+
+2025-03-01 16:40 UTC+0100 Wilfried Brunken DF7BE
+* source/gtk/draw.c
+* source/gtk/drawwidg.prg
+* samples/stretch.prg
+ ! Support ticket #86:
+ ! Now Method Addfile() of class HBitmap for GTK
+ ! has now size parameters.
+ ! (like same method of WinAPI)
+ ! If one of them is less than 1,
+ ! (or NIL)
+ ! the resize is not done, so
+ ! the previous behavior is preserved.
+ ! draw.c:
+ ! gdk_pixbuf_new_from_file_at_scale() is
+ ! the same as
+ ! gdk_pixbuf_new_from_file(),
+ ! but with size parameters.
+ ! To be continued with AddString()
+ ! method.
+
+
+2025-02-25 16:00 UTC+0100 Wilfried Brunken DF7BE
+* samples/stretch.prg
+ ! Support ticket #86:
+ ! Option for sized backgroud bitmap on window main.
+ ! Analysis started, need to fix
+ ! resize in methods AddString()
+ ! and AddFile() of HBitmap class.
+ ! For details, see post to ticket.
+
+2025-02-25 16:00 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_commands.html
+* samples/Readme.txt
+* samples/makeallsam.bat
+* samples/makeallsam.sh
+* samples/tabs_toolt.hbp (New)
+* samples/tabs_toolt.prg (New)
+ ! Support ticket #54 "Tooltip for tabs ?"
+ ! Now ready for close.
+ ! Sample program added,
+ ! docu updated.
+ ! (special behavior of mouse cursor)
+ ! For more details see post to
+ ! (closed) ticket.
+ ! TNX Alain Aupeix.
+
+
+2025-02-24 16:45 UTC+0100 Wilfried Brunken DF7BE
+* samples/trackbar.prg
+ ! Bug ticket #71 : say position
+ ! Sample program fixed.
+ ! For details see post to ticket,
+ ! closed.
+ ! TNX Jose M. C. Quintas
+
+
+2025-02-23 18:40 UTC+0100 Wilfried Brunken DF7BE
+* source/gtk/hsayimg.prg
+* source/winapi/hsayimg.prg
+* doc/hwgdoc_classes.html
+ ! Bug ticket #195 Bug of @ Image in a tab
+ ! METHOD ReplMsg() removed.
+ ! Test on Windows and LINUX
+ ! OK.
+ ! Docu updated (Now call Refresh() instead)
+
+2025-02-23 14:40 UTC+0100 Wilfried Brunken DF7BE
+* source/gtk/hsayimg.prg
+  ! Forgotten to deactivate debug call of
+  ! hwg_writelog("ReplMsg")
+
+2025-02-23 13:40 UTC+0100 Wilfried Brunken DF7BE
+* source/gtk/hsayimg.prg
+* source/winapi/hsayimg.prg
+* doc/hwgdoc_classes.html
+* doc/hwgdoc_functions.html
+  ! Bug ticket #195 Bug of @ Image in a tab
+  ! solved. For details see post to ticket.
+  ! METHOD ReplMsg() added to HSayBmp class
+  ! Docu hwg_GetDirSep() also for MacOS.
+
+
+2025-02-22 13:35 UTC+0100 Wilfried Brunken DF7BE
+* test/ticket188.hbp (New)
+* test/ticket188.prg (New)
+* doc/hwgdoc_commands.html
+* doc/hwgdoc_functions.html
+  ! Bug ticket #188:
+  ! Sample extracted from tutorial and
+  ! EDITBOX changed to GET.
+  ! Docu updated.
+  ! For details, see comment line of
+  ! test program and post of ticket.
+  ! Advice, that inverted (negative)
+  ! QR codes are not recognized
+
+
+2025-02-19 15:35 UTC+0100 Wilfried Brunken DF7BE
+* source/winapi/draw.c
+* include/warnings.h
+  ! Added
+  ! Warning suppressed: "maybe-uninitialized"
+  ! The other modifications are only
+  ! comment lines without any function
+  ! modifications
+  ! (used as know how store)
+  ! Ticket handling continued.
+
+
+2025-02-18 12:00 UTC+0100 Wilfried Brunken DF7BE
+* contrib/gthwg/tests/test1.hbp
+* contrib/gthwg.hbp
+* contrib/gthwg/tests/gthwtest.png (New)
+  ! Bug Ticket #199
+  ! Error when building gthwg/test1
+  ! Modified HBP files and
+  ! screenshot with running
+  ! test program added.
+  ! For details see post to bug ticket.
+
+
+2025-02-08 15:05 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrencode/include/empty.txt (Deleted)
+* contrib/qrencode/libqrcode_hb.prg
+  ! Project qrencode:
+  ! At least, a little correction
+  ! for Borland C and MSVC
+
+
+2025-02-07 19:00 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrencode/Readme.txt
+* contrib/qrencode/libqrcode_hb.prg
+* contrib/qrencode/qrcodegenerator.c
+* contrib/qrencode/include/qrcodegen.h
+* doc/hwgdoc_functions.html
+* install.txt
+* make_vc.bat
+* make_w32.bat
+* makefile.vc
+* makefile.wc
+* samples/dev/env/pfad_msc.bat
+* samples/dev/env/pfad_pc.bat
+* source/common/procmisc/cfuncs.c
+  ! Project qrencode:
+  ! After a long time the
+  ! project is now finished.
+  ! Have fun, to create lot's
+  ! of QR codes in a HWGUI application.
+  ! Compiler check:
+  ! MSVC now ok:
+  ! The chdir() is under
+  ! MSVC _chdir().
+  ! (to Alexander)
+  !
+  ! Bugix in makefiles and scripts done.
+  !
+  ! Open Watcom C,
+  ! Pelles C and Digital Mars C:
+  ! No chance to compile Harbour
+  ! at this time,
+  ! so no possibility to build
+  ! HWGUI afterwards.
+  ! The environmwent scripts are prepared
+  ! for next tries, for example to handle
+  ! path names with blanks like
+  ! C:\Windows\Program Files
+  ! Installation instructions
+  ! and other docu updated.
+
+2025-02-03 15:45 UTC+0100 Wilfried Brunken DF7BE
+* samples/qrencode.prg
+  ! Project qrencode:
+  ! Sample program extended
+  ! with dialog to enter a
+  ! text for creating a
+  ! QR code.
+  ! Helpful for following
+  ! test procedures.
+  ! (to be continued)
+
+
+2025-02-01 18:10 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrencode/Readme.txt
+* contrib/qrencode/build.bat (New)
+* contrib/qrencode/build.sh (New)
+* contrib/qrencode/hb_qrencode.prg
+* contrib/qrencode/include/qrcodegen.h (New)
+* contrib/qrencode/libqrcode_hb.prg
+* contrib/qrencode/libqrencode.prg
+* contrib/qrencode/qrcodegenerator.c (New)
+* contrib/qrencode/qrcodegenerator.hbp (New)
+  ! Project qrencode:
+  ! Continued development:
+  ! UTF-8 check ok.
+  ! Now all needed files from original
+  ! QR code generator archive inserted.
+  ! Build scripts for easier
+  ! handling added.
+  ! TO-DO:
+  ! Check for Borland C, Watcom C
+  ! and Pelles C.
+  ! (to be continued)
+
+
+2025-01-30 16:20 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrencode/Readme.txt
+* contrib/qrencode/libqrcode_hb.prg
+* doc/hwgdoc_classes.html
+* doc/hwgdoc_functions.html
+* contrib/qrencode/include/stdbool.h (New)
+* contrib/qrencode/include/empty.txt (Deleted)
+* samples/qrencode.prg
+* source/cross/hmisccross.prg
+* test/testunique.hbp (New)
+* test/testunique.prg (New)
+  ! Project qrencode:
+  ! Some important advices to
+  ! handle the cache for
+  ! bitmap display,
+  ! the bitmap name (not the file name)
+  ! must be unique, otherwise an old
+  ! bitmap image is displayed.
+  ! New function hwg_BMPuniquename()
+  ! helps to create unique bitmap names.
+  ! Easy for creating masses of bitmaps
+  ! (or QR codes).
+  ! Advice, that HWG_QRENCODE()
+  ! is in "contrib", not in HWGUI
+  ! code.
+  ! Started project:
+  ! Modify the qrcodegenerator so
+  ! to be ready for non C99 standard compilers
+  ! like Borland C.
+  ! Include file "stdbool.h" is a substitute
+  ! for missing BOOL declarations in C99 standard.
+  ! (to be continued)
+
+
+2025-01-24 10:18 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * contrib/gthwg/gt_hwgui_w.c
+    ! Fixes for msvc compiler
+  * contrib/contrib.hwprj
+  * hwgui.hwprj
+    * Now it puts libraries according to compiler used: lib/bcc, lib/mingw, lib/mingw64...
+  * samples/a.prg
+    * Added C compiler info to Help window
+
+2025-01-23 15:50 UTC+0300 Alexander Kresin <alex@belacy.ru>
+  * image/WindowsXP.Manifest
+    * Small correction for 64-bit applications
+  * source/common/procmisc/cfuncs.c
+    * Changed the hwg_chdir() for to not compile under msvc.
+      BTW, I still don't understand, why we need this function,
+        since we have a standard Clipper/Harbour's DirChange().
+  * utils/hwbuild/hwb.prg
+    ! Fixes and enhancements
+
+2025-01-21 19:20 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrencode/libqrencode.prg (New)
+* contrib/qrencode/qrencode.hbp
+* source/cross/hmisccross.prg
+  ! Project qrencode:
+  ! Urgent fix compile
+  ! (to be continued)
+
+2025-01-21 16:20 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_functions.html
+* samples/qrencode.prg
+* source/cross/hmisccross.prg
+  ! Project qrencode:
+  ! New functions:
+  ! hwg_BMPxyfromBinary()
+  ! hwg_delEOFMarker()
+  ! Done:
+  ! After calling hwg_QRCodetxt2BPM() the
+  ! size getting with hwg_QRCodeGetSize() returns 0,0
+  ! (is now binary format of bitmap)
+  ! So the new function
+  ! hwg_BMPxyfromBinary() will
+  ! do this for you.
+  ! (to be continued)
+
+
+2025-01-20 16:30 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_functions.html
+* doc/image/qr_darc_text.bmp (New)
+* samples/qrencode.prg
+* source/cross/hmisccross.prg
+  ! Project qrencode:
+  ! New parameter nboarder for HWG_QRENCODE().
+  ! Format description for
+  ! bitmap images added in
+  ! HWGUI function docu.
+  ! (to be continued)
+
+
+2025-01-19 13:00 UTC+0100 Wilfried Brunken DF7BE
+* doc/image/hwgui_sf.bmp (New)
+* contrib/qrencode/hb_qrencode.prg
+* contrib/qrencode/libqrcode_hb.prg
+* samples/qrencode.prg
+* doc/hwgdoc_functions.html
+* source/cross/hmisccross.prg
+  ! Project qrencode:
+  ! Some modifications for
+  ! better handling, also
+  ! docu updated.
+  ! TO-DO:
+  ! After calling hwg_QRCodetxt2BPM() the
+  ! size getting with hwg_QRCodeGetSize() returns 0,0
+  ! (To be continued)
+
+
+2025-01-17 16:25 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrencode/hb_qrencode.hbp (New)
+* contrib/qrencode/hb_qrencode.prg (New)
+* contrib/qrencode/libqrcode_hb.prg (New)
+* contrib/qrencode/img/command_with_Euro.png (New)
+* contrib/qrencode/Readme.txt
+  ! Project qrdencode extended:
+  ! Now console/terminal Harbour program to
+  ! generate QR codes from commmand line.
+  ! For creating lot's of QR codes by
+  ! batch calls.
+
+
+2025-01-14 15:45 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/ReadMe.txt
+* contrib/qrdecode/qrdecode.prg
+  ! Project qrdecode completed.
+  ! Now running on all 3 OS's.
+
+
+2025-01-13 18:00 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/ReadMe.txt
+* contrib/qrdecode/qrdecode.prg
+* contrib/qrdecode/qrdecode_mac.sh
+  ! Project qrdecode:
+  ! Now running on MacOS by
+  ! HWGUI sample code.
+  ! The main coding is finished,
+  !	but TO-DO:
+  ! A new function needed to check
+  ! execute permission of the shell script
+  ! or the HWGUI program (also for LINUX)
+  ! (to be continued)
+
+2025-01-13 16:15 UTC+0100 Wilfried Brunken DF7BE
+* clean.sh
+  ! More cleaning
+  ! (to be continued)
+
+2025-01-13 15:45 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/ReadMe.txt
+  ! Project qrdecode:
+  ! Instructions for LINUXMint added.
+  ! (to be continued with MacOS)
+
+
+2025-01-10 20:00 UTC+0100 Wilfried Brunken DF7BE
+* doc/hwgdoc_functions.html
+* source/cross/hmisccross.prg
+* source/gtk/misc.c
+* test/testsleep.prg
+* test/rdln_test.prg
+  ! Project qrdecode on MacOS:
+  ! Revised sleep functions
+  ! for waitung for successful scan.
+  ! (to be continued)
+  ! Harbour workaround removed
+  ! (see Harbour issue #370)
+  ! (TNX Jose M. C. Quintas)
+  ! Revised sleep functions
+  ! (new hwg_Sleep_C() and
+  !  updated docu)
+
+2025-01-07 16:40 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/ReadMe.txt
+* contrib/qrdecode/qrdecode_mac.sh
+  ! Project qrdecode on MacOS:
+  ! First steps are successful, QR code
+  ! from camera can be decoded in shell script
+  ! (to be continued)
+  ! TO-DO:
+  ! Integrate the functionality of the shell script
+  ! into the HWGUI sample program.
+
+
+2025-01-05 17:10 UTC+0100 Wilfried Brunken DF7BE
+* test/Ticket85.hbp
+* test/Ticket85.prg
+  ! #85 USE OF STATIC ARRAY ELEMENT IN SAY DO NOT WORK
+  ! by  domenico d'oria
+  ! For details see comment line of demo
+  ! program.
+
+2025-01-05 16:10 UTC+0100 Wilfried Brunken DF7BE
+* source/cross/hmisccross.prg
+* samples/qrencode.prg
+* doc/hwgdoc_functions.html
+* test/rdln_test.prg
+  ! For Harbour bug report,
+  ! Preparing rdln_test.prg for
+  ! opening a new issue.
+  ! Project QR encoding:
+  ! New function hwg_oBitmap2file(),
+  ! is under construction yet.
+  ! (to be continued)
+
+
+2025-01-04 19:30 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/qrdecode.prg
+  ! Project QR code decode:
+  ! Sample program displays the
+  ! result read from output file
+  ! of ZBar into window of
+  ! hwg_ShowHelp().
+  ! The output file is read by
+  ! new function hwg_RdLn().
+  ! (to be continued)
+
+
+2025-01-03 19:40 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/ReadMe.txt
+* contrib/qrdecode/qrdecode
+* contrib/qrdecode/qrdecode.prg
+* contrib/qrdecode/v4l2.c (new)
+  ! Now LINUX working with patch
+  ! of Zbar code
+  ! (Patch is from
+  ! https://bugs.archlinux.org/attachments/44091/12776/v4l2.patchhttps://bugs.archlinux.org/attachments/44091/12776/v4l2.patchhttps://bugs.archlinux.org/attachments/44091/12776/v4l2.patch
+  ! To be continued with MacOS.
+
+2025-01-02 13:55 UTC+0100 Wilfried Brunken DF7BE
+* source/cross/hmisccross.prg
+* clean.sh
+* contrib/qrdecode/ReadMe.txt
+* contrib/qrdecode/qrdecode.prg
+* test/textfile_MacOS.txt (new)
+* test/textfile_UNIX.txt (new)
+* test/textfile_Win.txt (new)
+  ! QR decode:
+  ! New functions are helpers to read
+  ! the file with the result of a QR code scan:
+  ! hwg_RdLn()
+  ! hwg_RmCr()
+  ! hwg_RmBlTabs()
+  ! hwg_Max()
+  ! hwg_Min()
+  ! with autodetect of the
+  ! OS dependant line endings.
+  ! QR scan on Windows runs OK, but LINUX
+  ! have some errors in ZBar utility.
+  ! Need to fix them.
+  ! Afterwards the port to MacOS can start.
+  ! So: to be continued !!!
+
+
+2024-12-29 14:00 UTC+0100 Wilfried Brunken DF7BE
+* contrib/qrdecode/ReadMe.txt (new)
+* contrib/qrdecode/qrdecode.prg
+* contrib/qrdecode/qrdecode.hbp
+* contrib/Readme.txt
+* source/common/procmisc/cfuncs.c
+  ! Added qrdecode utility with
+  ! Zbar (external call).
+  ! Scan and decode QR
+  ! and EAN bar codes.
+  ! First issue running on
+  ! Windows 11 / 10.
+  ! To be continued for
+  ! LINUX an MacOS.
+
+2024-12-29 11:00 UTC+0100 Wilfried Brunken DF7BE
+* oldlogs/Changelog.002 (archived)
+* oldlogs/Readme.txt
+  ! Changelog archived
+  ! from 2022-02-09 to 2024-12-12
+  ! as .002
+
+
+
+* ======================= EOF of Changelog =======================
+
