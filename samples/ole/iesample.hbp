@@ -1,0 +1,10 @@
+-lgdiplus
+iesample.prg
+-i..\..\include
+-lhwgui
+-lprocmisc
+-lhbxml
+-lhwg_qhtm
+-lhbactivex
+-L..\..\lib
+-gtgui

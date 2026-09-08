@@ -1,5 +1,5 @@
 /*
- * $Id: Changelog 3932 2026-09-08 02:19:12Z itamarlins $
+ * $Id: Changelog 3923 2026-09-07 06:51:54Z itamarlins $
  */
 
 /* Use this format for the entry headers:
@@ -14,117 +14,6 @@
  "oldlogs".
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-2026-09-07 23:16 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Changed
-  - **theme.c**: dropped Windows 2000 support - removed the entire dynamic
-    LoadLibrary()/GetProcAddress() indirection for UxTheme.dll (~47
-    function-pointer typedefs, ~47 "Fail" fallback stubs, the GetProc()/
-    FPROC() machinery, and the m_hThemeDll handle). All hb_OpenThemeData(),
-    hb_DrawThemeBackground(), etc. wrappers now call the real Win32 theme
-    APIs directly; UxTheme is statically linked instead (uxtheme.lib via
-    #pragma comment for MSVC - GCC/Clang/MinGW builds need "-luxtheme"
-    added to their link command). HWG_INITTHEMELIB()/HWG_ENDTHEMELIB() are
-    kept for .prg compatibility but no longer load/free anything. File
-    shrank from 2058 to 1139 lines.
-    !Atention for use of UxTheme need link lib "-luxtheme"
-
-2026-09-07 22:15 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-    * source/winapi/message.c
-    ! Reverted previous changes back to HB_PARSTRDEF for parameter 2 in s_msgbox()
-      to prevent Unicode string stack corruption when title argument is omitted.
-
-2026-09-07 03:00 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **htmlfunc.c**: refactored for Unicode/ANSI and 64‑bit compatibility.
-    Replaced `hb_parc()` with `HB_PARSTR()` for string parameters in
-    `HWGAX_DISPLAYHTMLPAGE` and `HWGAX_DISPLAYHTMLSTR`; replaced
-    `hb_parnl()` with `hb_parnll()` for numeric parameters in
-    `HWGAX_RESIZEBROWSER` and `HWGAX_DOPAGEACTION` to avoid 64‑bit
-    truncation. Now compiles cleanly with `-W3 -es2` on all supported
-    compilers.
-
-2026-09-07 17:42 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **hwg_qhtm.c**: refactored handle and pointer conversions to eliminate
-    all compiler warnings and errors on 32/64-bit builds. Replaced
-    `hb_parnl()`/`hb_parni()` with `HB_PARHANDLE()` for window handles and
-    control IDs; used `HB_RETHANDLE()` and `hb_retptr()` for returning
-    handles and pointers; replaced `hb_vmPushLong()` with
-    `hb_vmPushPointer()` for passing HWND to Harbour. Added `(INT_PTR)`
-    cast for HMENU to ensure 64-bit safety. Now compiles cleanly with
-    `-W3 -es2` on all supported compilers.
-
-2026-09-07 17:33 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **hqhtm.prg**: fixed compiler warnings triggered by `-es2`.
-  - Added parentheses to `Activate` and `Init` method implementations to
-    match class declarations, eliminating W0001 for `HQhtm`.
-  - Aligned parameter name in `Redefine` method of `HQhtmButton` class to
-    match declaration (`oWndParent` instead of `oWnd`), eliminating W0001.
-  - Added `HB_SYMBOL_UNUSED( oFont )` in `New` and `Redefine` methods of
-    `HQhtmButton` to suppress W0003 warnings for unused parameter.
-  - Now compiles cleanly without warnings.
-
-2026-09-07 16:18 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **hhtml.prg**: implemented missing `Activate()` method for `HHtml`
-    class, which embeds the WebBrowser control into the parent window
-    using `hwgax_EmbedBrowserObject()`. This eliminates the W0001
-    compiler warning and ensures the browser object is properly created.
-
-2026-09-07 15:52 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **h_activex.prg**: suppressed compiler warnings by adding
-    ... := nil  for unused variables and parameters, without
-    removing any code. Now compiles without W0003 warnings.
-
-2026-09-07 15:34 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **htmlcore.c**: refactored for 64‑bit safety and modern compiler
-    compatibility.
-    * Replaced `GlobalAlloc`/`GlobalFree` with `hb_xgrab`/`hb_xfree` for
-      custom COM structures.
-    * Fixed pointer truncation in `SetEmbedded`/`GetEmbedded` by using
-      `hb_itemPutPtr`/`hb_itemGetPtr` instead of numeric handles.
-    * Switched to `GetWindowLongPtr`/`SetWindowLongPtr` unconditionally.
-    * Added `HB_SYMBOL_UNUSED` for unused parameters and casts for
-      `InterlockedIncrement`/`Decrement` to eliminate compiler warnings.
-    * Ensured Unicode/ANSI and 32/64‑bit builds compile cleanly with
-      `-W3 -es2`.
-
-2026-09-07 15:18 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **c_activex.c**: comprehensive refactoring for modern compiler
-    compatibility, Unicode/ANSI support, and memory safety.
-  - Replaced legacy `hb_parc()` calls with `HB_PARSTR()` macro and added
-    `TEXT()` around string literals in `HWG_CREATEACTIVEX` to ensure
-    proper TCHAR handling.
-  - Fixed critical memory leaks in the event sink: `PHB_ITEM` objects
-    (`pEvents`, `pEventsExec`) are now properly released in `Release()`;
-    argument items created in `Invoke()` are freed after Harbour call.
-  - Replaced `GlobalAlloc`/`GlobalFree` with `hb_xgrab`/`hb_xfree` for
-    consistent memory management across 32/64-bit builds.
-  - Added error checking for `AtlAxGetControl` in `HWG_ATLAXGETDISP` to
-    prevent null pointer dereference; replaced `hb_stackReturnItem()`
-    with proper item creation using `hb_itemNew()`/`hb_itemReturn()`.
-  - Removed dependency on `hb_itemPushList()` – implemented manual
-    argument pushing with `hb_vmPush()`; now uses standard VARIANT
-    macros (`V_VT`, `V_I2REF`, etc.) with correct pointer dereferencing
-    for by-reference parameters.
-  - Eliminated legacy `__XHARBOUR__` conditional blocks and removed
-    unused includes (`hashapi.h`); initialized all variables to suppress
-    warnings.
-  - Now compiles cleanly with `-W3 -es2` on MSVC, GCC, and Clang, for
-    both 32/64-bit architectures and ANSI/Unicode builds.
-
-2026-09-07 14:35 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
-  ### Fixed
-  - **gt_hwg.prg**: fixed compiler warnings by initializing variables
-    `oPane`, `nStyle`, and `bSize` in `GTHWG_CREATEMAINWINDOW` to avoid
-    "variable never assigned" warnings; added `HB_SYMBOL_UNUSED` for
-    unused parameters; initialized `nQuality` in `GTHWG_ADDFONT`.
-    Now compiles cleanly without warnings.
 
 2026-09-06 03:51 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
   ### Fixed

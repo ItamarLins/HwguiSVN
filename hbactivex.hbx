@@ -1,0 +1,44 @@
+/* --------------------------------------------------------------------
+ * NOTE: You can add manual override which functions to include or
+ *       exclude from automatically generated EXTERNAL/DYNAMIC list.
+ *          Syntax: // HB_FUNC_INCLUDE <func>
+ *                  // HB_FUNC_EXCLUDE <func>
+ */
+
+/* --------------------------------------------------------------------
+ * WARNING: Automatically generated code below. DO NOT EDIT! (except casing)
+ *          Regenerate using hbmk2 '-hbx=' option.
+ */
+
+#ifndef __HBEXTERN_CH__HBACTIVEX__
+#define __HBEXTERN_CH__HBACTIVEX__
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBACTIVEX__ANNOUNCE )
+   ANNOUNCE __HBEXTERN__HBACTIVEX__
+#endif
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBACTIVEX__REQUEST )
+   #command DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+DYNAMIC HACTIVEX
+DYNAMIC HHTML
+DYNAMIC HWGAX_DISPLAYHTMLPAGE
+DYNAMIC HWGAX_DISPLAYHTMLSTR
+DYNAMIC HWGAX_DOPAGEACTION
+DYNAMIC HWGAX_EMBEDBROWSEROBJECT
+DYNAMIC HWGAX_OLEINITIALIZE
+DYNAMIC HWGAX_OLEUNINITIALIZE
+DYNAMIC HWGAX_RESIZEBROWSER
+DYNAMIC HWGAX_UNEMBEDBROWSEROBJECT
+DYNAMIC HWG_ATLAXGETDISP
+DYNAMIC HWG_CREATEACTIVEX
+DYNAMIC HWG_RELEASEDISPATCH
+DYNAMIC HWG_SETUPCONNECTIONPOINT
+DYNAMIC HWG_SHUTDOWNCONNECTIONPOINT
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBACTIVEX__REQUEST )
+   #uncommand DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+#endif

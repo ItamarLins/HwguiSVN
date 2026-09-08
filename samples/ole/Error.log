@@ -1,0 +1,16 @@
+Error BASE/1004  No exported method: ONEVENT
+Called from (b)HWG_ERRSYS(20)
+Called from ONEVENT(0)
+Called from HWGAX_EMBEDBROWSEROBJECT(0)
+Called from HHTML:ACTIVATE(60)
+Called from HHTML:NEW(50)
+Called from MAIN(38)
+(1) = Type: U Value: ???:U
+(2) = Type: N Value: 528
+(3) = Type: P Value: <pointer>
+(4) = Type: P Value: <pointer>
+
+
+HWGUI 2.23 dev Build 8 Unicode
+Date:09/07/26
+Time:21:45:38

@@ -1,5 +1,5 @@
 /*
- * $Id: hhtml.prg 2534 2016-06-08 09:45:01Z alkresin $
+ * $Id: hhtml.prg 3928 2026-09-07 19:19:57Z itamarlins $
  *
  * HWGUI - Harbour Win32 GUI library source code:
  * HHtml class
@@ -50,7 +50,7 @@ METHOD New( oParent ) CLASS HHtml
 
 Return Self
 
-METHOD Activate CLASS HHtml
+METHOD Activate() CLASS HHtml
 
    IF !Empty( ::oParent:handle )
      ::oParent:oEmbedded := Self
