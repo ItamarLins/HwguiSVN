@@ -1,0 +1,92 @@
+hbmk2: Processando script local: hbmk.hbm
+Harbour 3.2.1dev (r2607071005)
+Copyright (c) 1999-2025, https://harbour.github.io/
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: cairo_win32_surface_create (defined in libcairo.a(win32_cairo-win32-display-surface.c.obj)) [LNK4217]
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: cairo_create (defined in libcairo.a(cairo.c.obj)) [LNK4217]
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: cairo_surface_flush (defined in libcairo.a(cairo-surface.c.obj)) [LNK4217]
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: cairo_destroy (defined in libcairo.a(cairo.c.obj)) [LNK4217]
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: cairo_surface_destroy (defined in libcairo.a(cairo-surface.c.obj)) [LNK4217]
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: g_object_unref (defined in libgobject-2.0.a(gobject.c.obj)) [LNK4217]
+ld.lld: warning: libhwgui.a(draw.o): locally defined symbol imported: g_error_free (defined in libglib-2.0.a(gerror.c.obj)) [LNK4217]
+ld.lld: error: undefined symbol: gr_make_face_with_ops
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shaper_face_data_create)
+
+ld.lld: error: undefined symbol: gr_face_destroy
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shaper_face_data_destroy)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(hb_lazy_loader_t<hb_graphite2_face_data_t, hb_shaper_lazy_loader_t<hb_face_t, 1u, hb_graphite2_face_data_t>, hb_face_t, 1u, hb_graphite2_face_data_t>::do_destroy(hb_graphite2_face_data_t*))
+
+ld.lld: error: undefined symbol: gr_face_featureval_for_lang
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_face_find_fref
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_fref_set_feature_value
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_make_seg
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_seg_n_slots
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_seg_first_slot
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced 1 more times
+
+ld.lld: error: undefined symbol: gr_slot_origin_X
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced 2 more times
+
+ld.lld: error: undefined symbol: gr_seg_advance_X
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_next_in_segment
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_before
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_after
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_gid
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_can_insert_before
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_advance_Y
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_slot_origin_Y
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: gr_featureval_destroy
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced 1 more times
+
+ld.lld: error: undefined symbol: gr_seg_destroy
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+>>> referenced by libharfbuzz.a(hb-graphite2.cc.obj):(_hb_graphite2_shape)
+
+ld.lld: error: undefined symbol: __declspec(dllimport) UuidCreate
+>>> referenced by libharfbuzz.a(hb-uniscribe.cc.obj):(_hb_uniscribe_shaper_face_data_create)
+
+ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+hbmk2: Erro: Executando linkeditor. 1
+clang.exe C:/Users/Itamar/AppData/Local/Temp/hbmk_8blhjj.dir/test_svg.o C:/Users/Itamar/AppData/Local/Temp/hbmk_8blhjj.dir/hbmk_tsie1q.o    -static -mconsole -static -lhwgui -lprocmisc -lhbxml -lhbwin -lpng -lgdiplus -l"rsvg-2" -lcairo -l"cairo-gobject" -l"pangocairo-1.0" -l"pango-1.0" -l"pangoft2-1.0" -l"pangowin32-1.0" -l"gdk_pixbuf-2.0" -lharfbuzz -lfribidi -lthai -l"gobject-2.0" -l"gio-2.0" -l"gmodule-2.0" -l"glib-2.0" -lxml2 -lintl -liconv -l"pcre2-8" -lffi -l"pixman-1" -lfreetype -lfontconfig -lpng16 -lz -lbrotlidec -lbrotlicommon -ltiff -ljpeg -lwebp -llzma -lc++ -lc++abi -lunwind -lntdll -lbcrypt -luserenv -lshlwapi -ldnsapi -lhbextern -lhbdebug -lhbvm -lhbrtl -lhblang -lhbcpage -lgtcgi -lgtpca -lgtstd -lgtwin -lgtwvt -lgtgui -lhbrdd -lhbuddall -lhbusrrdd -lrddntx -lrddcdx -lrddnsx -lrddfpt -lhbrdd -lhbhsx -lhbsix -lhbrtl -lhbvm -lhbmacro -lhbcplr -lhbpp -lhbcommon -lhbmainstd -lwinmm -lkernel32 -luser32 -lgdi32 -ladvapi32 -lws2_32 -liphlpapi -lwinspool -lcomctl32 -lcomdlg32 -lshell32 -luuid -lole32 -loleaut32 -lmpr -lmapi32 -limm32 -lmsimg32 -lwininet -lhbpcre -lhbzlib   -otest_svg.exe  -Lc:/hb32/lib/win/clang -L../lib -LC:/msys64/clang64/lib

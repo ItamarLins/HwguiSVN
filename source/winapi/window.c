@@ -1,5 +1,5 @@
 /*
- * $Id: window.c 3921 2026-09-07 06:29:10Z itamarlins $
+ * $Id: window.c 3947 2026-09-11 16:56:27Z itamarlins $
  *
  * HWGUI - Harbour Win32 GUI library source code:
  * C level windows functions
@@ -1426,7 +1426,9 @@ HB_FUNC( HWG_ANSITOUNICODE )
        * default, CP_UTF8 after HWG_SETUTF8()) - use it instead of a
        * hardcoded CP_ACP so this stays consistent with hwg_wstrget() and
        * friends above. */
-      nWideLen = MultiByteToWideChar( s_iVM_CP, 0, pszText, (int)nLen, NULL, 0 );
+
+      // FIX: Added (LPWSTR) typecast so Clang accepts the pointer when building in ANSI mode
+      nWideLen = MultiByteToWideChar( s_iVM_CP, 0, pszText, (int)nLen, (LPWSTR)NULL, 0 );
       if( nWideLen == 0 )
       {
             hb_retc( "" );
@@ -1438,9 +1440,16 @@ HB_FUNC( HWG_ANSITOUNICODE )
             hb_retc( "" );
             return;
       }
-      MultiByteToWideChar( s_iVM_CP, 0, pszText, (int)nLen, pResult, (int)nWideLen );
-      pResult[nWideLen] = 0;
-      HB_RETSTRLEN( pResult, nWideLen );
+
+      // FIX: Added (LPWSTR) typecast to pResult
+      MultiByteToWideChar( s_iVM_CP, 0, pszText, (int)nLen, (LPWSTR)pResult, (int)nWideLen );
+
+      // FIX: Applied explicit WCHAR* cast to accurately index the wide character array
+      ((WCHAR*)pResult)[nWideLen] = 0;
+
+      // CORRECT HARBOUR API: Returns the wide-char buffer with its size calculated in bytes
+      hb_retclen( ( const char * ) pResult, nWideLen * sizeof( TCHAR ) );
+
       hb_xfree( pResult );
 }
 

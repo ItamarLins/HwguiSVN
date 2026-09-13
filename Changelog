@@ -1,5 +1,5 @@
 /*
- * $Id: Changelog 3932 2026-09-08 02:19:12Z itamarlins $
+ * $Id: Changelog 3958 2026-09-13 23:40:03Z itamarlins $
  */
 
 /* Use this format for the entry headers:
@@ -14,6 +14,427 @@
  "oldlogs".
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+2026-09-13 20:35 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+  * Add support for fully static linking of librsvg (SVG) on
+    MSYS2 CLANG64. Produces a single .exe with no third-party
+    DLL dependencies - only Windows system DLLs remain.
+    Tested with:
+      MSYS2 CLANG64 (Clang 22)
+      mingw-w64-clang-x86_64-librsvg 2.63.0-1
+      Harbour 3.2.1dev (r2607071005)
+    Note: librsvg 2.57 or earlier has a bug in the static library
+    on MinGW that prevents linking (ld.lld: .idata$4 should not
+    refer to special section 0). Version 2.63.0 is the first
+    known working release.
+  * svg.hbc: complete rewrite for static linking.
+    Lists ~45 static libraries in dependency order plus the
+    required Windows system libraries. All comments in English.
+    Build command:
+      hbmk2 your_app.prg path/to/hwgui.hbp path/to/svg.hbc -fullstatic
+  * draw.c: add bz2_error_stub.c logic (bz_internal_error).
+    The libbz2.a static archive references bz_internal_error()
+    but does not define it - the default handler is only in the
+    shared library. The stub is now part of libhwgui.a so that
+    any statically linked application resolves the symbol
+    automatically without needing to provide its own stub.
+  * Static link produces test_svg.exe at 34 MB.
+    After llvm-strip -s (or --strip-all):
+       25.783.296 bytes  (~25.7 MB)
+    Both -s and --strip-all have the same effect on PE/COFF:
+    they remove the symbol table. No further reduction from
+    strip alone.
+  * Options for further reduction (not applied by default):
+      - UPX:  upx --best --lzma test_svg.exe  -> ~9 MB
+        Caveat: some antivirus tools report false positives
+        on UPX-compressed executables.
+  * Verified with:
+      llvm-objdump -p test_svg.exe | grep "DLL Name"
+    Result: 38 entries, all Windows system DLLs
+    (KERNEL32, USER32, GDI32, gdiplus, ole32, SHELL32,
+     api-ms-win-crt-*, etc.). No librsvg, cairo, glib,
+     pango, gdk-pixbuf, harfbuzz, freetype, or any other
+     third-party DLL is imported.
+    The executable is fully self-contained on any
+    Windows 10 or later system.
+  Files changed:
+      source/winapi/draw.c      add bz_internal_error() stub
+      svg.hbc                   full rewrite for -fullstatic
+
+2026-09-13 18:13 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+  * Language changed samples\test_svg.prg pt-br for en
+    command for test SVG image files:
+    hbmk2 test_svg.prg ..\svg.hbc
+
+2026-09-13 18:02 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+  * Add optional SVG image loading via librsvg (Cairo + GLib + GObject).
+    Enable with -D__USE_LIBRSVG and link against rsvg-2, cairo,
+    gobject-2.0 and glib-2.0.
+    New function:
+      hwg_LoadSvg( cPath, nWidth, nHeight ) -> HBITMAP
+    The DIB is filled with white before rendering so that transparent
+    areas of the SVG appear as white instead of black (hwg_Drawbitmap
+    ignores the alpha channel).
+    When __USE_LIBRSVG is not defined, HWG_LOADSVG() is compiled as a
+    stub that returns NULL, so callers do not need to guard the call
+    with #ifdef.
+  * hwgui.hbp add commented line #-cflag=-D__USE_LIBRSVG
+  * Add HBitmap:AddHandle( hBmp ) to wrap an HBITMAP created outside
+    the class (e.g. by hwg_LoadSvg). The handle is registered in the
+    shared bitmap list, so HBitmap:RELEASE() deletes it when the object
+    is released.
+  * source\winapi\draw.c add function HWG_LOADSVG()
+  + Add svg.hbc for use of optional SVG recurse. hbmk2 hwgui.hbp svg.hbc
+  + Add files hwgui.svg and info.svg
+  + Add sample test_svg.prg
+  ! Attention with file hwgui.hbp
+    # Uncomment these line to build HwGUI with LIBRSVG SVG files
+    #-cflag=-D__USE_LIBRSVG
+    command: hbmk2 hwgui.hbp svg.hbc
+    Note: Use msys2 on Windows OS Clang.
+        * pacman -S mingw-w64-clang-x86_64-librsvg
+        * pacman -S mingw-w64-clang-x86_64-gdk-pixbuf2
+    This resource uses several libraries: 4 main libs + their
+    transitive dependencies. To find all the libraries needed for
+    distributing your app:
+    C:\msys64\clang64\bin\llvm-objdump.exe -p test_svg.exe | C:\msys64\usr\bin\grep.exe -i "DLL Name"
+    cd C:\msys64\clang64\bin
+    C:\msys64\clang64\bin\llvm-objdump.exe -p librsvg-2-2.dll | C:\msys64\usr\bin\grep.exe -i "DLL Name"
+    C:\msys64\clang64\bin\llvm-objdump.exe -p libcairo-2.dll | C:\msys64\usr\bin\grep.exe -i "DLL Name"
+    C:\msys64\clang64\bin\llvm-objdump.exe -p libgobject-2.0-0.dll | C:\msys64\usr\bin\grep.exe -i "DLL Name"
+    C:\msys64\clang64\bin\llvm-objdump.exe -p libglib-2.0-0.dll | C:\msys64\usr\bin\grep.exe -i "DLL Name"
+
+2026-09-13 10:57 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+  * source/winapi/draw.c
+  * source/winapi/hownbtn.prg
+  + Add animated GIF support to OwnerButton. Windows OS only.
+    A button can now display a real animated GIF (all frames, with
+    their original per-frame delays), not just the first frame.
+  + Add HWG_DRAWGIFFRAME() optional speed factor (8th parameter).
+      > 1.0  faster  (2.0 = twice as fast)
+      < 1.0  slower  (0.5 = half speed)
+      1.0    GIF native timing (default)
+    Values <= 0 fall back to 1.0.
+  + Add HOwnButton:SetGifPath( cPath ) to inform the original GIF file
+    path when the @...OWNERBUTTON macro has already converted the BITMAP
+    clause to an HBitmap object.
+  + Add HOwnButton:SetGifSpeed( nSpeed ) to change the animation speed
+    at runtime. The internal timer interval is recalculated automatically.
+  + Add HOwnButton:GetGifRect() returning { x1, y1, x2, y2 } of the GIF
+    area in client coordinates. Used by OnGifTick() to invalidate only
+    the GIF region and by DrawItems() to paint at the same coordinates,
+    guaranteeing that both always agree.
+  + Add sample samples/gifownbtn.prg
+  + Add image/hwgui_64x64.gif
+  * Add -lgdiplus into hbmk.hbm for GDIPLUS lib.
+
+2026-09-12 11:27 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+  * source/winapi/draw.c - TransparentBmp()
+        - Fixed loss of transparency when mixing HBitmap():AddFile(PNG)
+      with FROM RESOURCE BMPs from HBinC container (imagens.rc)
+        - GdipCreateBitmapFromHBITMAP() was wrapping the original HBITMAP,
+      GdipBitmapSetPixel() modified the cached bitmap from container,
+      causing all resource bitmaps to lose transparency.
+        - Now clones the bitmap with GdipCloneBitmapAreaI(PixelFormat32bppARGB)
+      before any pixel manipulation.
+        - Added detection of real alpha channel: if bitmap already has alpha
+      < 255, trColor is ignored and GDI+ AlphaBlend path is forced.
+        - If 32bpp bitmap has no alpha (PNG with white background), converts
+      color-key to alpha with tolerance 30 to remove anti-aliased white
+      halo. Pure key color (dist < 10) becomes fully transparent.
+        - Fixes OWNERBUTTON with BITMAP ... TRANSPARENT mixing resource and
+      file-based images.
+
+2026-09-12 01:55 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+  * source/winapi/draw.c
+  - Removed obsolete LoadLibrary for GradientFill
+  - Fixed missing icons in HContainer when trColor=-1
+  - Added GDI+ path for 32bpp PNG/TIF with alpha (TransparentBmp)
+
+2026-09-12 01:31 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+! source/winapi/draw.c - TransparentBmp() modernized (Win2K+)
+!   Removed 1998-era LoadLibrary("MSIMG32.DLL") + GetProcAddress("TransparentBlt")
+!   dynamic loading. Now links directly to msimg32.lib (-lmsimg32).
+!   Old BMPs (1/4/8/24bpp) -> TransparentBlt() color-key (magenta), palette-safe.
+!   New BMPs/PNGs (32bpp):
+!     - with __USE_GDIPLUS: GDI+ GdipDrawImageRectI() - handles straight alpha
+!       correctly (no premultiplication needed, no black halos).
+!     - without __USE_GDIPLUS: AlphaBlend() fallback with documented limitation:
+!       expects premultiplied alpha. Caller must provide premultiplied HBITMAP
+!       for correct semi-transparent edges.
+!   Removed static HMODULE s_hMsImg32 leak, now fully thread-safe.
+!   libs=msimg32 (and gdiplus when __USE_GDIPLUS)
+
+### Notes
+- cfuncs/TransparentBmp: the removed GetModuleHandle/LoadLibrary/
+  GetProcAddress block was a 1996-era workaround. MSIMG32.DLL was not
+  present on Windows 95 RTM or NT 3.51, so statically linking against
+  msimg32.lib would cause the OS loader to refuse to launch the entire
+  executable ("A required DLL file, MSIMG32.DLL, was not found"), not
+  just fail the single call. Runtime resolution allowed one binary to
+  run on 95 RTM (transparent draw silently skipped) and 95 OSR2 / NT 4
+  (transparent draw active).
+- MSIMG32.DLL has been a guaranteed system component since Windows 2000
+  SP1, and HWGUI already requires GDI+ (Vista+), so the workaround has
+  protected nothing that HWGUI still supports for over two decades.
+  The modern equivalent, if one were ever needed again, is the linker's
+  /DELAYLOAD:msimg32.dll (available since MSVC 6.0, 1998), which does the
+  same thing without hand-written code.
+
+2026-09-12 00:21 UTC-0300 Junior Itamar <itamarlins@gmail.com>
+    * source/winapi/draw.c
+    - Fixed dual ANSI/UNICODE support:
+      HWG_OPENIMAGE(): replaced hb_parc() with HB_PARSTR() + _wfopen() for file mode,
+      now handles paths with accents (C:\Usuários\José\...) in both ANSI and UNICODE builds.
+      Binary string mode (bString=.T.) keeps hb_parc() as raw binary data.
+        - HWG_OPENBITMAP(): removed CreateFileA() + WideCharToMultiByte() workaround,
+      now uses CreateFile( HB_PARSTR() ) directly, consistent with HWG_SAVEBITMAP().
+        - HWG_GDIPLUSSAVEPNG(): replaced hb_parc() + CP_ACP conversion with HB_PARSTR(),
+      UNICODE build now passes LPCWSTR directly to GdipSaveImageToFile(), ANSI build
+      keeps MultiByteToWideChar(). Added missing hb_strfree() on all exit paths.
+        - TransparentBmp(): fixed GDI handle leak. LoadLibrary("MSIMG32.DLL") was called
+      on every call without FreeLibrary(). Now caches HMODULE in static s_hMsImg32
+      and loads only once.
+        - HWG_QRCODEZOOM_C(): fixed potential buffer overread. nlen parameter from Harbour
+      is now clamped to 16384 bytes (buffer size) before memcpy() and loop.
+        - hwg_BMPNewImageC(): kept malloc()/free() pair for bmp_fileimg as intended
+      in this version (not hb_xgrab/hb_xfree). Added defensive free() of previous
+      buffer to prevent leak if caller forgets HWG_BMPDESTROY().
+  No API change. Fully backward compatible with ANSI and UNICODE (-DUNICODE) builds.
+
+2026-09-11 22:15 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+### Changed
+  - source/common/procmisc/cfuncs.c: general code cleanup and consistency pass.
+  - Added `#include "hbset.h"` so `hb_setGetEpoch()` and
+    `hb_setGetDecimals()` are declared explicitly instead of relying on
+    transitive includes from other Harbour headers.
+
+2026-09-11 21:57 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+   - source/common/procmisc/cfuncs.c EDI_UTF8_LOWER, EDI_UTF8_UPPER: missing `return` after
+     the error branch caused a fall-through to `hb_retclen( szDst, iDstLen )`
+     with `szDst == NULL` and `iDstLen == 0`, overwriting the intended
+     return value with an empty result on any conversion failure.
+  ### Changed
+   -  source/common/procmisc/cfuncs.c changeutf8case: switched from `malloc`/`realloc`/`free` to
+     `hb_xgrab`/`hb_xrealloc`/`hb_xfree`. Required so the returned buffer
+      can be handed to `hb_retclen_buffer()` without an extra copy.
+   - cfuncs/EDI_UTF8_LOWER, cfuncs/EDI_UTF8_UPPER: return via
+     `hb_retclen_buffer()` instead of `hb_retclen()` + `free()`. Removes
+     one allocation and one copy per call.
+   - cfuncs/EDI_UTF8_LOWER, cfuncs/EDI_UTF8_UPPER: store the result of
+     `hb_parclen()` in `HB_SIZE` instead of `int`, avoiding truncation on
+     large inputs and signed/unsigned mismatch warnings on strict builds.
+   - cfuncs/EDI_UTF8_LOWER, cfuncs/EDI_UTF8_UPPER: added explicit
+     `HB_ISCHAR(1)` guard with early return, so `hb_parc(1)` is never
+     called on a non-string parameter.
+  ### Notes
+   - No `#ifdef` added. Harbour strings are byte strings in both ANSI and
+     UNICODE builds; `changeutf8case` performs case folding entirely on
+     UTF-8 byte sequences, so no wide-char branch is required. Verified on
+     Linux GCC/Clang (32/64) and Windows MSVC, Clang-cl and MinGW-GCC
+     (32/64).
+  ### Fixed
+  - source/common/procmisc/cfuncs.c HWG_STRREV: input longer than 511 bytes was silently truncated
+    because the reversal ran against a fixed `char puffer[512]`. Now uses
+    `hb_parclen()` + `hb_xgrab()` and returns the exact-length result via
+    `hb_retclen_buffer()`, with no upper bound other than available memory.
+  ### Changed
+  - source/common/procmisc/cfuncs.c HWG_STRREV: replaced `strncpy` with `memcpy` + explicit
+    null-termination. Eliminates GCC `-Wstringop-truncation` and MSVC
+    `C4996` warnings and correctly preserves embedded NUL bytes.
+  - HWG_STRREV: replaced the ternary fallback with an explicit
+    `HB_ISCHAR(1)` guard and early return, for consistency with the rest
+    of the file.
+  - HWG_STRREV: `hb_retclen_buffer()` transfers buffer ownership
+    to Harbour, removing the extra copy previously done by `hb_retc()`.
+  ### Notes
+  - No `#ifdef` added. Harbour strings are byte strings in both ANSI and
+    UNICODE builds, and `reverse_string()` is already UTF-8-aware, so no
+    wide-char branch is required. Verified on Linux GCC/Clang (32/64) and
+    Windows MSVC, Clang-cl and MinGW-GCC (32/64).
+  ### Fixed
+  - source/common/procmisc/cfuncs.c HWG_CHDIR: return value was inverted. `chdir()`/`_chdir()`
+    return 0 on success and -1 on failure, but the code returned the
+    raw result inside a `&&` expression, so the Harbour-side value was
+    `.F.` on success and `.T.` on failure. Now compares explicitly:
+    `chdir(...) == 0`.
+  - cfuncs/HWG_CHDIR, cfuncsL/HWG_CHDIR: used `hb_parc()` (raw UTF-8
+    bytes) as the path argument. On Windows this bypasses the ANSI
+    codepage conversion and on POSIX it bypasses the locale conversion,
+    breaking non-ASCII paths (`João`, `Área de Trabalho`, `Café`, ...).
+    Now uses `hb_parcx()` on Windows ANSI and `hb_parc()` on POSIX
+    (native UTF-8).
+  - cfuncs/HWG_CHDIR, cfuncsL/HWG_CHDIR: added a native UNICODE branch
+    so the call is consistent under `-DUNICODE` builds and the CRT
+    working-directory state is updated along with the kernel one. The
+    UTF-8 -> UTF-16 conversion is done with `MultiByteToWideChar(CP_UTF8,
+    ...)` + `hb_xgrab`/`hb_xfree`, since Harbour has no `hb_parcw()`.
+    The path is then passed to `_wchdir()` (not `SetCurrentDirectoryW`,
+    which updates only the kernel state and would leave the CRT's
+    relative-path resolution out of sync).
+  ### Changed
+  - cfuncs/HWG_CHDIR: explicit `HB_ISCHAR(1)` guard with early
+    `hb_retl( HB_FALSE )` instead of relying on `&&` short-circuit.
+  - cfuncs includes: `<direct.h>` was only included under `_MSC_VER`,
+    so MinGW, Clang-cl and Clang/MSYS2 builds failed with
+    `call to undeclared function '_wchdir'`. Now included for every
+    Windows toolchain via
+    `#if defined( _WIN32 ) || defined( __WIN32__ ) || defined( __MINGW32__ )`
+
+2026-09-11 19:35 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  - samples/rtfsample.prg rewritten as a more complete usage example -
+    InfoDoc() document metadata, colored table header backgrounds
+    (nTblHdColor/nTblHdFColor), a dedicated text-color section with a
+    full 16-color palette reference and inline color/size mixing, a
+    per-cell color highlight, an embedded-vs-linked image note, and an
+    existence check before attempting to embed the sample image.
+  - Update image \hwgui\doc\image\All_Features_Combined_Pgn1_rtf.png
+  - Update image \hwgui\doc\image\All_Features_Combined_Pgn2_rtf.png
+
+2026-09-11 13:51 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+* source/winapi/window.c: Fix compiler error in HWG_ANSITOUNICODE() when
+  building in ANSI/non-Unicode mode (with -DUNICODE commented or disabled).
+  Added explicit LPWSTR typecasts to MultiByteToWideChar() parameters to
+  prevent Clang/GCC from failing on incompatible pointer types, and replaced
+  the invalid macro with hb_retclen() to properly return the wide string
+  buffer to Harbour. Fixed cross-compiler compatibility for Clang, GCC,
+  and MSVC in both 32-bit and 64-bit architectures.
+
+2026-09-10 11:58 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+### Fixed
+   - richtext/RtfImage: PNG images not rendered by WordPad/RichEdit.
+   - Several Fixes
+   ### Changed
+   - richtext/RtfImage: binary payload read buffer increased from 8 KB to
+     64 KB to reduce I/O calls during hex streaming.
+   - richtext/Image: documentation updated to recommend `lFrame = .F.` for
+     inline images.
+
+   ### Notes
+   - WordPad (RichEdit 8.1+) may block images from RTFs carrying the NTFS
+     `Zone.Identifier` stream (Mark-of-the-Web). This is not a code defect.
+     Locally generated RTFs have no MotW and open without prompting.
+     To disable content blocking for the current user:
+       HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\RichEdit
+       NoSecurityUpgrade = 1 (DWORD)
+   + Add files rtfsample.prg, rtfsample.hbp, for make file All_Features_Combined.rtf
+   + Add image \hwgui\doc\image\All_Features_Combined_Pgn1_rtf.png
+   + Add image \hwgui\doc\image\All_Features_Combined_Pgn2_rtf.png
+
+   ### Affected files
+   - misc/richtext.prg
+     (New, END, NumCode, TextCode, LogicCode, RtfImage, Image)
+
+  ### Compatibility
+   - Harbour, xHarbour.
+   - Clang, MSVC, GCC — 32/64-bit.
+   - Windows 7 SP1+ / 8.1 / 10 / 11.
+   - Word, WordPad, LibreOffice Writer, RichEdit 8.1+.
+
+2026-09-09 23:20 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **draw.c**: fixed a memory leak in hwg_BMPNewImageC() - the global
+    bmp_fileimg pointer was overwritten by a new malloc() without freeing
+    a previous allocation first, so calling HWG_BMPNEWIMAGE() twice
+    without an HWG_BMPDESTROY() in between silently leaked the earlier
+    buffer.
+
+2026-09-09 02:35 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **dialog.c**: fixed s_PSPProc() pushing pObject a second time instead
+    of the real lParam when dispatching WM_INITDIALOG for property sheet
+    pages. Confirmed harmless today - InitModalDlg() in hdialog.prg (the
+    handler property sheet pages route through, since pages are regular
+    HDialog objects) explicitly marks both wParam and lParam as
+    HB_SYMBOL_UNUSED - but any WM_INITDIALOG handler that started reading
+    lParam would have silently received the wrong value. Now pushes
+    lParam like every other message.
+
+2026-09-09 02:08 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * contrib/misc/richtext.prg:
+      - Refactored Bmp2Wmf() to convert BMP files into Enhanced Metafiles (EMF)
+        using the library's native hwg_Createenhmetafile()
+
+2026-09-09 01:27 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * contrib/misc/richtext.prg:
+      - Modernized Bmp2Wmf() method: replaced legacy DibRead/DibDraw with
+        HBitmap():LoadFromFile() and oBmp:Draw() to generate WMF metafiles
+        directly via GDI. Eliminates dependencies on obsolete DIB functions.
+      - Uses 8 KB buffer and hb_StrToHex() for fast binary conversion.
+      - Added screen DPI fallback and proper temporary file management.
+
+2026-09-09 01:08 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * contrib/misc/richtext.prg:
+      - Added new Wmf2Rtf() method to embed Windows Metafiles (WMF) directly
+        into RTF documents. Extracts dimensions from the Aldus Placeable
+        Metafile header using native Harbour functions L2Bin() and Bin2W().
+      - Uses 8 KB buffer and hb_StrToHex() for fast binary-to-hex conversion.
+      - Eliminates dependency on GETBMETAFILE() and ::oPrinter.
+
+2026-09-09 00:43 UTC-0300 Itamar Lins <itamarlins at gmail.com>
+    * source/winapi/draw.c:
+      + Added HWG_GDIPLUSSAVEPNG() C function to handle native GDI+ PNG stream
+        encoding, providing cross-platform 32/64-bit support (Clang/MSVC/GCC).
+    * contrib/misc/richtext.prg:
+      - Added new RtfImage() method to embed JPEG, PNG, and GIF images into RTF
+        documents using native Harbour/HWGUI functions.
+        GIF images are automatically converted to PNG via HWG_GDIPLUSSAVEPNG()
+        and embedded as PNG data (using \pngblip).
+      - Updated Image() method to call RtfImage() for all image formats except
+        BMP/WMF (which remain as stubs for future implementation).
+
+2026-09-08 23:00 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    * contrib/misc/richtext.prg:
+      - Added full Unicode (UTF-8) support.
+        Changed RTF header to code page 65001 and implemented \u escapes.
+      - Fixed shading normalization in Paragraph and IncStyle.
+      - Corrected style handling in ParaStyle and CharStyle (now use Len(::ParStyles)).
+      - Added validation for header data in DefNewTable.
+      - Updated all comments to English and improved code readability.
+      - Kept image inclusion methods as stubs (future enhancement).
+
+2026-09-08 22:19 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    * contrib/misc/miscfunc.prg:
+      - Added comprehensive English comments for all functions.
+      - Fixed ADDPROPERTY: changed condition `!Empty(eNewValue)` to
+        `eNewValue != NIL` to allow assignment of .F. and 0 as valid values.
+      - Improved readability and documentation.
+
+2026-09-08 21:39 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+    * contrib/misc/arr2str.c:
+    ### Fixed 64-bit integer serialization/deserialization:
+        * WriteArray: corrected pointer advancement from 9 to 8 bytes
+          when writing a 64-bit integer (type '\10').
+        * ReadArray: properly interprets type '\10' as a 64-bit integer
+          instead of incorrectly treating it as a long string.
+      - Updated function header comments to clarify binary format.
+
+2026-09-08 21:39 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hctrlex.prg**: removed a stray altd() call left in HButtonEx:Init(),
+    which opened the interactive Harbour/xHarbour debugger every time a
+    themed/owner-drawn button was initialized.
+  - **hctrlex.prg**: fixed HButtonEx:PaintBk() computing a zero-height
+    BitBlt (rect[4]-rect[4] instead of rect[4]-rect[2]) in both Bitblt()
+    calls, which would silently copy zero rows of pixels. Currently inert
+    since the only call site (in Paint()) is commented out, but fixed for
+    correctness in case it's re-enabled.
+
+2026-09-08 21:12 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
+  ### Fixed
+  - **hcomboex.prg**: fixed 64-bit pointer truncation in the embedded C
+    section - HB_FUNC(COPYDATA) read the WM_GETTEXT buffer address
+    (lParam) via hb_parnl() (32-bit LONG), corrupting it on 64-bit builds
+    and making lstrcpyn() write to the wrong memory; now uses
+    hb_parnint(). ComboSubclassProc() still truncated wParam via
+    hb_vmPushLong((LONG)wParam) - a leftover from an earlier partial fix
+    that already switched lParam to HB_PUSHITEM() but missed wParam - and
+    never checked HB_ISPOINTER() on the .prg's return value, so a real
+    handle (e.g. the HBRUSH a combo box's WM_CTLCOLOREDIT/
+    WM_CTLCOLORLISTBOX handler must return) would get truncated through
+    hb_parnl(). Both now match the already-correct pattern used in
+    s_MainWndProc (window.c).
 
 2026-09-07 23:16 UTC-0300 Itamar Lins  <itamarlins at gmail.com>
   ### Changed

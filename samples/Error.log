@@ -1,0 +1,14 @@
+Error BASE/1003  Variable does not exist: OPANEL
+Called from (b)HWG_ERRSYS(20)
+Called from SHOWLOGO(72)
+Called from (b)MAIN(34)
+Called from ONCOMMAND(653)
+Called from (b)HMAINWINDOW(306)
+Called from HMAINWINDOW:ONEVENT(416)
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405)
+Called from MAIN(54)
+
+HWGUI 2.23 dev Build 8 Unicode
+Date:09/13/26
+Time:16:09:18

@@ -1,0 +1,96 @@
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 06:47:13
+Unrecoverable error 9001: Error recovery failure
+Called from AFILL(0)
+Called from RICHTEXT:NEW(176) in misc\richtext.prg
+Called from MAIN(11) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 06:55:52
+Unrecoverable error 9001: Error recovery failure
+Called from AFILL(0)
+Called from RICHTEXT:NEW(176) in misc\richtext.prg
+Called from MAIN(11) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 06:57:15
+Unrecoverable error 9001: Error recovery failure
+Called from RICHTEXT:DEFNEWTABLE(1351) in misc\richtext.prg
+Called from MAIN(51) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 06:59:18
+Unrecoverable error 9001: Error recovery failure
+Called from RICHTEXT:DEFNEWTABLE(1351) in misc\richtext.prg
+Called from MAIN(51) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 07:00:24
+Unrecoverable error 9001: Error recovery failure
+Called from ASIZE(0)
+Called from RICHTEXT:DEFNEWTABLE(1355) in misc\richtext.prg
+Called from MAIN(51) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 07:04:31
+Unrecoverable error 9001: Error recovery failure
+Called from RICHTEXT:DEFNEWTABLE(1353) in misc\richtext.prg
+Called from MAIN(51) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\rtfsample.exe
+Terminated at: 2026-09-09 07:07:12
+Unrecoverable error 9001: Error recovery failure
+Called from __ERRINHANDLER(0)
+Called from HWINDOW:GETACTIVEWINDOW(264) in source\winapi\hcwindow.prg
+Called from RICHTEXT:RTFIMAGE(1710) in misc\richtext.prg
+Called from RICHTEXT:IMAGE(1103) in misc\richtext.prg
+Called from MAIN(102) in rtfsample.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\test_svg.exe
+Terminated at: 2026-09-13 16:06:56
+Unrecoverable error 9001: Error recovery failure
+Called from SHOWLOGO(70) in test_svg.prg
+Called from (b)MAIN(34) in test_svg.prg
+Called from ONCOMMAND(653) in source\winapi\hwindow.prg
+Called from (b)HMAINWINDOW(306) in source\winapi\hwindow.prg
+Called from HMAINWINDOW:ONEVENT(416) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(54) in test_svg.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\test_svg.exe
+Terminated at: 2026-09-13 16:07:54
+Unrecoverable error 9001: Error recovery failure
+Called from SHOWLOGO(70) in test_svg.prg
+Called from (b)MAIN(34) in test_svg.prg
+Called from ONCOMMAND(653) in source\winapi\hwindow.prg
+Called from (b)HMAINWINDOW(306) in source\winapi\hwindow.prg
+Called from HMAINWINDOW:ONEVENT(416) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(54) in test_svg.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\test_svg.exe
+Terminated at: 2026-09-13 16:08:36
+Unrecoverable error 9001: Error recovery failure
+Called from SHOWLOGO(62) in test_svg.prg
+Called from (b)MAIN(34) in test_svg.prg
+Called from ONCOMMAND(653) in source\winapi\hwindow.prg
+Called from (b)HMAINWINDOW(306) in source\winapi\hwindow.prg
+Called from HMAINWINDOW:ONEVENT(416) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(54) in test_svg.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\samples\test_svg.exe
+Terminated at: 2026-09-13 16:09:23
+Unrecoverable error 9001: Error recovery failure
+Called from SHOWLOGO(72) in test_svg.prg
+Called from (b)MAIN(34) in test_svg.prg
+Called from ONCOMMAND(653) in source\winapi\hwindow.prg
+Called from (b)HMAINWINDOW(306) in source\winapi\hwindow.prg
+Called from HMAINWINDOW:ONEVENT(416) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(54) in test_svg.prg
+------------------------------------------------------------------------
