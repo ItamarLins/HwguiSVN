@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>HwguiTurbo — Cadastro de Clientes</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+    color: #222;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Barra de abas ---- */
+  .tabs {
+    display: flex;
+    background: #e8eaed;
+    border-bottom: 1px solid #ccc;
+    padding: 0 10px;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 12px 24px;
+    cursor: grab;
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-bottom: -1px;
+    user-select: none;
+    font-size: 14px;
+    color: #555;
+    transition: background 0.15s, opacity 0.15s;
+    border-radius: 6px 6px 0 0;
+    white-space: nowrap;
+  }
+
+  .tab:active { cursor: grabbing; }
+  .tab:hover { background: #dfe1e5; }
+
+  .tab.active {
+    background: #fff;
+    color: #0078d4;
+    border-color: #ccc;
+    font-weight: 600;
+  }
+
+  .tab.dragging { opacity: 0.4; }
+  .tab.drop-target { border-left: 3px solid #0078d4; }
+
+  /* ---- Painéis ---- */
+  .panel {
+    display: none;
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+    background: #fff;
+  }
+
+  .panel.active { display: block; }
+
+  h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+
+  /* ---- Formulário ---- */
+  .form-row {
+    margin-bottom: 14px;
+    max-width: 500px;
+  }
+
+  .form-row label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #555;
+  }
+
+  .form-row input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .form-row input:focus {
+    outline: none;
+    border-color: #0078d4;
+    box-shadow: 0 0 0 2px rgba(0,120,212,0.15);
+  }
+
+  /* ---- Botões ---- */
+  button {
+    padding: 9px 20px;
+    background: #0078d4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+
+  button:hover { background: #006cbd; }
+  button:active { background: #005a9e; }
+
+  button.danger { background: #c0392b; padding: 4px 10px; font-size: 12px; }
+  button.danger:hover { background: #a93226; }
+
+  button.secondary { background: #6c757d; padding: 4px 10px; font-size: 12px; }
+  button.secondary:hover { background: #5a6268; }
+
+  button.restore { background: #27ae60; padding: 4px 10px; font-size: 12px; }
+  button.restore:hover { background: #1e8449; }
+
+  .del-label {
+    display: inline-block;
+    background: #f8d7da;
+    color: #721c24;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+
+  /* ---- Mensagens ---- */
+  .msg {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    font-weight: 500;
+    display: none;
+    max-width: 500px;
+  }
+
+  .msg.ok   { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+  .msg.erro { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+  /* ---- Tabela ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+
+  th {
+    background: #f0f2f5;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 13px;
+    color: #444;
+    border-bottom: 2px solid #ddd;
+  }
+
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+
+  tr:hover td { background: #f9fafb; }
+
+  tr.row-deleted td {
+    opacity: 0.55;
+    text-decoration: line-through;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+    font-style: italic;
+  }
+
+  /* ---- Busca ---- */
+  .busca-row {
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+  }
+
+  .busca-row input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  /* ---- Resumo / Relatório ---- */
+  .cards {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    min-width: 180px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .card .label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0078d4;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ BARRA DE ABAS ============ -->
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="cadastro"  onclick="showTab('cadastro',  this)">Cadastro</div>
+  <div class="tab"        data-tab="lista"     onclick="showTab('lista',     this)">Lista</div>
+  <div class="tab"        data-tab="busca"     onclick="showTab('busca',     this)">Buscar</div>
+  <div class="tab"        data-tab="relatorio" onclick="showTab('relatorio', this)">Relatório</div>
+  <div class="tab"        data-tab="sobre"     onclick="showTab('sobre',     this)">Sobre</div>
+</div>
+
+<!-- ============ ABA CADASTRO ============ -->
+<div id="cadastro" class="panel active">
+  <h2>Novo Cliente</h2>
+
+  <div class="form-row">
+    <label>Nome</label>
+    <input type="text" id="cad_nome" placeholder="Digite o nome completo">
+  </div>
+
+  <div class="form-row">
+    <label>Email</label>
+    <input type="text" id="cad_email" placeholder="exemplo@dominio.com">
+  </div>
+
+  <button onclick="salvar()">Salvar</button>
+  <button class="secondary" onclick="limparForm()">Limpar</button>
+
+  <div id="cad_msg" class="msg"></div>
+</div>
+
+<!-- ============ ABA LISTA ============ -->
+<div id="lista" class="panel">
+  <h2>Clientes Cadastrados</h2>
+  <button onclick="listar()">Atualizar Lista</button>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:80px">RECNO</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th style="width:180px">Ações</th>
+      </tr>
+    </thead>
+    <tbody id="lista_tbody">
+      <tr><td colspan="4" class="empty">Nenhum cliente carregado</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============ ABA BUSCAR ============ -->
+<div id="busca" class="panel">
+  <h2>Buscar Cliente</h2>
+
+  <div class="busca-row">
+    <input type="text" id="busca_nome" placeholder="Digite parte do nome...">
+    <button onclick="buscar()">Buscar</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:80px">RECNO</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th style="width:80px">Status</th>
+      </tr>
+    </thead>
+    <tbody id="busca_tbody">
+      <tr><td colspan="4" class="empty">Digite um nome para buscar</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============ ABA RELATÓRIO ============ -->
+<div id="relatorio" class="panel">
+  <h2>Relatório</h2>
+  <button onclick="gerarRelatorio()">Gerar Relatório</button>
+
+  <div class="cards">
+    <div class="card">
+      <div class="label">Total (ativos)</div>
+      <div class="value" id="rel_total">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Último RECNO</div>
+      <div class="value" id="rel_ultimo">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Com email</div>
+      <div class="value" id="rel_com_email">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Deletados</div>
+      <div class="value" id="rel_deletados">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA SOBRE ============ -->
+<div id="sobre" class="panel">
+  <h2>Sobre</h2>
+  <p><strong>HwguiTurbo</strong> — versão 1.0.0</p>
+  <p>Integração do WebView2 (Chromium) com Hwgui/Harbour.</p>
+  <p>
+    <strong>Stack:</strong><br>
+    &bull; Clang 22 (MSYS2 CLANG64)<br>
+    &bull; Harbour (Git)<br>
+    &bull; Hwgui (dev)<br>
+    &bull; Microsoft WebView2 Runtime
+  </p>
+  <p><strong>Recursos:</strong></p>
+  <ul>
+    <li>WebView2 embutido na janela Hwgui</li>
+    <li>Comunicação bidirecional JS ↔ Harbour via JSON</li>
+    <li>Múltiplas funções Harbour expostas ao JavaScript</li>
+    <li>Redimensionamento automático</li>
+    <li>Abas arrastáveis — segure e mova para reordenar</li>
+    <li>Registros deletados visíveis com marcação DEL</li>
+    <li>Restaurar registro deletado</li>
+    <li>Compilação pura com Clang, sem MSVC ou GCC</li>
+  </ul>
+</div>
+
+<!-- ============ SCRIPT ============ -->
+<script>
+
+/* -------- Controle de abas -------- */
+function showTab(id, el) {
+   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+   el.classList.add('active');
+   document.getElementById(id).classList.add('active');
+
+   if (id === 'lista')      listar();
+   if (id === 'relatorio')  gerarRelatorio();
+}
+
+/* -------- Utilidades -------- */
+function mostrarMsg(idEl, texto, tipo) {
+   const el = document.getElementById(idEl);
+   el.className = 'msg ' + tipo;
+   el.innerText = texto;
+   if (tipo === 'ok') {
+      setTimeout(() => { el.className = 'msg'; }, 4000);
+   }
+}
+
+function limparForm() {
+   document.getElementById('cad_nome').value  = '';
+   document.getElementById('cad_email').value = '';
+   document.getElementById('cad_nome').focus();
+}
+
+function escapeHtml(s) {
+   if (s == null) return '';
+   return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+}
+
+/* -------- Cadastro -------- */
+async function salvar() {
+   const nome  = document.getElementById('cad_nome').value.trim();
+   const email = document.getElementById('cad_email').value.trim();
+
+   if (!nome) {
+      mostrarMsg('cad_msg', 'O campo Nome é obrigatório.', 'erro');
+      return;
+   }
+
+   try {
+      const obj = await GravarCliente({ nome: nome, email: email });
+
+      if (obj.ok) {
+         mostrarMsg('cad_msg', 'Cliente gravado com sucesso! RECNO = ' + obj.recno, 'ok');
+         limparForm();
+      } else {
+         mostrarMsg('cad_msg', obj.msg || 'Erro ao gravar.', 'erro');
+      }
+   } catch (e) {
+      mostrarMsg('cad_msg', 'Erro: ' + e.message, 'erro');
+   }
+}
+
+/* -------- Lista -------- */
+async function listar() {
+   try {
+      const obj = await ListarClientes();
+      const tb = document.getElementById('lista_tbody');
+      tb.innerHTML = '';
+
+      if (!obj.ok || !obj.clientes || obj.clientes.length === 0) {
+         tb.innerHTML = '<tr><td colspan="4" class="empty">Nenhum cliente cadastrado</td></tr>';
+         return;
+      }
+
+      obj.clientes.forEach(c => {
+         const tr = document.createElement('tr');
+
+         if (c.deleted) {
+            tr.className = 'row-deleted';
+         }
+
+         // Botão: se deletado, mostra "Restaurar"; senão, "Apagar"
+         const btn = c.deleted
+            ? '<button class="restore" onclick="toggleApagar(' + c.recno + ')">Restaurar</button>'
+            : '<button class="danger"  onclick="toggleApagar(' + c.recno + ')">Apagar</button>';
+
+         // Etiqueta DEL só aparece se deletado
+         const del = c.deleted ? '<span class="del-label">DEL</span>' : '';
+
+         tr.innerHTML =
+            '<td>' + c.recno + '</td>' +
+            '<td>' + escapeHtml(c.nome) + '</td>' +
+            '<td>' + escapeHtml(c.email) + '</td>' +
+            '<td>' + btn + del + '</td>';
+
+         tb.appendChild(tr);
+      });
+   } catch (e) {
+      alert('Erro ao listar: ' + e.message);
+   }
+}
+
+/* -------- Apagar / Restaurar (toggle) -------- */
+async function toggleApagar(recno) {
+   try {
+      const obj = await ApagarCliente({ recno: recno });
+      if (obj.ok) {
+         listar();
+      } else {
+         alert('Erro: ' + (obj.msg || 'Não foi possível alterar o registro.'));
+      }
+   } catch (e) {
+      alert('Erro: ' + e.message);
+   }
+}
+
+/* -------- Buscar -------- */
+async function buscar() {
+   const nome = document.getElementById('busca_nome').value.trim();
+   const tb = document.getElementById('busca_tbody');
+   tb.innerHTML = '';
+
+   if (!nome) {
+      tb.innerHTML = '<tr><td colspan="4" class="empty">Digite um nome para buscar</td></tr>';
+      return;
+   }
+
+   try {
+      const obj = await BuscarCliente({ nome: nome });
+
+      if (!obj.ok || !obj.clientes || obj.clientes.length === 0) {
+         tb.innerHTML = '<tr><td colspan="4" class="empty">Nenhum resultado encontrado</td></tr>';
+         return;
+      }
+
+      obj.clientes.forEach(c => {
+         const tr = document.createElement('tr');
+         if (c.deleted) tr.className = 'row-deleted';
+
+         const status = c.deleted
+            ? '<span class="del-label">DEL</span>'
+            : '<span style="color:#27ae60;font-weight:600;font-size:12px;">ATIVO</span>';
+
+         tr.innerHTML =
+            '<td>' + c.recno + '</td>' +
+            '<td>' + escapeHtml(c.nome) + '</td>' +
+            '<td>' + escapeHtml(c.email) + '</td>' +
+            '<td>' + status + '</td>';
+         tb.appendChild(tr);
+      });
+   } catch (e) {
+      alert('Erro ao buscar: ' + e.message);
+   }
+}
+
+/* -------- Relatório -------- */
+async function gerarRelatorio() {
+   try {
+      const obj = await ListarClientes();
+
+      if (!obj.ok || !obj.clientes) {
+         document.getElementById('rel_total').innerText     = '0';
+         document.getElementById('rel_ultimo').innerText    = '0';
+         document.getElementById('rel_com_email').innerText = '0';
+         document.getElementById('rel_deletados').innerText = '0';
+         return;
+      }
+
+      const ativos    = obj.clientes.filter(c => !c.deleted);
+      const deletados = obj.clientes.filter(c =>  c.deleted);
+      const ultimo    = obj.clientes.length > 0
+                        ? Math.max(...obj.clientes.map(c => c.recno))
+                        : 0;
+      const comEmail  = ativos.filter(c => c.email && c.email.trim() !== '').length;
+
+      document.getElementById('rel_total').innerText     = ativos.length;
+      document.getElementById('rel_ultimo').innerText    = ultimo;
+      document.getElementById('rel_com_email').innerText = comEmail;
+      document.getElementById('rel_deletados').innerText = deletados.length;
+   } catch (e) {
+      alert('Erro ao gerar relatório: ' + e.message);
+   }
+}
+
+/* -------- Enter nos campos -------- */
+document.getElementById('cad_email').addEventListener('keypress', e => {
+   if (e.key === 'Enter') salvar();
+});
+
+document.getElementById('busca_nome').addEventListener('keypress', e => {
+   if (e.key === 'Enter') buscar();
+});
+
+/* -------- Foco inicial + ativação do drag -------- */
+window.addEventListener('load', () => {
+   document.getElementById('cad_nome').focus();
+   ativarDrag();
+});
+
+/* ============================================================
+   ABAS ARRASTÁVEIS
+   ============================================================ */
+let dragSrcEl = null;
+
+function handleDragStart(e) {
+   dragSrcEl = this;
+   e.dataTransfer.effectAllowed = 'move';
+   e.dataTransfer.setData('text/html', this.outerHTML);
+   this.classList.add('dragging');
+}
+
+function handleDragOver(e) {
+   e.preventDefault();
+   e.dataTransfer.dropEffect = 'move';
+   return false;
+}
+
+function handleDragEnter(e) {
+   if (this !== dragSrcEl) this.classList.add('drop-target');
+}
+
+function handleDragLeave(e) {
+   this.classList.remove('drop-target');
+}
+
+function handleDrop(e) {
+   e.stopPropagation();
+   e.preventDefault();
+
+   if (dragSrcEl !== this) {
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+      const idxSrc  = tabs.indexOf(dragSrcEl);
+      const idxDest = tabs.indexOf(this);
+
+      if (idxSrc < idxDest) {
+         this.parentNode.insertBefore(dragSrcEl, this.nextSibling);
+      } else {
+         this.parentNode.insertBefore(dragSrcEl, this);
+      }
+   }
+   this.classList.remove('drop-target');
+   return false;
+}
+
+function handleDragEnd(e) {
+   this.classList.remove('dragging');
+   document.querySelectorAll('.tab').forEach(t => t.classList.remove('drop-target'));
+}
+
+function ativarDrag() {
+   document.querySelectorAll('.tab').forEach(tab => {
+      tab.setAttribute('draggable', 'true');
+      tab.addEventListener('dragstart', handleDragStart);
+      tab.addEventListener('dragover',  handleDragOver);
+      tab.addEventListener('dragenter', handleDragEnter);
+      tab.addEventListener('dragleave', handleDragLeave);
+      tab.addEventListener('drop',      handleDrop);
+      tab.addEventListener('dragend',   handleDragEnd);
+   });
+}
+
+</script>
+</body>
+</html>

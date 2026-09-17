@@ -1,0 +1,322 @@
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:04:56
+Unrecoverable error 9001: Error recovery failure
+Called from INICIALIZAWEBVIEW(60) in clientes_test.prg
+Called from (b)MAIN(18) in clientes_test.prg
+Called from HMAINWINDOW:NEW(373) in source\winapi\hwindow.prg
+Called from MAIN(18) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:11:55
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(100) in clientes_test.prg
+Called from CHECKMENSAGEM(87) in clientes_test.prg
+Called from ONOTHERMSG(127) in clientes_test.prg
+Called from (b)MAIN(29) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(31) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:19:07
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(125) in clientes_test.prg
+Called from CHECKMENSAGEM(111) in clientes_test.prg
+Called from ONOTHERMSG(52) in clientes_test.prg
+Called from (b)MAIN(39) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(41) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:22:01
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(127) in clientes_test.prg
+Called from CHECKMENSAGEM(111) in clientes_test.prg
+Called from ONOTHERMSG(52) in clientes_test.prg
+Called from (b)MAIN(39) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(41) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:23:29
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(133) in clientes_test.prg
+Called from CHECKMENSAGEM(117) in clientes_test.prg
+Called from ONOTHERMSG(52) in clientes_test.prg
+Called from (b)MAIN(39) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(41) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:26:02
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(139) in clientes_test.prg
+Called from CHECKMENSAGEM(117) in clientes_test.prg
+Called from ONOTHERMSG(52) in clientes_test.prg
+Called from (b)MAIN(39) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(41) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:34:11
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(139) in clientes_test.prg
+Called from CHECKMENSAGEM(117) in clientes_test.prg
+Called from ONOTHERMSG(52) in clientes_test.prg
+Called from (b)MAIN(39) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(41) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-15 23:36:33
+Unrecoverable error 9001: Error recovery failure
+Called from HB_HGETDEF(0)
+Called from PROCESSARMENSAGEM(139) in clientes_test.prg
+Called from CHECKMENSAGEM(117) in clientes_test.prg
+Called from ONOTHERMSG(52) in clientes_test.prg
+Called from (b)MAIN(39) in clientes_test.prg
+Called from HWINDOW:ONEVENT(206) in source\winapi\hcwindow.prg
+Called from HMAINWINDOW:ONEVENT(424) in source\winapi\hwindow.prg
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405) in source\winapi\hwindow.prg
+Called from MAIN(41) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-16 07:56:52
+Unrecoverable error 6005: Exception error:
+
+    Exception Code:C0000005 ACCESS_VIOLATION
+    Exception Address:00007FF707DEF86B
+    RAX:0000000000000000  RBX:0000000000000046  RCX:00000213F53C7E28  RDX:00000213F39BAAC0
+    RSI:00000213F39BAAC0  RDI:00000213F53C7E28  RBP:0000000000000000
+    R8 :0000000000000000  R9 :0000000000000000  R10:0000000000000000  R11:0000000000000246
+    R12:0000000000000000  R13:000000D005B0F390  R14:0000000000130352  R15:00000213F39BAAC0
+    CS:RIP:0033:00007FF707DEF86B  SS:RSP:002B:000000D005B0EDC0
+    DS:002B  ES:002B  FS:0053  GS:002B
+    Flags:00010202
+    Exception Parameters: 0000000000000001 FFFFFFFFFFFFFFF8
+
+Modules:
+00007FF707DE0000 00000000001B5000 C:\dev\hwgui\contrib\webview2\clientes_test.exe
+00007FF8C1350000 00000000001F9000 C:\Windows\SYSTEM32\ntdll.dll
+00007FF8C0D20000 00000000000C2000 C:\Windows\System32\KERNEL32.DLL
+00007FF8BEFA0000 00000000002F7000 C:\Windows\System32\KERNELBASE.dll
+00007FF8BED50000 0000000000100000 C:\Windows\System32\ucrtbase.dll
+00007FF8C0AB0000 000000000019D000 C:\Windows\System32\USER32.dll
+00007FF8BEC50000 0000000000022000 C:\Windows\System32\win32u.dll
+00007FF8C04D0000 000000000002B000 C:\Windows\System32\GDI32.dll
+00007FF8BEB00000 000000000011A000 C:\Windows\System32\gdi32full.dll
+00007FF8BEE50000 000000000009D000 C:\Windows\System32\msvcp_win.dll
+00007FF8BFCD0000 0000000000771000 C:\Windows\System32\SHELL32.dll
+00007FF8C0590000 00000000000B2000 C:\Windows\System32\ADVAPI32.dll
+00007FF8C07C0000 000000000009E000 C:\Windows\System32\msvcrt.dll
+00007FF8C0670000 00000000000A0000 C:\Windows\System32\sechost.dll
+00007FF8BFBA0000 0000000000126000 C:\Windows\System32\RPCRT4.dll
+00007FF8BEC20000 0000000000027000 C:\Windows\System32\bcrypt.dll
+00007FF8BF8F0000 000000000012C000 C:\Windows\System32\ole32.dll
+00007FF8C0DF0000 0000000000354000 C:\Windows\System32\combase.dll
+00007FF8BF810000 00000000000D6000 C:\Windows\System32\OLEAUT32.dll
+00007FF8AA8D0000 00000000000B0000 C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.7291_none_792d678f2443dbb3\COMCTL32.dll
+00007FF869DD0000 00000000001AA000 C:\Windows\WinSxS\amd64_microsoft.windows.gdiplus_6595b64144ccf1df_1.1.19041.7725_none_91a0b114cc8b5498\gdiplus.dll
+00007FF8C0860000 00000000000DA000 C:\Windows\System32\comdlg32.dll
+00007FF8B9600000 0000000000007000 C:\Windows\SYSTEM32\MSIMG32.dll
+00007FF8C0C70000 00000000000AD000 C:\Windows\System32\shcore.dll
+00007FF8B34F0000 0000000000027000 C:\Windows\SYSTEM32\WINMM.dll
+00007FF8C09A0000 000000000005B000 C:\Windows\System32\SHLWAPI.dll
+00007FF8A0F30000 00000000000A4000 C:\Windows\SYSTEM32\WINSPOOL.DRV
+00007FF8C0790000 000000000002F000 C:\Windows\System32\IMM32.DLL
+00007FF8AC980000 0000000000049000 C:\dev\hwgui\contrib\webview2\webview_wrapper.dll
+00007FF8BE180000 000000000000C000 C:\Windows\SYSTEM32\CRYPTBASE.DLL
+00007FF8BF2A0000 0000000000082000 C:\Windows\System32\bcryptPrimitives.dll
+00007FF8BC300000 000000000009E000 C:\Windows\system32\uxtheme.dll
+00007FF8BFA20000 0000000000116000 C:\Windows\System32\MSCTF.dll
+00007FF8AC950000 000000000002C000 C:\dev\hwgui\contrib\webview2\WebView2Loader.dll
+00007FF8BC7C0000 0000000000012000 C:\Windows\SYSTEM32\kernel.appcore.dll
+00007FF8BC6B0000 000000000002E000 C:\Windows\SYSTEM32\dwmapi.dll
+00007FF8BC9E0000 00000000007AC000 C:\Windows\SYSTEM32\windows.storage.dll
+00007FF8BE210000 000000000002B000 C:\Windows\SYSTEM32\Wldp.dll
+00007FF858960000 00000000008D1000 C:\Users\Itamar\AppData\Local\Microsoft\EdgeWebView\Application\153.0.4234.32\EBWebView\x64\EmbeddedBrowserWebView.dll
+00007FF8B4000000 000000000000A000 C:\Windows\SYSTEM32\VERSION.dll
+00007FF8B9B40000 00000000000FA000 C:\Windows\SYSTEM32\PROPSYS.dll
+00007FF8C0A00000 00000000000A9000 C:\Windows\System32\clbcatq.dll
+00007FF8AC4F0000 0000000000024000 C:\Windows\system32\edputil.dll
+00007FF8B80E0000 00000000000F9000 C:\Windows\SYSTEM32\textinputframework.dll
+00007FF8BB520000 000000000035B000 C:\Windows\System32\CoreUIComponents.dll
+00007FF8BBAE0000 00000000000F2000 C:\Windows\System32\CoreMessaging.dll
+00007FF8C0450000 0000000000073000 C:\Windows\System32\WS2_32.dll
+00007FF8BDB50000 0000000000033000 C:\Windows\SYSTEM32\ntmarta.dll
+00007FF8BADE0000 0000000000157000 C:\Windows\SYSTEM32\wintypes.dll
+
+Called from HWG__SETMENU(0)
+Called from HWG_SETMENU(63) in source\winapi\menu.prg
+Called from HWG_BUILDMENU(183) in source\winapi\menu.prg
+Called from HWG_ENDMENU(231) in source\winapi\menu.prg
+Called from MAIN(38) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-16 07:57:14
+Unrecoverable error 6005: Exception error:
+
+    Exception Code:C0000005 ACCESS_VIOLATION
+    Exception Address:00007FF71940686E
+    RAX:00007FF7194741B0  RBX:0000000000000046  RCX:0000028ADB4A8A18  RDX:0000028ADB52B1B0
+    RSI:0000028ADB52B1B0  RDI:0000028ADB4A8A18  RBP:0000000000000000
+    R8 :0000000000000000  R9 :0000000000000000  R10:0000000000000000  R11:0000000000000246
+    R12:0000000000000000  R13:000000DC170FF190  R14:00000000001A03B8  R15:0000028ADB52B1B0
+    CS:RIP:0033:00007FF71940686E  SS:RSP:002B:000000DC170FEBC0
+    DS:002B  ES:002B  FS:0053  GS:002B
+    Flags:00010286
+    Exception Parameters: 0000000000000001 00007FF719474188
+
+Modules:
+00007FF719400000 00000000001B8000 C:\dev\hwgui\contrib\webview2\clientes_test.exe
+00007FF8C1350000 00000000001F9000 C:\Windows\SYSTEM32\ntdll.dll
+00007FF8C0D20000 00000000000C2000 C:\Windows\System32\KERNEL32.DLL
+00007FF8BEFA0000 00000000002F7000 C:\Windows\System32\KERNELBASE.dll
+00007FF8BED50000 0000000000100000 C:\Windows\System32\ucrtbase.dll
+00007FF8C0AB0000 000000000019D000 C:\Windows\System32\USER32.dll
+00007FF8BEC50000 0000000000022000 C:\Windows\System32\win32u.dll
+00007FF8C04D0000 000000000002B000 C:\Windows\System32\GDI32.dll
+00007FF8BEB00000 000000000011A000 C:\Windows\System32\gdi32full.dll
+00007FF8BEE50000 000000000009D000 C:\Windows\System32\msvcp_win.dll
+00007FF8BFCD0000 0000000000771000 C:\Windows\System32\SHELL32.dll
+00007FF8C0590000 00000000000B2000 C:\Windows\System32\ADVAPI32.dll
+00007FF8C07C0000 000000000009E000 C:\Windows\System32\msvcrt.dll
+00007FF8C0670000 00000000000A0000 C:\Windows\System32\sechost.dll
+00007FF8BFBA0000 0000000000126000 C:\Windows\System32\RPCRT4.dll
+00007FF8BEC20000 0000000000027000 C:\Windows\System32\bcrypt.dll
+00007FF8BF8F0000 000000000012C000 C:\Windows\System32\ole32.dll
+00007FF8C0DF0000 0000000000354000 C:\Windows\System32\combase.dll
+00007FF8AA8D0000 00000000000B0000 C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.7291_none_792d678f2443dbb3\COMCTL32.dll
+00007FF8BF810000 00000000000D6000 C:\Windows\System32\OLEAUT32.dll
+00007FF8C0860000 00000000000DA000 C:\Windows\System32\comdlg32.dll
+00007FF869DD0000 00000000001AA000 C:\Windows\WinSxS\amd64_microsoft.windows.gdiplus_6595b64144ccf1df_1.1.19041.7725_none_91a0b114cc8b5498\gdiplus.dll
+00007FF8B9600000 0000000000007000 C:\Windows\SYSTEM32\MSIMG32.dll
+00007FF8C0C70000 00000000000AD000 C:\Windows\System32\shcore.dll
+00007FF8C09A0000 000000000005B000 C:\Windows\System32\SHLWAPI.dll
+00007FF8B34F0000 0000000000027000 C:\Windows\SYSTEM32\WINMM.dll
+00007FF8A0F30000 00000000000A4000 C:\Windows\SYSTEM32\WINSPOOL.DRV
+00007FF8C0790000 000000000002F000 C:\Windows\System32\IMM32.DLL
+00007FF8AC980000 0000000000049000 C:\dev\hwgui\contrib\webview2\webview_wrapper.dll
+00007FF8BE180000 000000000000C000 C:\Windows\SYSTEM32\CRYPTBASE.DLL
+00007FF8BF2A0000 0000000000082000 C:\Windows\System32\bcryptPrimitives.dll
+00007FF8BC300000 000000000009E000 C:\Windows\system32\uxtheme.dll
+00007FF8BFA20000 0000000000116000 C:\Windows\System32\MSCTF.dll
+00007FF8AC950000 000000000002C000 C:\dev\hwgui\contrib\webview2\WebView2Loader.dll
+00007FF8BC7C0000 0000000000012000 C:\Windows\SYSTEM32\kernel.appcore.dll
+00007FF8BC6B0000 000000000002E000 C:\Windows\SYSTEM32\dwmapi.dll
+00007FF8BC9E0000 00000000007AC000 C:\Windows\SYSTEM32\windows.storage.dll
+00007FF8BE210000 000000000002B000 C:\Windows\SYSTEM32\Wldp.dll
+00007FF858960000 00000000008D1000 C:\Users\Itamar\AppData\Local\Microsoft\EdgeWebView\Application\153.0.4234.32\EBWebView\x64\EmbeddedBrowserWebView.dll
+00007FF8B4000000 000000000000A000 C:\Windows\SYSTEM32\VERSION.dll
+00007FF8B9B40000 00000000000FA000 C:\Windows\SYSTEM32\PROPSYS.dll
+00007FF8C0A00000 00000000000A9000 C:\Windows\System32\clbcatq.dll
+00007FF8AC4F0000 0000000000024000 C:\Windows\system32\edputil.dll
+00007FF8B80E0000 00000000000F9000 C:\Windows\SYSTEM32\textinputframework.dll
+00007FF8BB520000 000000000035B000 C:\Windows\System32\CoreUIComponents.dll
+00007FF8BBAE0000 00000000000F2000 C:\Windows\System32\CoreMessaging.dll
+00007FF8C0450000 0000000000073000 C:\Windows\System32\WS2_32.dll
+00007FF8BDB50000 0000000000033000 C:\Windows\SYSTEM32\ntmarta.dll
+00007FF8BADE0000 0000000000157000 C:\Windows\SYSTEM32\wintypes.dll
+
+Called from HWG__SETMENU(0)
+Called from HWG_SETMENU(63) in source\winapi\menu.prg
+Called from HWG_BUILDMENU(183) in source\winapi\menu.prg
+Called from HWG_ENDMENU(231) in source\winapi\menu.prg
+Called from MAIN(38) in clientes_test.prg
+------------------------------------------------------------------------
+Application Internal Error - C:\dev\hwgui\contrib\webview2\clientes_test.exe
+Terminated at: 2026-09-16 07:58:31
+Unrecoverable error 6005: Exception error:
+
+    Exception Code:C0000005 ACCESS_VIOLATION
+    Exception Address:00007FF7589BF5EB
+    RAX:0000000000000000  RBX:0000000000000083  RCX:0000023D7A397D68  RDX:0000023D78AFB0E0
+    RSI:0000023D78AFB0E0  RDI:0000023D7A397D68  RBP:0000000000000001
+    R8 :0000000000000000  R9 :0000000000000000  R10:0000000000000000  R11:0000000000000246
+    R12:0000000000000001  R13:0000004CCABBF780  R14:00000000006303E8  R15:0000023D78AFB0E0
+    CS:RIP:0033:00007FF7589BF5EB  SS:RSP:002B:0000004CCABBF1A0
+    DS:002B  ES:002B  FS:0053  GS:002B
+    Flags:00010206
+    Exception Parameters: 0000000000000001 FFFFFFFFFFFFFFF8
+
+Modules:
+00007FF7589B0000 00000000001B5000 C:\dev\hwgui\contrib\webview2\clientes_test.exe
+00007FF8C1350000 00000000001F9000 C:\Windows\SYSTEM32\ntdll.dll
+00007FF8C0D20000 00000000000C2000 C:\Windows\System32\KERNEL32.DLL
+00007FF8BEFA0000 00000000002F7000 C:\Windows\System32\KERNELBASE.dll
+00007FF8BED50000 0000000000100000 C:\Windows\System32\ucrtbase.dll
+00007FF8C0AB0000 000000000019D000 C:\Windows\System32\USER32.dll
+00007FF8BEC50000 0000000000022000 C:\Windows\System32\win32u.dll
+00007FF8C04D0000 000000000002B000 C:\Windows\System32\GDI32.dll
+00007FF8BEB00000 000000000011A000 C:\Windows\System32\gdi32full.dll
+00007FF8BEE50000 000000000009D000 C:\Windows\System32\msvcp_win.dll
+00007FF8BFCD0000 0000000000771000 C:\Windows\System32\SHELL32.dll
+00007FF8C0590000 00000000000B2000 C:\Windows\System32\ADVAPI32.dll
+00007FF8C07C0000 000000000009E000 C:\Windows\System32\msvcrt.dll
+00007FF8C0670000 00000000000A0000 C:\Windows\System32\sechost.dll
+00007FF8BFBA0000 0000000000126000 C:\Windows\System32\RPCRT4.dll
+00007FF8BEC20000 0000000000027000 C:\Windows\System32\bcrypt.dll
+00007FF8BF8F0000 000000000012C000 C:\Windows\System32\ole32.dll
+00007FF8C0DF0000 0000000000354000 C:\Windows\System32\combase.dll
+00007FF8AA8D0000 00000000000B0000 C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.7291_none_792d678f2443dbb3\COMCTL32.dll
+00007FF8BF810000 00000000000D6000 C:\Windows\System32\OLEAUT32.dll
+00007FF869DD0000 00000000001AA000 C:\Windows\WinSxS\amd64_microsoft.windows.gdiplus_6595b64144ccf1df_1.1.19041.7725_none_91a0b114cc8b5498\gdiplus.dll
+00007FF8C0860000 00000000000DA000 C:\Windows\System32\comdlg32.dll
+00007FF8B9600000 0000000000007000 C:\Windows\SYSTEM32\MSIMG32.dll
+00007FF8C0C70000 00000000000AD000 C:\Windows\System32\shcore.dll
+00007FF8B34F0000 0000000000027000 C:\Windows\SYSTEM32\WINMM.dll
+00007FF8C09A0000 000000000005B000 C:\Windows\System32\SHLWAPI.dll
+00007FF8A0F30000 00000000000A4000 C:\Windows\SYSTEM32\WINSPOOL.DRV
+00007FF8C0790000 000000000002F000 C:\Windows\System32\IMM32.DLL
+00007FF8AC980000 0000000000049000 C:\dev\hwgui\contrib\webview2\webview_wrapper.dll
+00007FF8BE180000 000000000000C000 C:\Windows\SYSTEM32\CRYPTBASE.DLL
+00007FF8BF2A0000 0000000000082000 C:\Windows\System32\bcryptPrimitives.dll
+00007FF8BC300000 000000000009E000 C:\Windows\system32\uxtheme.dll
+00007FF8BFA20000 0000000000116000 C:\Windows\System32\MSCTF.dll
+00007FF8AC950000 000000000002C000 C:\dev\hwgui\contrib\webview2\WebView2Loader.dll
+00007FF8BC7C0000 0000000000012000 C:\Windows\SYSTEM32\kernel.appcore.dll
+00007FF8BC6B0000 000000000002E000 C:\Windows\SYSTEM32\dwmapi.dll
+00007FF8BC9E0000 00000000007AC000 C:\Windows\SYSTEM32\windows.storage.dll
+00007FF8BE210000 000000000002B000 C:\Windows\SYSTEM32\Wldp.dll
+00007FF858960000 00000000008D1000 C:\Users\Itamar\AppData\Local\Microsoft\EdgeWebView\Application\153.0.4234.32\EBWebView\x64\EmbeddedBrowserWebView.dll
+00007FF8B4000000 000000000000A000 C:\Windows\SYSTEM32\VERSION.dll
+00007FF8B9B40000 00000000000FA000 C:\Windows\SYSTEM32\PROPSYS.dll
+00007FF8C0A00000 00000000000A9000 C:\Windows\System32\clbcatq.dll
+00007FF8AC4F0000 0000000000024000 C:\Windows\system32\edputil.dll
+00007FF8B80E0000 00000000000F9000 C:\Windows\SYSTEM32\textinputframework.dll
+00007FF8BB520000 000000000035B000 C:\Windows\System32\CoreUIComponents.dll
+00007FF8BBAE0000 00000000000F2000 C:\Windows\System32\CoreMessaging.dll
+00007FF8BDB50000 0000000000033000 C:\Windows\SYSTEM32\ntmarta.dll
+00007FF8C0450000 0000000000073000 C:\Windows\System32\WS2_32.dll
+00007FF8BADE0000 0000000000157000 C:\Windows\SYSTEM32\wintypes.dll
+
+Called from HWG_CENTERWINDOW(0)
+Called from (b)HWINDOW(171) in source\winapi\hwindow.prg
+Called from HMAINWINDOW:CENTER(0) in source\winapi\hwindow.prg
+Called from HMAINWINDOW:ACTIVATE(403) in source\winapi\hwindow.prg
+Called from MAIN(43) in clientes_test.prg
+------------------------------------------------------------------------

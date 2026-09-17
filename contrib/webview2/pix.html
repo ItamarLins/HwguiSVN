@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Gerador PIX — HwguiTurbo</title>
+<script src="qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+    color: #222;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .header {
+    background: #32bcad;
+    color: #fff;
+    padding: 16px 24px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+  }
+
+  h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px 16px;
+    align-items: center;
+  }
+
+  .form-grid label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .form-grid input,
+  .form-grid textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .form-grid input:focus,
+  .form-grid textarea:focus {
+    outline: none;
+    border-color: #32bcad;
+    box-shadow: 0 0 0 2px rgba(50,188,173,0.2);
+  }
+
+  .form-grid .hint {
+    font-size: 11px;
+    color: #888;
+    grid-column: 2;
+    margin-top: -8px;
+  }
+
+  .btn-row {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  button {
+    padding: 10px 22px;
+    background: #32bcad;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+
+  button:hover { background: #28a193; }
+  button:active { background: #1f8377; }
+
+  button.secondary {
+    background: #6c757d;
+  }
+  button.secondary:hover { background: #5a6268; }
+
+  .msg {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    font-weight: 500;
+    display: none;
+  }
+
+  .msg.ok   { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+  .msg.erro { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+  /* Área de resultado */
+  #resultado {
+    display: none;
+  }
+
+  #resultado.visivel {
+    display: block;
+  }
+
+  .resultado-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .qrcode-box {
+    background: #fff;
+    border: 2px solid #32bcad;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .qrcode-box canvas {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .valor-destaque {
+    margin-top: 12px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #32bcad;
+  }
+
+  .copia-cola-box label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+
+  .copia-cola-box textarea {
+    width: 100%;
+    height: 140px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    resize: vertical;
+    word-break: break-all;
+  }
+
+  .copia-cola-box .btn-row {
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">💠 Gerador de PIX — HwguiTurbo</div>
+
+<div class="container">
+
+  <!-- ============ FORMULÁRIO ============ -->
+  <div class="card">
+    <h2>Dados do Pagamento</h2>
+
+    <div class="form-grid">
+      <label>Valor (R$)</label>
+      <input type="number" id="valor" step="0.01" min="0.01" placeholder="0.00">
+
+      <label>Chave PIX</label>
+      <input type="text" id="chave" placeholder="CPF, CNPJ, telefone, email ou chave aleatória" maxlength="77">
+      <div class="hint">CPF: 11 dígitos &bull; CNPJ: 14 dígitos &bull; Telefone: +55DDDNúmero &bull; Email: até 77 chars</div>
+
+      <label>Recebedor</label>
+      <input type="text" id="nome" placeholder="Nome do recebedor" maxlength="25">
+      <div class="hint">Máximo 25 caracteres. Acentos são removidos automaticamente.</div>
+
+      <label>Cidade</label>
+      <input type="text" id="cidade" placeholder="Cidade do recebedor" maxlength="15">
+      <div class="hint">Máximo 15 caracteres.</div>
+
+      <label>Identificador</label>
+      <input type="text" id="txid" placeholder="Deixe em branco para ***" maxlength="25">
+      <div class="hint">Letras e números, sem espaços. Máximo 25 chars.</div>
+
+      <label>Descrição</label>
+      <input type="text" id="descricao" placeholder="Descrição do pagamento (opcional)" maxlength="70">
+      <div class="hint">Máximo 70 caracteres.</div>
+    </div>
+
+    <div class="btn-row">
+      <button onclick="gerar()">Gerar QR Code</button>
+      <button class="secondary" onclick="limparForm()">Limpar</button>
+    </div>
+
+    <div id="msg" class="msg"></div>
+  </div>
+
+  <!-- ============ RESULTADO ============ -->
+  <div class="card" id="resultado">
+    <h2>QR Code Gerado</h2>
+
+    <div class="resultado-grid">
+      <div class="qrcode-box">
+        <div id="qrcode" style="width:280px;height:280px;margin:0 auto;"></div>
+        <div class="valor-destaque" id="valor_destaque">R$ 0,00</div>
+      </div>
+
+      <div class="copia-cola-box">
+        <label>PIX Copia e Cola</label>
+        <textarea id="copiaecola" readonly></textarea>
+
+        <div class="btn-row">
+          <button onclick="copiarPix()">📋 Copiar</button>
+          <button class="secondary" onclick="imprimir()">🖨️ Imprimir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+/* ============================================================
+   PONTE ÚNICA — todo o backend passa por aqui
+   ============================================================ */
+async function Executar(acao, args) {
+   return await ExecutarAcao({ acao: acao, args: args || {} });
+}
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+function mostrarMsg(texto, tipo) {
+   const el = document.getElementById('msg');
+   el.className = 'msg ' + tipo;
+   el.innerText = texto;
+   if (tipo === 'ok') {
+      setTimeout(() => { el.className = 'msg'; }, 4000);
+   }
+}
+
+function limparForm() {
+   ['valor', 'chave', 'nome', 'cidade', 'txid', 'descricao'].forEach(id => {
+      document.getElementById(id).value = '';
+   });
+   document.getElementById('resultado').classList.remove('visivel');
+   document.getElementById('msg').className = 'msg';
+}
+
+/* Remove acentos — o padrão PIX exige caracteres ASCII */
+function removeAcentos(s) {
+   if (!s) return '';
+   return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+/* Formata valor como "R$ 1.234,56" */
+function formataMoeda(n) {
+   return "R$ " + Number(n).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+   });
+}
+
+/* ============================================================
+   GERAR PIX
+   ============================================================ */
+async function gerar() {
+   const valor     = parseFloat(document.getElementById('valor').value);
+   const chave     = document.getElementById('chave').value.trim();
+   const nome      = removeAcentos(document.getElementById('nome').value.trim());
+   const cidade    = removeAcentos(document.getElementById('cidade').value.trim());
+   const txid      = document.getElementById('txid').value.trim();
+   const descricao = removeAcentos(document.getElementById('descricao').value.trim());
+
+   // Validações locais
+   if (!valor || valor <= 0) {
+      mostrarMsg('Informe um valor maior que zero.', 'erro');
+      return;
+   }
+   if (!chave) {
+      mostrarMsg('Informe a chave PIX.', 'erro');
+      return;
+   }
+   if (!nome) {
+      mostrarMsg('Informe o nome do recebedor.', 'erro');
+      return;
+   }
+   if (!cidade) {
+      mostrarMsg('Informe a cidade.', 'erro');
+      return;
+   }
+
+   try {
+      const obj = await Executar("pix.gerar", {
+         valor:     valor,
+         chave:     chave,
+         nome:      nome,
+         cidade:    cidade,
+         txid:      txid,
+         descricao: descricao
+      });
+
+      if (!obj.ok) {
+         mostrarMsg(obj.msg || 'Erro ao gerar o PIX.', 'erro');
+         return;
+      }
+
+      // Gera o QR Code no canvas
+      gerarQRCode(obj.pix);
+
+      // Preenche a área de copia-e-cola
+      document.getElementById('copiaecola').value = obj.pix;
+      document.getElementById('valor_destaque').innerText = formataMoeda(obj.valor);
+
+      // Mostra o resultado
+      document.getElementById('resultado').classList.add('visivel');
+      mostrarMsg('QR Code gerado com sucesso!', 'ok');
+
+   } catch (e) {
+      mostrarMsg('Erro: ' + e.message, 'erro');
+   }
+}
+
+/* ============================================================
+   QR CODE — usa a lib qrcode do CDN
+   ============================================================ */
+function gerarQRCode(texto) {
+   const qr = qrcode(0, 'M');   // 0 = escolhe versão automaticamente
+   qr.addData(texto);
+   qr.make();
+
+   const container = document.getElementById('qrcode');
+   container.innerHTML = qr.createImgTag(4, 8);
+}
+
+/* ============================================================
+   COPIAR E IMPRIMIR
+   ============================================================ */
+function copiarPix() {
+   const ta = document.getElementById('copiaecola');
+   ta.select();
+   ta.setSelectionRange(0, 99999);
+   document.execCommand('copy');
+
+   const btn = event.target;
+   const original = btn.innerText;
+   btn.innerText = '✓ Copiado!';
+   setTimeout(() => { btn.innerText = original; }, 1500);
+}
+
+function imprimir() {
+   window.print();
+}
+
+/* ============================================================
+   ENTER nos campos = Gerar
+   ============================================================ */
+['valor', 'chave', 'nome', 'cidade', 'txid', 'descricao'].forEach(id => {
+   document.getElementById(id).addEventListener('keypress', e => {
+      if (e.key === 'Enter') gerar();
+   });
+});
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+window.addEventListener('load', () => {
+   document.getElementById('valor').focus();
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Error BASE/1070  Argument error: ==
+Called from (b)HWG_ERRSYS(20)
+Called from CHECKMENSAGEM(118)
+Called from ONOTHERMSG(54)
+Called from (b)MAIN(41)
+Called from HWINDOW:ONEVENT(206)
+Called from HMAINWINDOW:ONEVENT(424)
+Called from HWG_ACTIVATEMAINWINDOW(0)
+Called from HMAINWINDOW:ACTIVATE(405)
+Called from MAIN(43)
+(1) = Type: P Value: <pointer>
+(2) = Type: N Value: 0
+
+
+HWGUI 2.23 dev Build 8 Unicode
+Date:09/16/26
+Time:08:29:16

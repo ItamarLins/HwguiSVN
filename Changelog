@@ -1,5 +1,5 @@
 /*
- * $Id: Changelog 3958 2026-09-13 23:40:03Z itamarlins $
+ * $Id: Changelog 3962 2026-09-17 04:24:50Z itamarlins $
  */
 
 /* Use this format for the entry headers:
@@ -14,6 +14,113 @@
  "oldlogs".
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+2026-09-17 01:18 UTC-0300 Itamar Junior <itamarlins@gmail.com>
+  * menu_c.c
+    * HWG__ADDMENUITEM(): fixed a menu handle leak when InsertMenu()
+      failed to insert a freshly-created submenu (the handle was left
+      orphaned); the submenu is now destroyed in that case. Also fixed
+      the return value on the non-submenu branch, which always
+      returned 0 regardless of InsertMenu()'s actual result.
+    * HWG__CREATESUBMENU(): fixed a menu handle leak when
+      SetMenuItemInfo() failed to attach the freshly-created submenu.
+    * HWG__INSERTBITMAPMENU(): fixed use of uninitialized memory - the
+      MENUITEMINFO had MIIM_ID and MIIM_DATA set in fMask without wID
+      and dwItemData being filled in, causing SetMenuItemInfo() to
+      write stack garbage into the menu item's command ID and item
+      data. fMask reduced to MIIM_BITMAP (the only field this function
+      is actually meant to change), and the struct is now zeroed
+      before use.
+    * HWG_SETMENUBACKCOLOR(): fixed a bug introduced by an earlier GDI
+      leak fix - the brush just assigned via SetMenuInfo() was deleted
+      right afterward, leaving the menu with an invalid brush handle
+      for repainting (MENUINFO.hbrBack is not copied by Windows). The
+      PREVIOUS brush is now retrieved via GetMenuInfo() and freed only
+      after the new one is installed, removing the leak without
+      invalidating the handle in use.
+    * HWG_GETMENUCAPTION(): added a check on the return value of the
+      first GetMenuItemInfo() call before computing the buffer size,
+      instead of implicitly relying on the earlier memset().
+  * menu.prg
+    * Hwg_DefineMenuItem(): fixed a logical operator (.OR. -> .AND.)
+      in the lBitmap check, which triggered an attempt to load a
+      bitmap even when lBitmap was an empty string ("") rather than
+      Nil.
+
+2026-09-17 00:41 UTC-0300 Itamar Junior <itamarlins@gmail.com>
+   * source/win/wprint.c
+     Fixed 4 bugs related to resource leaks and missing error
+     handling:
+     * HWG_SETPRINTERMODE(): fixed a printer HANDLE leak that
+       occurred when the printer was opened internally via
+       OpenPrinter() and the subsequent DocumentProperties() call
+       failed while querying the DEVMODE size (nSize == 0).
+       ClosePrinter() is now called on that error path.
+     * HWG_SETDOCUMENTPROPERTIES(): fixed a memory leak
+       (hb_xgrab/hb_xfree) of the DEVMODE buffer when the initial
+       DocumentProperties() query call did not return IDOK. The
+       pointer is now freed and reset to NULL in that case,
+       avoiding a leak on every call where the printer driver
+       rejects the first query.
+     * HWG_PLAYENHMETAFILE(): the local RECT variable was left
+       uninitialized and could contain stack garbage when
+       WindowFromDC() returned NULL (e.g. a metafile/printer DC
+       passed by mistake instead of a window DC). rc is now
+       zero-initialized, and on GetClientRect() failure the
+       device's full area (via GetDeviceCaps()) is used as the
+       destination rectangle instead.
+     * HWG_CREATEENHMETAFILE(): fixed a division-by-zero in the
+       client-coordinate-to-.01mm conversion when
+       GetDeviceCaps(HORZRES/VERTRES) returned 0 (invalid DC).
+       Also added a check for GetDC() returning NULL.
+
+2026-09-17 00:26 UTC-0300 Itamar Junior <itamarlins@gmail.com>
+    * contrib/webview2: Multi-context architecture.
+      * Each WebView now has its own context (up to 16 per process).
+      * API change: create_webview_embedded() takes an extra "id" arg;
+        all functions receive the context pointer returned by it.
+      * Fixed ACCESS_VIOLATION crash caused by overwriting GWLP_USERDATA
+        (now uses SetPropA/GetPropA named properties instead).
+      * All 15 exports stable; sample validated with full feature set..
+      + Add file client.html
+      + Add file client_test.prg
+      - removed file webview_test.prg
+
+2026-09-15 21:45 UTC-0300  Itamar Junior <itamarlins@gmail.com>
+    * contrib/webview2: New module. Integration of Microsoft WebView2
+      (Edge Chromium engine) into Hwgui windows via the "webview" C/C++
+      library (https://github.com/webview/webview).
+      + New files:
+          contrib/webview2/webview_wrapper.c    - C++ wrapper exported as DLL
+          contrib/webview2/build.sh             - build script (MSYS2 CLANG64)
+          contrib/webview2/build.bat            - build script (CMD)
+          contrib/webview2/hbmk.hbc             - hbmk2 config for Harbour
+          contrib/webview2/WebView2Loader.dll   - Microsoft WebView2 SDK loader
+          contrib/webview2/webview_wrapper.dll
+          contrib/webview2/webview_test.prg     - sample of use
+      + Documentation (four languages):
+          doc/webview2_en.html      English
+          doc/webview2_es.html      Spanish
+          doc/webview2_ptbr.html    Portuguese (Brazil)
+          doc/webview2_ru.html      Russian
+      + Output DLL: bin/webview_wrapper.dll
+      + Exported functions:
+          create_webview_embedded( parent_title, title, w, h ) -> handle
+          navigate_webview( handle, url )
+          resize_webview( handle, w, h )
+          destroy_webview( handle )
+      + Requirements:
+          - WebView2Loader.dll (from WebView2 SDK) in the same folder
+            as the executable.
+          - WebView2 Runtime installed on Windows (one-time, Evergreen
+            Standalone Installer, x64).
+      + Built with Clang 22 (MSYS2 CLANG64 environment), static linking
+        of libc++/libunwind so it does not depend on MSYS2 DLLs at runtime.
+      + Example usage in Harbour/Hwgui:
+          pLib := hb_LibLoad( "webview_wrapper.dll" )
+          hWebView := hb_DynCall( { "create_webview_embedded", pLib, ... )
+      - Known limitation: single instance only (uses FindWindowA by title).
+      - Tested on Windows 10/11, x64.
 
 2026-09-13 20:35 UTC-0300 Junior Itamar <itamarlins@gmail.com>
   * Add support for fully static linking of librsvg (SVG) on
@@ -93,7 +200,6 @@
     command: hbmk2 hwgui.hbp svg.hbc
     Note: Use msys2 on Windows OS Clang.
         * pacman -S mingw-w64-clang-x86_64-librsvg
-        * pacman -S mingw-w64-clang-x86_64-gdk-pixbuf2
     This resource uses several libraries: 4 main libs + their
     transitive dependencies. To find all the libraries needed for
     distributing your app:
