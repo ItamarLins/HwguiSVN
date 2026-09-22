@@ -57,7 +57,7 @@ jobs:
         git clone https://github.com/harbour/core.git "$HOME/hb32" --depth 1
         cd "$HOME/hb32"
         # HB_INSTALL_PREFIX must be an MSYS path (/c/...), not C:/...
-        win-make.exe install HB_INSTALL_PREFIX=/c/temp/harbour
+        ./win-make.exe install HB_INSTALL_PREFIX=/c/temp/harbour
 
     - name: Verify Harbour
       shell: msys2 {0}
