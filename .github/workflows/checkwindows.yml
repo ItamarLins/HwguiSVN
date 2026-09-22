@@ -21,13 +21,31 @@ jobs:
           make
           mingw-w64-x86_64-gcc
 
-    - name: Baixar Harbour pre-compilado
+    # 1. VERIFICAÇÃO DE CACHE: Se a pasta já foi guardada em um teste anterior, recupera ela intacta
+    - name: Verificar Cache do Harbour Pre-compilado
+      id: cache-harbour-win
+      uses: actions/cache@v4
+      with:
+        path: C:\temp\harbour
+        key: ${{ runner.os }}-harbour-mingw64-v1
+
+    # 2. DOWNLOAD CONDICIONAL: Só executa se o passo de cache acima der um "cache-hit" falso
+    - name: Baixar Harbour pre-compilado (Apenas se nao existir no cache)
+      if: steps.cache-harbour-win.outputs.cache-hit != 'true'
       shell: pwsh
       run: |
-        # Troque a URL pela do seu Release.
         $url = "https://github.com/ItamarLins/hwguiSVN/releases/download/harbour-mingw64-v1/harbour-mingw64.zip"
-        Invoke-WebRequest -Uri $url -OutFile harbour.zip
-        Expand-Archive -Path harbour.zip -DestinationPath C:\temp -Force
+        $zipPath = "$env:TEMP\harbour.zip"
+
+        # Garante que o diretório base C:\temp existe antes da extração
+        if (!(Test-Path "C:\temp")) { New-Item -ItemType Directory -Path "C:\temp" | Out-Null }
+
+        Write-Host "Baixando o Harbour de: $url"
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
+
+        Write-Host "Extraindo os binarios..."
+        Expand-Archive -Path $zipPath -DestinationPath C:\temp -Force
+        Remove-Item -Path $zipPath -Force
 
     - name: Verificar Harbour
       shell: msys2 {0}
@@ -41,10 +59,10 @@ jobs:
       env:
         HB_BUILD_STRIP: all
         HB_COMPILER: mingw64
-        HB_INSTALL_PREFIX: /c/temp/harbour
+        HB_INSTALL_PREFIX: 'C:\temp\harbour'
       run: |
         set -e
-        export PATH="/c/temp/harbour/bin:$PATH"
+        export PATH="/c/temp/harbour/bin:/mingw64/bin:$PATH"
         cd "$GITHUB_WORKSPACE"
         hbmk2 hwgui.hbp -w3
         hbmk2 hbxml.hbp -w3
