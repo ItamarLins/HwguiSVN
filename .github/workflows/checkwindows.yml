@@ -2,16 +2,40 @@ name: checkwindows
 
 on:
   push:
+  #schedule:
+  # - cron: "15 5 1 * *"
   workflow_dispatch:
+    inputs:
+      name:
+        description: 'hwgui test'
+        default: 'checkonly'
+        required: true
 
 jobs:
+
   Build:
+    # This runs on Windows Server. MSYS2 provides bash + MinGW-w64
+    # but the compiler still produces native Windows PE32+ binaries.
     runs-on: windows-latest
+
     steps:
 
-    - uses: actions/checkout@v4
+    # Checks out ItamarLins/HwguiSVN automatically.
+    - name: Checkout HwguiSVN
+      uses: actions/checkout@v4
 
-    - name: Configurar MSYS2 / MinGW 64-bits
+    # Cache the whole Harbour 3.2 install. First run compiles it
+    # (~3-5 min) and stores under this key. Next runs restore in
+    # seconds and skip the compile step entirely. Bump v1 -> v2
+    # if you ever want to force a fresh Harbour build.
+    - name: Cache Harbour 3.2 (64-bit)
+      id: cache-hb
+      uses: actions/cache@v4
+      with:
+        path: C:\temp\harbour
+        key: harbour-mingw64-v1
+
+    - name: Setup MSYS2 / MinGW 64-bit
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
@@ -21,55 +45,58 @@ jobs:
           make
           mingw-w64-x86_64-gcc
 
-    # 1. VERIFICAÇÃO DE CACHE: Se a pasta já foi guardada em um teste anterior, recupera ela intacta
-    - name: Verificar Cache do Harbour Pre-compilado
-      id: cache-harbour-win
-      uses: actions/cache@v4
-      with:
-        path: C:\temp\harbour
-        key: ${{ runner.os }}-harbour-mingw64-v1
-
-    # 2. DOWNLOAD CONDICIONAL: Só executa se o passo de cache acima der um "cache-hit" falso
-    - name: Baixar Harbour pre-compilado (Apenas se nao existir no cache)
-      if: steps.cache-harbour-win.outputs.cache-hit != 'true'
-      shell: pwsh
+    # Only runs when the cache misses. "hb32" is just the directory
+    # name for the Harbour 3.2 source tree; the build itself targets
+    # 64-bit Windows because MINGW64 is the active toolchain.
+    - name: Build Harbour 3.2 (cache miss only)
+      if: steps.cache-hb.outputs.cache-hit != 'true'
+      shell: msys2 {0}
       run: |
-        $url = "https://github.com/ItamarLins/HwguiSVN/releases/download/harbour-mingw64-v1/harbour-mingw64.zip"
-        $zipPath = "$env:TEMP\harbour.zip"
+        set -e
+        rm -rf "$HOME/hb32"
+        git clone https://github.com/harbour/core.git "$HOME/hb32" --depth 1
+        cd "$HOME/hb32"
+        # HB_INSTALL_PREFIX must be an MSYS path (/c/...), not C:/...
+        win-make.exe install HB_INSTALL_PREFIX=/c/temp/harbour
 
-        # Garante que o diretório base C:\temp existe antes da extração
-        if (!(Test-Path "C:\temp")) { New-Item -ItemType Directory -Path "C:\temp" | Out-Null }
-
-        Write-Host "Baixando o Harbour de: $url"
-        Invoke-WebRequest -Uri $url -OutFile $zipPath
-
-        Write-Host "Extraindo os binarios..."
-        Expand-Archive -Path $zipPath -DestinationPath C:\temp -Force
-        Remove-Item -Path $zipPath -Force
-
-    - name: Verificar Harbour
+    - name: Verify Harbour
       shell: msys2 {0}
       run: |
         ls -la /c/temp/harbour/bin/
         /c/temp/harbour/bin/harbour.exe --version
+        # Expected: PE32+ executable (console) x86-64, for MS Windows
         file /c/temp/harbour/bin/harbour.exe
 
-    - name: Build 64 bits - HWGUI
+    # Build the HWGUI libraries. hbmk2 runs from the repo root
+    # (GITHUB_WORKSPACE is set by Actions).
+    - name: Build HWGUI
       shell: msys2 {0}
       env:
         HB_BUILD_STRIP: all
         HB_COMPILER: mingw64
-        HB_INSTALL_PREFIX: 'C:\temp\harbour'
+        HB_INSTALL_PREFIX: /c/temp/harbour
       run: |
         set -e
-        export PATH="/c/temp/harbour/bin:/mingw64/bin:$PATH"
-        cd "$GITHUB_WORKSPACE"
+        export PATH="/c/temp/harbour/bin:$PATH"
         hbmk2 hwgui.hbp -w3
         hbmk2 hbxml.hbp -w3
         hbmk2 procmisc.hbp -w3
         hbmk2 hwgdebug.hbp -w3
 
-    - name: Upload artefatos
+    # Compile the samples to prove the libraries are usable.
+    - name: Build samples
+      shell: msys2 {0}
+      env:
+        HB_BUILD_STRIP: all
+        HB_COMPILER: mingw64
+        HB_INSTALL_PREFIX: /c/temp/harbour
+      run: |
+        set -e
+        export PATH="/c/temp/harbour/bin:$PATH"
+        cd samples
+        hbmk2 allhbp.hbp
+
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: hwgui-mingw64
@@ -77,3 +104,4 @@ jobs:
           ${{ github.workspace }}/lib/*.a
           ${{ github.workspace }}/lib/*.lib
           ${{ github.workspace }}/include/*.ch
+        if-no-files-found: warn
