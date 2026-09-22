@@ -3,53 +3,59 @@ name: checkwindows
 on:
   push:
   workflow_dispatch:
-    inputs:
-      name:
-        description: 'HwGui Windows'
-        default: 'checkonly'
-        required: true
 
 jobs:
   Build:
     runs-on: windows-latest
     steps:
 
-    # 1. Puxa os arquivos da sua HwguiSVN direto para o workspace da máquina virtual
-    - name: Checkout do seu repositorio
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    # 2. Configura e ativa o ambiente MinGW de 32 bits que já vem pré-instalado no GitHub
-    - name: Configurar ambiente MSYS2 / MinGW 32-bits
+    - name: Configurar MSYS2 / MinGW 64-bits
       uses: msys2/setup-msys2@v2
       with:
-        msystem: MINGW32
-        update: false # Falso para usar o compilador que já está na imagem sem perder tempo atualizando
-        install: git
+        msystem: MINGW64
+        update: true
+        install: >-
+          git
+          make
+          mingw-w64-x86_64-gcc
 
-    # 3. Baixa e Compila o Harbour Core em 32-bits dentro do ambiente isolado do Windows
-    - name: Baixar e Compilar Harbour Core (32-bits)
+    - name: Baixar Harbour pre-compilado
+      shell: pwsh
+      run: |
+        # Troque a URL pela do seu Release.
+        $url = "https://github.com/ItamarLins/hwguiSVN/releases/download/harbour-mingw64-v1/harbour-mingw64.zip"
+        Invoke-WebRequest -Uri $url -OutFile harbour.zip
+        Expand-Archive -Path harbour.zip -DestinationPath C:\temp -Force
+
+    - name: Verificar Harbour
       shell: msys2 {0}
       run: |
-        mkdir dev
-        git clone https://github.com/harbour/core.git /dev/hb32 --depth 1
-        cd /dev/hb32
-        # win-make gera os binários nativos do Harbour para Windows
-         win-make.exe install HB_INSTALL_PREFIX=C:/temp/harbour
+        ls -la /c/temp/harbour/bin/
+        /c/temp/harbour/bin/harbour.exe --version
+        file /c/temp/harbour/bin/harbour.exe
 
-    # 4. Compila as bibliotecas da sua HWGUI
-    - name: Build 32 bits - HWGUI
+    - name: Build 64 bits - HWGUI
       shell: msys2 {0}
       env:
-         HB_BUILD_STRIP: all
-         HB_COMPILER: mingw
-         HB_INSTALL_PREFIX: C:/temp/harbour
+        HB_BUILD_STRIP: all
+        HB_COMPILER: mingw64
+        HB_INSTALL_PREFIX: /c/temp/harbour
       run: |
-        # Adiciona o Harbour recém-criado no PATH de execução do terminal
+        set -e
         export PATH="/c/temp/harbour/bin:$PATH"
-
-        # Executa a compilação dos seus arquivos .hbp na raiz do repositório
+        cd "$GITHUB_WORKSPACE"
         hbmk2 hwgui.hbp -w3
         hbmk2 hbxml.hbp -w3
         hbmk2 procmisc.hbp -w3
         hbmk2 hwgdebug.hbp -w3
 
+    - name: Upload artefatos
+      uses: actions/upload-artifact@v4
+      with:
+        name: hwgui-mingw64
+        path: |
+          ${{ github.workspace }}/lib/*.a
+          ${{ github.workspace }}/lib/*.lib
+          ${{ github.workspace }}/include/*.ch
