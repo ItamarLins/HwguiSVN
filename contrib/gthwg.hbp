@@ -1,0 +1,40 @@
+#
+# $Id: gthwg.hbp 3894 2026-08-26 20:04:32Z itamarlins $
+#
+
+
+# Special parameters for LINUX/GTK and MacOS/GTK
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+# MacOS
+{darwin}-static
+{darwin}-d__LINUX__
+{darwin}-d__GTK__
+{darwin}-d___MACOSX___
+
+-inc
+
+-hblib
+-o../lib/gthwg
+
+-n -q0 -w3 -es2
+
+-i../include
+
+"{unix}-cflag=`pkg-config --cflags gtk+-2.0`"
+
+-cflag=-DHWG_USE_POINTER_ITEM
+
+# Uncomment these two lines to build HwGUI in Unicode mode
+-prgflag=-DUNICODE
+-cflag=-DUNICODE
+
+gthwg/gt_hwg.prg
+{unix}gthwg/gt_hwgui_l.c
+{darwin}gthwg/gt_hwgui_l.c
+{win}gthwg/gt_hwgui_w.c
+
+# ====================== EOF of gthwg.hbp ========================

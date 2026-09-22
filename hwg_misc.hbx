@@ -1,0 +1,44 @@
+/* --------------------------------------------------------------------
+ * NOTE: You can add manual override which functions to include or
+ *       exclude from automatically generated EXTERNAL/DYNAMIC list.
+ *          Syntax: // HB_FUNC_INCLUDE <func>
+ *                  // HB_FUNC_EXCLUDE <func>
+ */
+
+/* --------------------------------------------------------------------
+ * WARNING: Automatically generated code below. DO NOT EDIT! (except casing)
+ *          Regenerate using hbmk2 '-hbx=' option.
+ */
+
+#ifndef __HBEXTERN_CH__HWG_MISC__
+#define __HBEXTERN_CH__HWG_MISC__
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HWG_MISC__ANNOUNCE )
+   ANNOUNCE __HBEXTERN__HWG_MISC__
+#endif
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HWG_MISC__REQUEST )
+   #command DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+DYNAMIC ADDMETHOD
+DYNAMIC ADDPROPERTY
+DYNAMIC ARRAY2STRING
+DYNAMIC BF_DECRYPT
+DYNAMIC BF_ENCRYPT
+DYNAMIC CFILEEXT
+DYNAMIC FORMATCODE
+DYNAMIC HWG_SETALL
+DYNAMIC INTLTRANSLATE
+DYNAMIC NEWBASE
+DYNAMIC REMOVEPROPERTY
+DYNAMIC RICHTEXT
+DYNAMIC SAYDOLLAR
+DYNAMIC SAYRUPIAH
+DYNAMIC STRING2ARRAY
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HWG_MISC__REQUEST )
+   #uncommand DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+#endif

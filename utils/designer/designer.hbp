@@ -1,0 +1,30 @@
+#
+# $Id: designer.hbp 3780 2025-06-03 13:33:54Z df7be $
+#
+# auto included hbmk.hbm
+
+-stop={!win}
+
+-n -w1
+
+
+
+-L../../
+
+
+-o./designer
+
+designer.prg
+hctrl.prg
+hformgen.prg
+inspect.prg
+editor.prg
+
+{win}designer.rc
+
+# Need for port to LINUX:
+# (designer:19023): Gtk-CRITICAL **: 15:20:56.617: IA__gtk_window_resize: assertion 'GTK_IS_WINDOW (window)' failed
+# Speicherzugriffsfehler (Speicherabzug geschrieben)
+
+
+# ============== EOF of designer.hbp ====================

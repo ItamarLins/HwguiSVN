@@ -1,0 +1,10 @@
+#
+# $Id: helpstatic.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+-ohelpstatic
+
+helpstatic.prg
+
+# ==================== EOF of helpstatic.hbp ===============

@@ -1,0 +1,14 @@
+#
+# $Id: testchild.hbp 3599 2025-04-14 19:22:50Z josequintas $
+#
+# auto included hbmk.hbm
+
+{linux}-stop="Windows only"
+{darwin}-stop="Windows only"
+{unix}-stop="Windows only"
+
+-otestchild
+
+testchild.prg
+
+# ==================== EOF of testchild.hbp ===============

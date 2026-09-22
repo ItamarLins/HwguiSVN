@@ -1,0 +1,20 @@
+#
+# $Id: hwgdebug.hbp 3579 2025-04-11 23:18:16Z josequintas $
+#
+
+-n -w2
+
+{linux}-lm
+{linux}-static
+{linux}-d__LINUX__
+{linux}-d__GTK__
+
+-L../..
+hwgui.hbc
+
+-o../../bin/hwgdebug
+
+hwgdebug.prg
+
+
+# ================= EOF of hwgdebug.hbp ====================

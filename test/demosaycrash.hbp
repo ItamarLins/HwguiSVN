@@ -1,0 +1,9 @@
+#
+# $Id: demosaycrash.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-odemosaycrash
+
+demosaycrash.prg
+
+# ==================== EOF of demosaycrash.hbp ===============

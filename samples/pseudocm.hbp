@@ -1,0 +1,10 @@
+#
+# $Id: pseudocm.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+-opseudocm
+
+pseudocm.prg
+
+# ==================== EOF of pseudocm.hbp ===============

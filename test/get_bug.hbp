@@ -1,0 +1,11 @@
+#
+# $Id: get_bug.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-w0
+
+-oget_bug
+
+get_bug.prg
+
+# ==================== EOF of get_bug.hbp ===============

@@ -1,0 +1,10 @@
+#
+# $Id: template.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-otemplate
+
+template.prg
+
+# ===================== EOF of template.hbp ====================
+

@@ -1,0 +1,11 @@
+#
+# $Id: hwbuild.hbp 3605 2025-04-15 11:46:52Z alkresin $
+#
+
+../../hwgui.hbc
+
+-n
+-w3
+-ohwb
+
+hwbc.prg

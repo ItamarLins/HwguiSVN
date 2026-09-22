@@ -1,0 +1,154 @@
+
+ GTK3.txt
+
+ $Id: GTK3.txt 3704 2025-05-01 15:46:13Z josequintas $
+
+ Special instructions for migration of HWGUI from GTK2 to GTK3
+
+0.) Preface
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! The migration of HWGUI to GTK3 is under construction !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+It is very hard to migrate a GTK2 application to GTK3, because
+lots of old functions are removed.
+In most cases these are functions for drawing.
+The must be substituted by usage of the cairo graphic function library.
+
+The design of dialog elements differ very significant.
+For example, the size of buttons need more space.
+
+Scripts and makefiles to build HWGUI and programs
+are ready to use.
+
+So all sample programs must be tested step by step.
+
+At this time it is recommended, to use GTK2, if your
+OS supports it !
+
+
+1.) Additional instructions for developers of HWGUI applications
+
+The migration must be done carefully "Step by Step".
+So be patient, if all sample programs for GTK2 are running on
+GTK3 with no trouble.
+
+2.1) Compiling the HWGUI application
+
+Look into a sample hbp file in directoy samples to
+modify the hbc files:
+
+{win}../hwgui.hbc
+# GTK2
+{linux}../hwgui.hbc
+# GTK3: Deactivate previous line
+# and activate following line
+#{linux}../hwguiGTK3.hbc
+
+so modify to:
+# {linux}../hwgui.hbc
+ ...
+{linux}../hwguiGTK3.hbc
+
+2.2) Compiler switches
+
+Use these compiler switches to make code for
+GTK2 and GTK3:
+
+C files:
+
+
+#if GTK_MAJOR_VERSION -0 < 3
+   /* GTK2 */
+   ...
+#else
+   /* GTK3 */
+   ...
+#endif
+
+or
+
+
+#if ! ( GTK_MAJOR_VERSION -0 < 3 )
+   /* GTK3 */
+   ...
+#endif
+
+PRG files:
+
+#ifdef ___GTK3___
+   * GTK3
+   ...
+#else
+   * GTK2
+   ...
+#endif
+
+or
+
+#ifdef ___GTK3___
+   * GTK2
+   ...
+#endif
+
+
+2.) Run the application with GTK3
+
+Ignore this message at start displayed in the terminal window:
+Gtk-CRITICAL : New application windows must be added after the GApplication::startup signal has been emitted.
+
+Other messages, but have no effect on function:
+gtk_container_propagate_draw: assertion '_gtk_widget_get_parent (child) == GTK_WIDGET (container)' failed
+
+
+3.) TO-DO list and list of problems to solve
+
+- INIT DIALOG crashes with access violation if background image is set.
+  ==> How to set a background image with CAIRO ?
+- How to display an icon (see test/icon.c)
+- Check all samples for GTK3, only those running on GTK2.
+
+
+4.) To be modified in the appliation by the programs:
+
+- Design troubles:
+  Buttons need more space, see sample program demofunc.prg.
+  It seems, that FONT and SIZE options are ignored and the
+  size is rendered by CAPTION string.
+  Also the underline character "_" is omitted.
+
+- Lot's of messages displayed in the terminal running the program, for example:
+  Gtk-CRITICAL **: 08:01:20.521: gtk_container_propagate_draw: assertion '_gtk_widget_get_parent (child) == GTK_WIDGET (container)' failed
+
+- BROWSE: The Move() function has no effect to increase the browse window with increasing
+  the main window manually (dbview.prg).
+
+- The task bar overlappes the menu,so overalpped menu item are not reachable (dbview.prg).
+
+- The menu needs about 25 pixels, so start for example the BROWSE at y = 25 + 1.
+  Also other y positions of following dialog elements must increase the vertical position
+  for 25 pixels (dbview.prg).
+
+
+5.) Miscanellous
+
+- Quick change between GTK2 and GTK3 for developing and test (example session):
+   ./clean.sh
+   ./make_gtk.sh -hb   ==> GTK2
+   cd samples
+   ==> edit dbview.hbp for GTK2
+   hbmk2 dbview.hbp
+   ./dbview
+   cd ..
+   ./clean.sh
+   ./make_gtk3.sh  ==> GTK3
+   cd samples
+   ==> edit dbview.hbp for GTK3
+   hbmk2 dbview.hbp
+   ./dbview
+   ...
+
+============================== EOF of GTK3.txt =================================
+
+

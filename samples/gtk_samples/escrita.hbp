@@ -1,0 +1,18 @@
+#
+# $Id: escrita.hbp 3623 2025-04-21 04:07:27Z josequintas $
+#
+# auto included hbmk.hbm
+#
+
+-stop={win}
+
+../../hwgui.hbc
+
+-n
+-d__LINUX__ -d__GTK__
+
+-oescrita
+
+escrita.prg
+
+# ==================== EOF of escrita.hbp ===============

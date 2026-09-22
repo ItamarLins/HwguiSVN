@@ -1,0 +1,43 @@
+/* --------------------------------------------------------------------
+ * NOTE: You can add manual override which functions to include or
+ *       exclude from automatically generated EXTERNAL/DYNAMIC list.
+ *          Syntax: // HB_FUNC_INCLUDE <func>
+ *                  // HB_FUNC_EXCLUDE <func>
+ */
+
+/* --------------------------------------------------------------------
+ * WARNING: Automatically generated code below. DO NOT EDIT! (except casing)
+ *          Regenerate using hbmk2 '-hbx=' option.
+ */
+
+#ifndef __HBEXTERN_CH__HWGDEBUG__
+#define __HBEXTERN_CH__HWGDEBUG__
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HWGDEBUG__ANNOUNCE )
+   ANNOUNCE __HBEXTERN__HWGDEBUG__
+#endif
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HWGDEBUG__REQUEST )
+   #command DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+DYNAMIC HBDEBUGGER
+DYNAMIC HWG_DBG_ALERT
+DYNAMIC HWG_DBG_ANSWER
+DYNAMIC HWG_DBG_INPUT
+DYNAMIC HWG_DBG_MSG
+DYNAMIC HWG_DBG_NEW
+DYNAMIC HWG_DBG_QUIT
+DYNAMIC HWG_DBG_SETACTIVELINE
+DYNAMIC HWG_DBG_WAIT
+DYNAMIC __DBG
+DYNAMIC __DBGALTDENTRY
+DYNAMIC __DBGENTRY
+DYNAMIC __DBGPROCESSRUN
+DYNAMIC __DBGVALTOSTR
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HWGDEBUG__REQUEST )
+   #uncommand DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+#endif

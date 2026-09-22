@@ -1,0 +1,13 @@
+#
+# $Id: testbmpcr.hbp 3583 2025-04-13 10:57:36Z josequintas $
+#
+# auto included hbmk.hbm
+
+# -mt
+
+-otestbmpcr
+-w1
+testbmpcr.prg
+
+# ===================== EOF of testbmpcr.hbp ====================
+

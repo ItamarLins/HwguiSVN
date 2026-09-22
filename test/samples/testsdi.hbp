@@ -1,0 +1,10 @@
+#
+# $Id: testsdi.hbp 3594 2025-04-14 19:20:23Z josequintas $
+#
+# auto included hbmk.hbm
+
+-otestsdi
+
+testsdi.prg
+
+# ==================== EOF of testsdi.hbp ===============
