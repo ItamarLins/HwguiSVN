@@ -1,10 +1,7 @@
-
 name: checkubuntu
 
 on:
   push:
-  #schedule:
-  # - cron: "15 5 1 * *"
   workflow_dispatch:
     inputs:
       name:
@@ -13,30 +10,51 @@ on:
         required: true
 
 jobs:
-
   Build:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Build
+    # 1. Usa a action nativa para trazer as mudanças do SEU código sem clonar manualmente
+    - name: Checkout do seu repositorio
+      uses: actions/checkout@v4
+
+    # 2. Instala dependências visuais (isso é rápido e puxa atualizações se houver)
+    - name: Instalar dependencias do sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-4-dev libgd-dev libx11-dev --fix-missing
+
+    # 3. VERIFICA O CACHE: Se o Harbour já foi compilado antes, recupera a pasta pronta
+    - name: Verificar Cache do Harbour
+      id: cache-harbour
+      uses: actions/cache@v4
+      with:
+        path: /tmp/harbour_built
+        key: ${{ runner.os }}-harbour-core
+
+    # 4. COMPILAÇÃO CONDICIONAL: Só baixa e compila o Harbour se NÃO houver cache salvo
+    - name: Baixar e Compilar Harbour Core (Apenas se não houver cache)
+      if: steps:cache-harbour.outputs.cache-hit != 'true'
+      run: |
+        git clone https://github.com/harbour/core /tmp/harbour --depth 1
+        cd /tmp/harbour
+        # Compila especificando um diretório de instalação customizado dentro do cache
+        make -j$(nproc) HB_INSTALL_PREFIX=/tmp/harbour_built install
+
+    # 5. Adiciona o Harbour (vindo do cache ou gerado agora) no PATH global do Linux
+    - name: Configurar PATH do Harbour
+      run: |
+        echo "/tmp/harbour_built/bin" >> $GITHUB_PATH
+
+    # 6. Compila APENAS os seus fontes da HWGUI que mudaram
+    - name: Compilar HwguiSVN
       env:
          HB_BUILD_STRIP: all
          HB_COMPILER: gcc
       run: |
-         sudo apt-get update
-         sudo apt-get upgrade
-         sudo apt-get install gcc
-         sudo apt-get install make
-         sudo apt-get install build-essential libgtk-4-dev --fix-missing
-         sudo apt-get install git
-         git clone https://github.com/harbour/core /tmp/harbour --depth 1
-         git clone https://github.com/ItamarLins/hwguiSVN /tmp/hwgui --depth 1
-         cd /tmp/harbour
-         sudo make -j$(nproc) install
-         cd /tmp/hwgui
-         hbmk2 hwgui.hbp -workdir=/tmp -w3 -es2
-         hbmk2 hbxml.hbp -workdir=/tmp -w3 -es2
-         hbmk2 procmisc.hbp -workdir=/tmp -w3 -es2
-         hbmk2 hwgdebug.hbp -workdir=/tmp -w3 -es2
-         cd /tmp/hwgui/samples
-         hbmk2 allhbp.hbp -workdir=/tmp -w3 -es2
+        # Agora o hbmk2 já está no path nativo do sistema
+        hbmk2 hwgui.hbp -workdir=/tmp -w3 -es2
+        hbmk2 hbxml.hbp -workdir=/tmp -w3 -es2
+        hbmk2 procmisc.hbp -workdir=/tmp -w3 -es2
+        hbmk2 hwgdebug.hbp -workdir=/tmp -w3 -es2
+
