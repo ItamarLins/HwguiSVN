@@ -34,7 +34,7 @@ jobs:
       if: steps.cache-harbour-win.outputs.cache-hit != 'true'
       shell: pwsh
       run: |
-        $url = "https://github.com/ItamarLins/hwguiSVN/releases/download/harbour-mingw64-v1/harbour-mingw64.zip"
+        $url = "https://github.com/ItamarLins/HwguiSVN/releases/download/harbour-mingw64-v1/harbour-mingw64.zip"
         $zipPath = "$env:TEMP\harbour.zip"
 
         # Garante que o diretório base C:\temp existe antes da extração
