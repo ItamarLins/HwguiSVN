@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'hwgui test'
+        description: 'HwGui Windows'
         default: 'checkonly'
         required: true
 
