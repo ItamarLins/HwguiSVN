@@ -27,10 +27,10 @@ jobs:
          sudo apt-get upgrade
          sudo apt-get install gcc
          sudo apt-get install make
-         sudo apt-get install build-essential libgtk2.0-dev --fix-missing
+         sudo apt-get install build-essential libgtk-4-dev --fix-missing
          sudo apt-get install git
          git clone https://github.com/harbour/core /tmp/harbour --depth 1
-         git clone https://github.com/JoseQuintas/hwgui_fork /tmp/hwgui --depth 1
+         git clone https://github.com/ItamarLins/hwguiSVN /tmp/hwgui --depth 1
          cd /tmp/harbour
          sudo make install
          cd /tmp/hwgui

@@ -18,15 +18,6 @@ jobs:
     runs-on: windows-latest
     steps:
 
-    - name: load mingw
-      uses: dawidd6/action-download-artifact@v9
-      with:
-         workflow: buildall.yml
-         workflow_conclusion: success
-         name: mingw_1502
-         path: c:\temp
-         repo: JoseQuintas/sefazclass
-
     - name: load harbour32
       uses: dawidd6/action-download-artifact@v9
       with:
@@ -49,7 +40,7 @@ jobs:
     - name: Load Source Code
       run: |
          c:
-         git clone https://github.com/JoseQuintas/hwgui_fork /temp/hwgui --depth 1
+         git clone https://github.com/ItamarLins/hwguiSVN /temp/hwgui --depth 1
 
     - name: Build 32 bits
       env:
