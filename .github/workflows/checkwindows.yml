@@ -1,10 +1,7 @@
-
 name: checkwindows
 
 on:
   push:
-  #schedule:
-  # - cron: "15 5 1 * *"
   workflow_dispatch:
     inputs:
       name:
@@ -13,47 +10,45 @@ on:
         required: true
 
 jobs:
-
   Build:
     runs-on: windows-latest
     steps:
 
-    - name: load harbour32
-      uses: dawidd6/action-download-artifact@v9
+    # 1. Puxa os arquivos da sua HwguiSVN direto para o workspace da máquina virtual
+    - name: Checkout do seu repositorio
+      uses: actions/checkout@v4
+
+    # 2. Configura e ativa o ambiente MinGW de 32 bits que já vem pré-instalado no GitHub
+    - name: Configurar ambiente MSYS2 / MinGW 32-bits
+      uses: msys2/setup-msys2@v2
       with:
-         workflow: buildall.yml
-         workflow_conclusion: success
-         name: hb32_mingw_1502
-         path: c:\temp
-         repo: JoseQuintas/sefazclass
+        msystem: MINGW32
+        update: false # Falso para usar o compilador que já está na imagem sem perder tempo atualizando
+        install: git
 
-    - name: Unzip
-      env:
-         PATH: c:\program files\7-zip
+    # 3. Baixa e Compila o Harbour Core em 32-bits dentro do ambiente isolado do Windows
+    - name: Baixar e Compilar Harbour Core (32-bits)
+      shell: msys2 {0}
       run: |
-         c:
-         md c:\temp\harbour
-         md c:\temp\harbour\comp
-         7z x -y c:\temp\mingw_1502.7z -oc:\temp\comp
-         7z x -y c:\temp\hb32_mingw_1502.7z -oc:\temp\harbour
+        git clone https://github.com /tmp/harbour --depth 1
+        cd /tmp/harbour
+        # win-make gera os binários nativos do Harbour para Windows
+        win-make install HB_INSTALL_PREFIX=C:/temp/harbour
 
-    - name: Load Source Code
-      run: |
-         c:
-         git clone https://github.com/ItamarLins/hwguiSVN /temp/hwgui --depth 1
-
-    - name: Build 32 bits
+    # 4. Compila as bibliotecas da sua HWGUI
+    - name: Build 32 bits - HWGUI
+      shell: msys2 {0}
       env:
          HB_BUILD_STRIP: all
          HB_COMPILER: mingw
-         HB_INSTALL_PREFIX: c:\temp\harbour
-         PATH: c:\temp\comp\mingw32\bin;c:\temp\harbour\bin
+         HB_INSTALL_PREFIX: C:/temp/harbour
       run: |
-         c:
-         cd c:\temp\hwgui
-         hbmk2 hwgui.hbp -w3
-         hbmk2 hbxml.hbp -w3
-         hbmk2 procmisc.hbp -w3
-         hbmk2 hwgdebug.hbp -w3
-         cd c:\temp\hwgui\samples
-         hbmk2 allhbp.hbp
+        # Adiciona o Harbour recém-criado no PATH de execução do terminal
+        export PATH="/c/temp/harbour/bin:$PATH"
+
+        # Executa a compilação dos seus arquivos .hbp na raiz do repositório
+        hbmk2 hwgui.hbp -w3
+        hbmk2 hbxml.hbp -w3
+        hbmk2 procmisc.hbp -w3
+        hbmk2 hwgdebug.hbp -w3
+
