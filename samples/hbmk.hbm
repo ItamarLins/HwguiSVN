@@ -15,10 +15,12 @@
 -n -w3 -es0
 -gui
 # -strip
+{win}-lucrt
 {win}-lgdiplus
 
 # Special parameters for LINUX/GTK and MacOS/GTK
 {linux}-lm
+{linux}-lz
 {linux}-static
 {linux}-d__LINUX__
 {linux}-d__GTK__
