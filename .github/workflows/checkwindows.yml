@@ -30,7 +30,7 @@ jobs:
     - name: Baixar e Compilar Harbour Core (32-bits)
       shell: msys2 {0}
       run: |
-        git clone https://github.com /tmp/harbour --depth 1
+        git clone https://github.com/harbour/core.git /tmp/harbour --depth 1
         cd /tmp/harbour
         # win-make gera os binários nativos do Harbour para Windows
         win-make install HB_INSTALL_PREFIX=C:/temp/harbour
