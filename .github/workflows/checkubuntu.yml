@@ -32,7 +32,7 @@ jobs:
          git clone https://github.com/harbour/core /tmp/harbour --depth 1
          git clone https://github.com/ItamarLins/hwguiSVN /tmp/hwgui --depth 1
          cd /tmp/harbour
-         sudo make install
+         sudo make -j$(nproc) install
          cd /tmp/hwgui
          hbmk2 hwgui.hbp -workdir=/tmp -w3 -es2
          hbmk2 hbxml.hbp -workdir=/tmp -w3 -es2
