@@ -33,7 +33,7 @@ jobs:
         git clone https://github.com/harbour/core.git /tmp/harbour --depth 1
         cd /tmp/harbour
         # win-make gera os binários nativos do Harbour para Windows
-         mingw32-make -j %NUMBER_OF_PROCESSORS% install HB_INSTALL_PREFIX=C:/temp/harbour
+         win-make.exe -j %NUMBER_OF_PROCESSORS% install HB_INSTALL_PREFIX=C:/temp/harbour
 
     # 4. Compila as bibliotecas da sua HWGUI
     - name: Build 32 bits - HWGUI
