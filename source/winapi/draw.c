@@ -69,16 +69,13 @@
  * MinGW-w64 headers are inconsistent about declaring the
  * GRADIENTFILL typedef. Some versions ship it in msimg32.h,
  * others do not. Define it locally when the compiler has not
- * seen it, so that the GetProcAddress dance below still works.
+ * seen it, so the declaration used by HB_FUN_HWG_DRAWGRADIENT
+ * still resolves.
  */
 #ifndef GRADIENTFILL
 typedef BOOL ( WINAPI * GRADIENTFILL )( HDC, PTRIVERTEX, ULONG,
                                         PVOID, ULONG, ULONG );
 #endif
-
-/* Runtime pointer to the MSIMG32!GradientFill function, resolved
- lazily on the first call to HB_FUN_HWG_DR*AWGRADIENT. */
-static GRADIENTFILL FuncGradientFill = NULL;
 
 /* REMOVED: Borland C++ 5.5 obsolete support
  * #if defined( __BORLANDC__ ) && __BORLANDC__ == 0x0550
