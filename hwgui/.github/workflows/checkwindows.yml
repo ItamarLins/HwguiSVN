@@ -1,0 +1,68 @@
+
+name: checkwindows
+
+on:
+  push:
+  #schedule:
+  # - cron: "15 5 1 * *"
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'hwgui test'
+        default: 'checkonly'
+        required: true
+
+jobs:
+
+  Build:
+    runs-on: windows-latest
+    steps:
+
+    - name: load mingw
+      uses: dawidd6/action-download-artifact@v21
+      with:
+         workflow: buildall.yml
+         workflow_conclusion: success
+         name: mingw_1502
+         path: c:\temp
+         repo: JoseQuintas/sefazclass
+
+    - name: load harbour32
+      uses: dawidd6/action-download-artifact@v21
+      with:
+         workflow: buildall.yml
+         workflow_conclusion: success
+         name: hb32_mingw_1502
+         path: c:\temp
+         repo: JoseQuintas/sefazclass
+
+    - name: Unzip
+      env:
+         PATH: c:\program files\7-zip
+      run: |
+         c:
+         md c:\temp\harbour
+         md c:\temp\harbour\comp
+         7z x -y c:\temp\mingw_1502.7z -oc:\temp\comp
+         7z x -y c:\temp\hb32_mingw_1502.7z -oc:\temp\harbour
+
+    - name: Load Source Code
+      run: |
+         c:
+         git clone https://github.com/JoseQuintas/hwgui_fork /temp/hwgui --depth 1
+
+    - name: Build 32 bits
+      env:
+         HB_BUILD_STRIP: all
+         HB_COMPILER: mingw
+         HB_INSTALL_PREFIX: c:\temp\harbour
+         PATH: c:\temp\comp\mingw32\bin;c:\temp\harbour\bin
+      run: |
+         c:
+         cd c:\temp\hwgui
+         hbmk2 hwgui.hbp -w3
+         hbmk2 hbxml.hbp -w3
+         hbmk2 procmisc.hbp -w3
+         hbmk2 hwgdebug.hbp -w3
+         cd c:\temp\hwgui\samples
+         hbmk2 allhbp.hbp

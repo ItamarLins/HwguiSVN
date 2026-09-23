@@ -1,0 +1,14 @@
+#
+# $Id: designer.hwprj 3400 2023-12-04 08:03:37Z alkresin $
+# HwBuilder project file for designer
+# Launch it with:
+#      hwb designer.hwprj   ( gui version )
+#   or hwbc designer.hwprj  ( console version )
+
+objpath=obj
+{unix}cflags=-O3
+
+outname=designer
+
+*.prg
+*.c

@@ -1,0 +1,58 @@
+#
+# $Id: hwgui.hwprj 3523 2025-01-24 07:18:51Z alkresin $
+# HwBuilder project file to build HwGUI libraries
+# Launch it with:
+#      hwb hwgui.hwprj   ( gui version )
+#   or hwbc hwgui.hwprj  ( console version )
+# Add -{uni} to a command line to build it in UNICODE mode (in Windows)
+
+makemode=on
+objpath=obj
+outpath=lib/$COMPILER
+{unix}cflags=-O3
+{win}{uni}cflags=-DUNICODE
+{win}{uni}prgflags=-dUNICODE
+{win}{uni}objpath=obj_uni
+{win}{uni}outpath=lib_uni
+
+:project hbxml
+target=lib
+outname=hbxml
+
+srcpath=source/common/xml
+*.prg
+*.c
+
+:project procmisc
+target=lib
+outname=procmisc
+
+srcpath=source/common/procmisc
+*.prg
+*.c
+
+srcpath=source/common/editor
+*.prg
+{win}hcedit_w.c
+{unix}hcedit_l.c
+
+:project hwgdebug
+target=lib
+outname=hwgdebug
+
+srcpath=source/common/debug
+*.prg
+*.c
+
+:project hwgui
+target=lib
+outname=hwgui
+
+{unix}srcpath=source/gtk
+{win}srcpath=source\winapi
+*.prg
+*.c -(window3.c)
+
+srcpath=source/cross
+*.prg
+*.c

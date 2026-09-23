@@ -1,0 +1,10 @@
+#
+# $Id: graph.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+-ograph
+
+graph.prg
+
+# ==================== EOF of graph.hbp ===============

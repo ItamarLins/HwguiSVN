@@ -1,0 +1,12 @@
+#
+# $Id: testtray.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+#-stop={linux}
+
+-otesttray
+
+testtray.prg
+
+# ==================== EOF of testtray.hbp ===============

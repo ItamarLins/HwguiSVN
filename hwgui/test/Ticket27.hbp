@@ -1,0 +1,13 @@
+#
+# $Id: Ticket27.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+
+-mt
+
+-oTicket27
+
+Ticket27.prg
+
+# ===================== EOF of Ticket27.hbp ====================
+

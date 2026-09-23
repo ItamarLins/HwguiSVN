@@ -1,0 +1,29 @@
+#
+# $Id: iesample.hbp 3583 2025-04-13 10:57:36Z josequintas $
+#
+# auto included hbmk.hbm
+
+{linux}-stop="Windows only"
+{darwin}-stop="Windows only"
+{unix}-stop="Windows only"
+
+# Only for compile of sample program
+# iesample.hbp
+# needed additional contrib library
+
+
+-b
+-n -q0 -es2
+
+-lhbactivex
+#-L../..
+-L..
+hwgui.hbc
+
+-oiesample
+
+iesample.prg
+
+
+# ===================== EOF of iesample.hbp ====================
+

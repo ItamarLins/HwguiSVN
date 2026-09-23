@@ -1,0 +1,25 @@
+  Readme.txt
+
+
+ $Id: Readme.txt 3504 2024-12-29 10:03:56Z df7be $
+ 
+  This directory is the archive of old Changelog's.
+  
+  Every Changelog has as file extension a 3-digit
+  version number "nnn".
+  The first archived C file is
+  "Changelog.001".
+  
+  Add for every archived log an entry with date range (Format YYYY-MM-DD)
+  in the following table.
+  
+  Table of archived Changelog
+  ===========================
+  
+  Changelog.002    2022-02-09 to 2024-12-12
+  Changelog.001    2003-11-14 to 2022-08-31
+  
+  
+  
+ 
+ =================== EOF of Readme.txt ===================================

@@ -1,0 +1,15 @@
+#
+# $Id: testtray.hbp 3623 2025-04-21 04:07:27Z josequintas $
+#
+# auto included hbmk.hbm
+#
+
+../../hwgui.hbc
+
+-n
+
+-otesttray
+
+testtray.prg
+
+# ==================== EOF of testtray.hbp ===============

@@ -1,0 +1,73 @@
+#
+# demoall.hbp
+#
+# auto included hbmk.hbm
+#
+
+#used by samples
+-D__CALLED_FROM_DEMOALL
+
+-odemoall
+{win}hbwin.hbc
+
+demoall.prg
+demoaltprog.prg
+demobitmap.prg
+demobrowsearr.prg
+demobrowsearray.prg
+demobrowsebmp.prg
+demobrowseclr.prg
+demobrowsedbf.prg
+demobrwtwosub.prg
+democalmonth.prg
+democalyear.prg
+democal3years.prg
+democheckbox.prg
+democombobox.prg
+demodateselect.prg
+demodbfdata.prg
+demodialog.prg
+demodlgbox.prg
+demofunc.prg
+demoget1.prg
+demoget2.prg
+demohtrack.prg
+demoimageview.prg
+demoimage1.prg
+demoimage2.prg
+demoini.prg
+demolenta.prg
+demolenta2.prg
+demolistboxsub.prg
+{win}demolisttwosub.prg
+demomemocomp.prg
+demomenu.prg
+demomenumod.prg
+demomenuxml.prg
+demonight.prg
+demoowner.prg
+demoprogbar.prg
+demostrrev.prg
+demotab.prg
+demotabtool.prg
+demotree.prg
+demosplit.prg
+demosplitter.prg
+demoupdown.prg
+# On MacOS, the libiconv not in GNU and not compatible
+# so skip this sample
+{win}demoxmltree.prg
+{linux}demoxmltree.prg
+
+{win}demobrowseado.prg
+{win}demogrid1.prg
+{win}demogrid4.prg
+{win}demogrid5.prg
+{win}demolistbox.prg
+{win}demomonthcal.prg
+{win}demomenubitmap.prg
+{win}demonice.prg
+{win}demoshadebtn.prg
+{win}demotrackbar.prg
+
+# =============================== EOF of demoall.hbp ==============================

@@ -1,0 +1,9 @@
+#
+# $Id: testunique.hbp 3578 2025-04-11 23:17:28Z josequintas $
+#
+
+-otestunique
+
+testunique.prg
+
+# ==================== EOF of testunique.hbp ===============

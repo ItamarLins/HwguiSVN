@@ -1,0 +1,10 @@
+#
+# $Id: tststconsapp.hbp 3573 2025-04-11 00:02:52Z josequintas $
+#
+# auto included hbmk.hbm
+
+-otststconsapp
+
+tststconsapp.prg
+
+# ==================== EOF of tststconsapp.hbp ===============

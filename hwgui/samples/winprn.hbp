@@ -1,0 +1,23 @@
+#
+# $Id: winprn.hbp 3586 2025-04-14 19:16:12Z josequintas $
+#
+# auto included hbmk.hbm
+
+# QR encode linking
+#-dWITH_QRENCDLL
+#-dWITH_QRENCST
+
+# hbwin.hbc
+xhb.hbc
+
+# Free this entries for static link of QR encoding library
+#-lqrcodegen
+#-lhbqrencode
+
+-w1
+
+-owinprn
+
+winprn.prg
+
+# ==================== EOF of winprn.hbpp ===============
