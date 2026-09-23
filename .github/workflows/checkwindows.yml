@@ -22,7 +22,7 @@ jobs:
 
     # Checks out ItamarLins/HwguiSVN automatically.
     - name: Checkout HwguiSVN
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     # Cache the whole Harbour 3.2 install. First run compiles it
     # (~3-5 min) and stores under this key. Next runs restore in
@@ -30,7 +30,7 @@ jobs:
     # if you ever want to force a fresh Harbour build.
     - name: Cache Harbour 3.2 (64-bit)
       id: cache-hb
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: C:\temp\harbour
         key: harbour-mingw64-v1
@@ -95,7 +95,7 @@ jobs:
         export PATH="/c/temp/harbour/bin:$PATH"
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: hwgui-mingw64
         path: |
