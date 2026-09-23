@@ -92,16 +92,16 @@
 {win}source/winapi/halert.prg
 
 # GTK
-{unix}source/gtk/commond.c
-{unix}source/gtk/control.c
-{unix}source/gtk/draw.c
-{unix}source/gtk/drawtext.c
-{unix}source/gtk/window.c
-{unix}source/gtk/wprint.c
-{unix}source/gtk/menu_c.c
-{unix}source/gtk/message.c
-{unix}source/gtk/misc.c
-{unix}source/gtk/inter.c
+{unix}source/gtk4/commond.c
+{unix}source/gtk4/control.c
+{unix}source/gtk4/draw.c
+{unix}source/gtk4/drawtext.c
+{unix}source/gtk4/window.c
+{unix}source/gtk4/wprint.c
+{unix}source/gtk4/menu_c.c
+{unix}source/gtk4/message.c
+{unix}source/gtk4/misc.c
+{unix}source/gtk4/inter.c
 
 {unix}source/cross/common.prg
 {unix}source/cross/hbincnt.prg
@@ -114,35 +114,35 @@
 {unix}source/cross/htrack.prg
 {unix}source/cross/hmisccross.prg
 
-{unix}source/gtk/drawwidg.prg
-{unix}source/gtk/herrsys.prg
-{unix}source/gtk/gtkmain.prg
-{unix}source/gtk/hbrowse.prg
-{unix}source/gtk/hcwindow.prg
-{unix}source/gtk/hcheck.prg
-{unix}source/gtk/hcombo.prg
-{unix}source/gtk/hcontrol.prg
-{unix}source/gtk/hdialog.prg
-{unix}source/gtk/hedit.prg
-{unix}source/gtk/hhyper.prg
-{unix}source/gtk/hownbtn.prg
-{unix}source/gtk/hpanel.prg
-{unix}source/gtk/hprinter.prg
-{unix}source/gtk/hradio.prg
-{unix}source/gtk/hsayimg.prg
-{unix}source/gtk/hsplit.prg
-{unix}source/gtk/htab.prg
-{unix}source/gtk/htimer.prg
-{unix}source/gtk/htool.prg
-{unix}source/gtk/htree.prg
-{unix}source/gtk/hupdown.prg
-{unix}source/gtk/hwindow.prg
-{unix}source/gtk/hwinprn.prg
-{unix}source/gtk/hprogres.prg
-{unix}source/gtk/hmonthc.prg
-{unix}source/gtk/hmisc.prg
-{unix}source/gtk/initools.prg
-{unix}source/gtk/menu.prg
+{unix}source/gtk4/drawwidg.prg
+{unix}source/gtk4/herrsys.prg
+{unix}source/gtk4/gtkmain.prg
+{unix}source/gtk4/hbrowse.prg
+{unix}source/gtk4/hcwindow.prg
+{unix}source/gtk4/hcheck.prg
+{unix}source/gtk4/hcombo.prg
+{unix}source/gtk4/hcontrol.prg
+{unix}source/gtk4/hdialog.prg
+{unix}source/gtk4/hedit.prg
+{unix}source/gtk4/hhyper.prg
+{unix}source/gtk4/hownbtn.prg
+{unix}source/gtk4/hpanel.prg
+{unix}source/gtk4/hprinter.prg
+{unix}source/gtk4/hradio.prg
+{unix}source/gtk4/hsayimg.prg
+{unix}source/gtk4/hsplit.prg
+{unix}source/gtk4/htab.prg
+{unix}source/gtk4/htimer.prg
+{unix}source/gtk4/htool.prg
+{unix}source/gtk4/htree.prg
+{unix}source/gtk4/hupdown.prg
+{unix}source/gtk4/hwindow.prg
+{unix}source/gtk4/hwinprn.prg
+{unix}source/gtk4/hprogres.prg
+{unix}source/gtk4/hmonthc.prg
+{unix}source/gtk4/hmisc.prg
+{unix}source/gtk4/initools.prg
+{unix}source/gtk4/menu.prg
 
 # ---------------- EOF of hwgui.hbm ------------------------------
 
